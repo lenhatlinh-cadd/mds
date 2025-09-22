@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CHARMM27 — MDSgro (Rebuilt)</title>
+  <meta name="description" content="CHARMM27 - force field summary, downloads, installation guide, examples, references."/>
+  <style>
+    :root{
+      --accent:#0b72d9;
+      --muted:#6b7280;
+      --bg:#f7fafc;
+      --card:#ffffff;
+      --radius:12px;
+      --maxw:980px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#0f172a;line-height:1.5}
+    .wrap{max-width:var(--maxw);margin:28px auto;padding:20px}
+    header{display:flex;align-items:center;gap:16px}
+    .logo{
+      width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px;
+      box-shadow:0 6px 18px rgba(11,114,217,0.15);
+    }
+    h1{margin:0;font-size:1.5rem}
+    p.lead{margin:6px 0 0;color:var(--muted)}
+    nav{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+    a.btn{
+      text-decoration:none;padding:8px 12px;border-radius:10px;background:transparent;border:1px solid rgba(15,23,42,0.06);
+      color:var(--accent);font-weight:600;font-size:0.95rem;
+    }
+    main{margin-top:22px;display:grid;grid-template-columns:1fr 320px;gap:18px}
+    @media (max-width:900px){ main{grid-template-columns:1fr}}
+    .card{background:var(--card);padding:16px;border-radius:var(--radius);box-shadow:0 6px 20px rgba(2,6,23,0.04)}
+    section h2{margin-top:0}
+    .meta{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:0.95rem;margin-top:6px}
+    .download-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .dl{
+      display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(90deg,rgba(11,114,217,0.04),transparent);
+    }
+    .code{
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f172a;color:#f8fafc;padding:10px;border-radius:8px;font-size:0.95rem;overflow:auto;
+    }
+    footer{margin-top:22px;padding:16px;color:var(--muted);text-align:center;font-size:0.9rem}
+    .badge{display:inline-block;padding:6px 8px;border-radius:999px;border:1px solid rgba(15,23,42,0.06);font-weight:600;font-size:0.85rem}
+    .toc{display:flex;flex-direction:column;gap:8px}
+    .toc a{color:var(--accent);text-decoration:none}
+    .citation{font-size:0.95rem;color:var(--muted)}
+    .example pre{white-space:pre-wrap}
+    .search{
+      display:flex;gap:8px;margin-top:12px;
+    }
+    .search input{flex:1;padding:8px;border-radius:10px;border:1px solid #e6edf3}
+    .search button{padding:8px 10px;border-radius:10px;border:none;background:var(--accent);color:white;font-weight:700}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">MDS</div>
+      <div>
+        <h1>CHARMM27 <span style="color:var(--muted);font-size:0.95rem">— Force field resource</span></h1>
+        <p class="lead">Tổng quan, hướng dẫn cài đặt và ví dụ sử dụng CHARMM27. (Trang rebuild thay thế)</p>
+        <div class="meta">
+          <span class="badge">CHARMM27</span>
+          <span>Last updated: <!-- TODO: replace with real date -->2025-09-22</span>
+        </div>
+      </div>
+    </header>
+
+    <nav aria-label="main nav">
+      <a class="btn" href="#overview">Tổng quan</a>
+      <a class="btn" href="#download">Downloads</a>
+      <a class="btn" href="#install">Cài đặt</a>
+      <a class="btn" href="#examples">Ví dụ</a>
+      <a class="btn" href="#references">Tài liệu tham khảo</a>
+      <a class="btn" href="#contact">Liên hệ</a>
+    </nav>
+
+    <main>
+      <div>
+        <section id="overview" class="card">
+          <h2>Tổng quan</h2>
+          <p>CHARMM27 là một phiên bản lực trường (force field) phổ biến cho mô phỏng phân tử — đặc biệt cho protein, acid nucleic và lipid. Trang này chứa thông tin tóm tắt về các tham số, khuyến nghị sử dụng, và liên kết tới tệp tham chiếu.</p>
+          <ul>
+            <li><strong>Phạm vi:</strong> protein, DNA/RNA, lipids (tùy tệp thông số).</li>
+            <li><strong>Tài liệu gốc:</strong> hãy tham khảo mục "Tài liệu tham khảo" bên dưới.</li>
+            <li><strong>Khuyến cáo:</strong> Kiểm tra tương thích phiên bản CHARMM với phần mềm (NAMD, GROMACS conversion, v.v.).</li>
+          </ul>
+        </section>
+
+        <section id="download" class="card" style="margin-top:16px">
+          <h2>Tải xuống</h2>
+          <p class="citation">Ghi chú bản quyền &amp; license: một số tệp tham số có hạn chế phân phối. Luôn kiểm tra giấy phép trước khi công bố kết quả.</p>
+
+          <div class="download-list">
+            <div class="dl">
+              <div>
+                <div style="font-weight:700">charmm27.prm</div>
+                <div style="font-size:0.9rem;color:var(--muted)">Parameter file — full force field</div>
+              </div>
+              <div>
+                <!-- TODO: replace href -->
+                <a class="btn" href="#" download>Download</a>
+              </div>
+            </div>
+
+            <div class="dl">
+              <div>
+                <div style="font-weight:700">top_all27_prot.rtf</div>
+                <div style="font-size:0.9rem;color:var(--muted)">Topology for proteins</div>
+              </div>
+              <div><a class="btn" href="#" download>Download</a></div>
+            </div>
+
+            <div class="dl">
+              <div>
+                <div style="font-weight:700">Conversion scripts</div>
+                <div style="font-size:0.9rem;color:var(--muted)">Scripts to convert to GROMACS/NAMD formats</div>
+              </div>
+              <div><a class="btn" href="#" download>Download</a></div>
+            </div>
+          </div>
+
+          <p style="margin-top:12px;color:var(--muted)">Nếu bạn muốn mình chuẩn hóa các link/tập tin từ trang gốc, hãy cung cấp link tải trực tiếp hoặc upload file.</p>
+        </section>
+
+        <section id="install" class="card" style="margin-top:16px">
+          <h2>Cài đặt &amp; Sử dụng nhanh</h2>
+          <p>Các bước sau minh họa cách dùng file tham số trong GROMACS (ví dụ chuyển đổi):</p>
+
+          <div class="code" aria-hidden="true">
+<pre>
+# Example: convert CHARMM topology to GROMACS using charmm2gmx-like workflow
+# 1) Prepare PSF/PDB in CHARMM format
+# 2) Use conversion tool (psfgen/charmm2gmx/convert scripts)
+# 3) gmx pdb2gmx -ff <converted_ff> -f structure.pdb -o processed.gro
+# 4) gmx grompp -f md.mdp -c processed.gro -p topol.top -o topol.tpr
+# 5) gmx mdrun -deffnm md
+</pre>
+          </div>
+
+          <h3 style="margin-top:12px">Các lưu ý</h3>
+          <ul>
+            <li>Luôn kiểm tra compatibility các nguyên tử phụ (patches) với topology của bạn.</li>
+            <li>Sử dụng tệp README đi kèm để biết phiên bản tương thích.</li>
+            <li>Khi chuyển đổi sang GROMACS, kiểm tra năng lượng ban đầu để đảm bảo không có lỗi vướng mắc.</li>
+          </ul>
+        </section>
+
+        <section id="examples" class="card" style="margin-top:16px">
+          <h2>Ví dụ &amp; Scripts</h2>
+          <p>Ví dụ nhỏ: tối ưu hóa cấu hình peptide 10 residue với CHARMM27 (lưu ý: chỉ minh họa).</p>
+          <div class="example">
+            <pre>
+# Pseudocode CHARMm-like
+read psf card name top_all27_prot.rtf
+read param card name par_all27_prot.prm
+read sequence ...
+coord ...
+energy
+minimize nstep 1000
+write coor final.coor
+            </pre>
+          </div>
+
+          <p style="margin-top:12px;color:var(--muted)">Bạn có thể chèn ví dụ thực tế hoặc script từ trang gốc vào đây để mình format lại cho đẹp.</p>
+        </section>
+
+        <section id="references" class="card" style="margin-top:16px">
+          <h2>Tài liệu tham khảo</h2>
+          <ol class="citation">
+            <li>MacKerell AD Jr., et al. CHARMM: The energy function and its parameterization. <!-- TODO: thêm trích dẫn đầy đủ --></li>
+            <li>Foloppe N., MacKerell AD. All-atom empirical force field for nucleic acids. <!-- TODO: thêm trích dẫn đầy đủ --></li>
+            <li>Hãy thay các tham chiếu trên bằng DOI/AMA/APA theo yêu cầu xuất bản của bạn.</li>
+          </ol>
+        </section>
+
+      </div>
+
+      <aside>
+        <div class="card">
+          <h3>Quick links</h3>
+          <div class="toc" style="margin-top:8px">
+            <a href="#overview">Tổng quan</a>
+            <a href="#download">Downloads</a>
+            <a href="#install">Cài đặt</a>
+            <a href="#examples">Ví dụ</a>
+            <a href="#references">Tài liệu tham khảo</a>
+          </div>
+
+          <div style="margin-top:14px">
+            <h4>Search</h4>
+            <div class="search">
+              <input type="search" placeholder="Tìm trong trang (JS-based search tĩnh)"/>
+              <button>Go</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h4>Liên hệ</h4>
+          <p class="meta">Tác giả: MDSgro — Email: <span style="color:var(--muted)">mdsgro@example.com</span></p>
+          <p style="margin-top:8px;font-size:0.95rem">Nếu bạn muốn mình chuyển toàn bộ nội dung trang gốc sang HTML chính xác, hãy cung cấp nội dung hoặc cấp truy cập công khai (không yêu cầu đăng nhập).</p>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h4>Phiên bản</h4>
+          <p class="meta">Template rebuild — lightweight, mobile-friendly</p>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      © <span id="year"></span> MDSgro — CHARMm27 resource. Template generated by ChatGPT.
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Small client-side search (very simple)
+    document.querySelector('.search button').addEventListener('click', function(){
+      const q = document.querySelector('.search input').value.trim().toLowerCase();
+      if(!q){ alert('Nhập từ khóa để tìm.') ; return; }
+      const all = document.querySelectorAll('main h2, main p, main li, main pre, main .dl');
+      let found = false;
+      all.forEach(el => {
+        if(el.textContent.toLowerCase().includes(q)){
+          el.scrollIntoView({behavior:'smooth', block:'center'});
+          el.style.transition = 'background 0.5s';
+          el.style.background = 'rgba(11,114,217,0.06)';
+          found = true;
+          setTimeout(()=> el.style.background = '', 2000);
+        }
+      });
+      if(!found) alert('Không tìm thấy kết quả trong trang.');
+    });
+  </script>
+</body>
+</html>
