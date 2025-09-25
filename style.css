@@ -23,14 +23,24 @@ header{display:flex;align-items:center;gap:16px}
 h1{margin:0;font-size:1.6rem}
 p.lead{margin:6px 0 0;color:var(--muted)}
 
-main{margin-top:22px;display:grid;grid-template-columns:280px 1fr;gap:18px}
+main{
+  margin-top:22px;
+  display:grid;
+  grid-template-columns:1fr 280px; /* content trái, sidebar phải */
+  gap:18px;
+}
 @media (max-width:900px){
   main{grid-template-columns:1fr}
   aside{position:static;}
 }
 
-.card{background:var(--card);padding:16px;border-radius:var(--radius);
-  box-shadow:0 6px 20px rgba(2,6,23,0.05);margin-bottom:16px}
+.card{
+  background:var(--card);
+  padding:16px;
+  border-radius:var(--radius);
+  box-shadow:0 6px 20px rgba(2,6,23,0.05);
+  margin-bottom:16px;
+}
 section h2{margin-top:0}
 
 aside{
@@ -69,4 +79,10 @@ aside{
   font-size:0.95rem;overflow:auto;
 }
 
-footer{margin-top:22px;padding:16px;color:var(--muted);text-align:center;font-size:0.9rem}
+footer{
+  margin-top:22px;
+  padding:16px;
+  color:var(--muted);
+  text-align:center;
+  font-size:0.9rem
+}
