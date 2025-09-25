@@ -89,20 +89,21 @@ aside{
   position: absolute;
   top: 6px;
   right: 6px;
-  background: white;
-  color: black;
-  border: 1px solid #ddd;
+  background: #facc15;   /* vàng */
+  color: white;
+  border: none;
   border-radius: 6px;
-  padding: 4px 8px;
+  padding: 4px 10px;
   font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
 }
 .copy-btn:hover {
-  background: #f3f4f6;
+  background: #eab308;   /* vàng đậm khi hover */
 }
 .copy-btn.copied {
-  background: #16a34a; /* xanh lá */
+  background: #16a34a;   /* xanh lá khi copied */
   color: white;
 }
 
@@ -113,3 +114,4 @@ footer{
   text-align:center;
   font-size:0.9rem;
 }
+
