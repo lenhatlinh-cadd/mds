@@ -12,30 +12,26 @@
       <div class="logo">GMX</div>
       <div>
         <h1>GROMACS Tutorial — Lysozyme in Water</h1>
-        <p class="lead">Demo load nội dung động từ file ngoài</p>
+        <p class="lead">Demo load nội dung động trong 1 khung duy nhất</p>
       </div>
     </header>
 
-    <nav>
-      <a class="btn" href="#step1">Step 1</a>
-      <a class="btn" href="#step2">Step 2</a>
-    </nav>
-
     <main>
-      <div>
-        <section id="step1" class="card"></section>
-        <section id="step2" class="card"></section>
-      </div>
-
       <aside>
         <div class="card">
           <h3>Quick links</h3>
           <div class="toc">
-            <a href="#step1">Step 1</a>
-            <a href="#step2">Step 2</a>
+            <button data-step="1">Step 1</button>
+            <button data-step="2">Step 2</button>
+            <button data-step="3">Step 3</button>
           </div>
         </div>
       </aside>
+
+      <div class="card" id="content">
+        <h2>Chào mừng</h2>
+        <p>Hãy chọn Step ở menu bên trái để xem nội dung.</p>
+      </div>
     </main>
 
     <footer>
@@ -43,7 +39,6 @@
     </footer>
   </div>
 
-  <!-- Link tới script ngoài -->
   <script src="script.js"></script>
 </body>
 </html>
