@@ -89,9 +89,9 @@ aside{
   position: absolute;
   top: 6px;
   right: 6px;
-  background: #facc15;   /* vàng */
-  color: white;
-  border: none;
+  background: white;       /* nền trắng mặc định */
+  color: black;            /* chữ đen mặc định */
+  border: 1px solid #ddd;
   border-radius: 6px;
   padding: 4px 10px;
   font-size: 0.8rem;
@@ -100,12 +100,13 @@ aside{
   transition: 0.2s;
 }
 .copy-btn:hover {
-  background: #eab308;   /* vàng đậm khi hover */
+  background: #f3f4f6;     /* xám nhạt khi hover */
 }
 .copy-btn.copied {
-  background: #16a34a;   /* xanh lá khi copied */
-  color: white;
+  background: var(--accent); /* xanh chủ đạo */
+  color: white;              /* chữ trắng */
 }
+
 
 footer{
   margin-top:22px;
@@ -114,4 +115,5 @@ footer{
   text-align:center;
   font-size:0.9rem;
 }
+
 
