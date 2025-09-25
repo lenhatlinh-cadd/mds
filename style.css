@@ -26,7 +26,7 @@ p.lead{margin:6px 0 0;color:var(--muted)}
 main{
   margin-top:22px;
   display:grid;
-  grid-template-columns:1fr 280px; /* content trái, sidebar phải */
+  grid-template-columns:1fr 280px; /* trái: content, phải: sidebar */
   gap:18px;
 }
 @media (max-width:900px){
@@ -72,22 +72,38 @@ aside{
   color:white;
 }
 
-.code{
-  font-family:ui-monospace,Menlo,monospace;
-  background:#0f172a;color:#f8fafc;
-  padding:10px;border-radius:8px;
-  font-size:0.95rem;overflow:auto;
-}
-
-aside .card h4 {
-  margin-top:0;
-  font-size:1.1rem;
-  color:var(--accent);
-}
-
-aside .card p {
-  margin:4px 0;
+/* Khối code */
+.code {
+  position: relative;
+  font-family: ui-monospace,Menlo,monospace;
+  background:#0f172a;
+  color:#f8fafc;
+  padding:10px;
+  border-radius:8px;
   font-size:0.95rem;
+  overflow:auto;
+}
+
+/* Nút copy */
+.copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: white;
+  color: black;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.copy-btn:hover {
+  background: #f3f4f6;
+}
+.copy-btn.copied {
+  background: #16a34a; /* xanh lá */
+  color: white;
 }
 
 footer{
@@ -95,36 +111,5 @@ footer{
   padding:16px;
   color:var(--muted);
   text-align:center;
-  font-size:0.9rem
+  font-size:0.9rem;
 }
-
-/*Thêm đoạn mã để copy code*/
-.code {
-  position: relative;
-  font-family: ui-monospace,Menlo,monospace;
-  background: #0f172a;
-  color: #f8fafc;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  overflow: auto;
-}
-
-.copy-btn {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.copy-btn.copied {
-  background: #16a34a;
-}
-
