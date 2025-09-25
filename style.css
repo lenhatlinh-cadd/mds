@@ -103,7 +103,7 @@ aside{
   background: #f3f4f6;     /* xám nhạt khi hover */
 }
 .copy-btn.copied {
-  background: var(--accent); /* xanh chủ đạo */
+  background: #22c55e; /* xanh lá */
   color: white;              /* chữ trắng */
 }
 
@@ -115,5 +115,6 @@ footer{
   text-align:center;
   font-size:0.9rem;
 }
+
 
 
