@@ -21,11 +21,11 @@ function enhanceCodeBlocks() {
 
       navigator.clipboard.writeText(codeText).then(() => {
         if (btn.classList.contains("copied")) {
-          // nếu đang copied → bấm lại thì trả về trạng thái ban đầu
+          // Nếu đã ở trạng thái copied → click lại reset về mặc định
           btn.textContent = "Copy";
           btn.classList.remove("copied");
         } else {
-          // nếu đang copy bình thường → chuyển sang trạng thái copied
+          // Nếu chưa → đổi sang trạng thái copied
           btn.textContent = "✓ Copied";
           btn.classList.add("copied");
         }
@@ -33,6 +33,7 @@ function enhanceCodeBlocks() {
     });
   });
 }
+
 
 
 // Load nội dung Step
@@ -59,4 +60,5 @@ stepButtons.forEach(btn => {
 
 // Mặc định load Step 1
 loadStep(1);
+
 
