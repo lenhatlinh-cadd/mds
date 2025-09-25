@@ -107,6 +107,28 @@ aside{
   color: white;              /* chữ trắng */
 }
 
+/*Thêm nút điều hướng*/
+.step-nav {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nav-btn {
+  background: #0b72d9;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.nav-btn:hover {
+  background: #094a9d;
+}
 
 footer{
   margin-top:22px;
@@ -115,6 +137,7 @@ footer{
   text-align:center;
   font-size:0.9rem;
 }
+
 
 
 
