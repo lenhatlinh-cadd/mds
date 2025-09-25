@@ -18,17 +18,22 @@ function enhanceCodeBlocks() {
       const codeText = block.querySelector('pre')
         ? block.querySelector('pre').innerText
         : block.innerText;
+
       navigator.clipboard.writeText(codeText).then(() => {
-        btn.textContent = "✓ Copied";
-        btn.classList.add("copied");
-        setTimeout(() => {
+        if (btn.classList.contains("copied")) {
+          // nếu đang copied → bấm lại thì trả về trạng thái ban đầu
           btn.textContent = "Copy";
           btn.classList.remove("copied");
-        }, 2000);
+        } else {
+          // nếu đang copy bình thường → chuyển sang trạng thái copied
+          btn.textContent = "✓ Copied";
+          btn.classList.add("copied");
+        }
       });
     });
   });
 }
+
 
 // Load nội dung Step
 function loadStep(step) {
@@ -54,3 +59,4 @@ stepButtons.forEach(btn => {
 
 // Mặc định load Step 1
 loadStep(1);
+
