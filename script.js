@@ -1,18 +1,27 @@
-// Cập nhật năm tự động
+// Cập nhật năm
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// Danh sách số step cần load
-const steps = 2; // có thể đổi thành 12 khi đủ file
+const content = document.getElementById('content');
+const stepButtons = document.querySelectorAll('.toc button');
 
-for (let i = 1; i <= steps; i++) {
-  fetch(`steps/step${i}.html`)
-    .then(res => res.text())
-    .then(html => {
-      document.querySelector(`#step${i}`).innerHTML = html;
-    })
-    .catch(err => {
-      console.error(`Không load được step${i}.html`, err);
-      document.querySelector(`#step${i}`).innerHTML =
-        `<h2>Step ${i}</h2><p style="color:red">Chưa có nội dung.</p>`;
-    });
-}
+stepButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const step = btn.dataset.step;
+
+    // Load nội dung
+    fetch(`steps/step${step}.html`)
+      .then(res => res.text())
+      .then(html => {
+        content.innerHTML = html;
+      })
+      .catch(err => {
+        console.error(err);
+        content.innerHTML = `<h2>Step ${step}</h2><p style="color:red">Không tải được nội dung.</p>`;
+      });
+
+    // Xoá highlight cũ
+    stepButtons.forEach(b => b.classList.remove('active'));
+    // Gán highlight cho nút vừa click
+    btn.classList.add('active');
+  });
+});
