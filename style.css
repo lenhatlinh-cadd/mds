@@ -49,3 +49,26 @@ aside{
   align-self:start;
   height:fit-content;
 }
+
+.toc button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toc button:hover {
+  background: rgba(11,114,217,0.08);
+}
+
+.toc button.active {
+  background: var(--accent);
+  color: white;
+}
+
