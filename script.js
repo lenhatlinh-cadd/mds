@@ -4,10 +4,11 @@ document.getElementById('year').textContent = new Date().getFullYear();
 const content = document.getElementById('content');
 const stepButtons = document.querySelectorAll('.toc button');
 
-// Hàm thêm nút copy cho tất cả .code
+// Gắn nút copy cho các khối code
 function enhanceCodeBlocks() {
   document.querySelectorAll('#content .code').forEach(block => {
-    if (block.querySelector('.copy-btn')) return; // tránh thêm lặp
+    if (block.querySelector('.copy-btn')) return;
+
     const btn = document.createElement('button');
     btn.textContent = "Copy";
     btn.className = "copy-btn";
@@ -29,13 +30,13 @@ function enhanceCodeBlocks() {
   });
 }
 
-// Load nội dung step
+// Load nội dung Step
 function loadStep(step) {
   fetch(`steps/step${step}.html`)
     .then(res => res.text())
     .then(html => {
       content.innerHTML = html;
-      enhanceCodeBlocks(); // gắn nút copy
+      enhanceCodeBlocks();
     })
     .catch(err => {
       console.error(err);
@@ -46,10 +47,10 @@ function loadStep(step) {
   document.querySelector(`.toc button[data-step="${step}"]`).classList.add('active');
 }
 
-// Gắn click event
+// Gắn sự kiện click
 stepButtons.forEach(btn => {
   btn.addEventListener('click', () => loadStep(btn.dataset.step));
 });
 
-// Mặc định Step 1
+// Mặc định load Step 1
 loadStep(1);
