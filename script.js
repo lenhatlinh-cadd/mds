@@ -100,7 +100,8 @@ stepButtons.forEach(btn => {
 });
 
 // Mặc định load Step 1
-loadStep(1);
+loadStep(0);
+
 
 
 
