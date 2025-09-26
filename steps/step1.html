@@ -1,146 +1,32 @@
+<h2>Step 1: Prepare the Topology (pdb2gmx)</h2>
 
-<!-- saved from url=(0055)http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html -->
-<html class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title>Lysozyme trong n&#432;&#7899;c</title>
-<meta name="title" content="GROMACS Tutorial">
+<p>á»ž bÆ°á»›c nÃ y, chÃºng ta sáº½ chuáº©n bá»‹ topology cho protein lysozyme (PDB ID: <code>1AKI</code>). 
+Äáº§u tiÃªn, cáº§n táº£i file cáº¥u trÃºc PDB tá»« <a href="https://www.rcsb.org/" target="_blank">RCSB Protein Data Bank</a>.</p>
 
-<!-- Google tag (gtag.js) -->
-<script async="" src="./2_files/js"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<img src="images/lysozyme_structure.png" alt="Lysozyme structure" width="400">
 
-  gtag('config', 'G-EBVNCYQWWG');
-</script>
-<link href="./2_files/style.css" rel="stylesheet" type="text/css">
-<link type="text/css" rel="stylesheet" charset="UTF-8" href="./2_files/m=el_main_css"></head>
-<body>
-<br>
-<center><h2><font size="+3">GROMACS Tutorial</font></h2>
-<p><font size="+1"><b>Step One: Prepare the Topology</b></font></p>
+<p>Sau khi táº£i, hÃ£y loáº¡i bá» cÃ¡c phÃ¢n tá»­ nÆ°á»›c tinh thá»ƒ (residue <code>HOH</code>) Ä‘á»ƒ thu Ä‘Æ°á»£c cáº¥u trÃºc protein thuáº§n. 
+CÃ³ thá»ƒ dÃ¹ng lá»‡nh <code>grep</code>:</p>
 
-<img src="./2_files/Steps_top_highlight.jpg" width="679" height="32" usemap="#navmap">
+<div class="code"><pre>
+grep -v HOH files/1AKI.pdb > files/1AKI_clean.pdb
+</pre></div>
 
-<map name="navmap">
-    <area shape="rect" coords="0,0,96,32" alt="pdb2gmx" href="http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html">
-    <area shape="rect" coords="96,0,192,32" alt="solv" href="http://www.mdtutorials.com/gmx/lysozyme/03_solvate.html">
-    <area shape="rect" coords="192,0,288,32" alt="ions" href="http://www.mdtutorials.com/gmx/lysozyme/04_ions.html">
-    <area shape="rect" coords="288,0,380,32" alt="minim" href="http://www.mdtutorials.com/gmx/lysozyme/05_EM.html">
-    <area shape="rect" coords="380,0,472,32" alt="equil" href="http://www.mdtutorials.com/gmx/lysozyme/06_equil.html">
-    <area shape="rect" coords="472,0,564,32" alt="md" href="http://www.mdtutorials.com/gmx/lysozyme/08_MD.html">
-    <area shape="rect" coords="564,0,679,32" alt="analysis" href="http://www.mdtutorials.com/gmx/lysozyme/09_analysis.html">
-</map>
+<p>Tiáº¿p theo, cháº¡y cÃ´ng cá»¥ <code>pdb2gmx</code> Ä‘á»ƒ táº¡o topology vÃ  cáº¥u trÃºc Ä‘Ã£ xá»­ lÃ½:</p>
 
-<font size="3">
+<div class="code"><pre>
+gmx pdb2gmx -f files/1AKI_clean.pdb -o files/1AKI_processed.gro -water tip3p
+</pre></div>
 
-<table width="900" border="0" cellpadding="20">
-<tbody><tr>
- <td>
+<p>Khi cháº¡y lá»‡nh nÃ y, chÆ°Æ¡ng trÃ¬nh sáº½ yÃªu cáº§u chá»n <b>force field</b>. 
+Trong hÆ°á»›ng dáº«n nÃ y, chÃºng ta chá»n <code>CHARMM36</code> (sá»‘ 9 trong danh sÃ¡ch).</p>
 
-<h2>Some GROMACS Basics</h2>
-
-<p>With the release of version 5.0 of GROMACS, all of the tools are essentially modules of a binary named "gmx."  This is a departure from previous versions, wherein each of the tools was invoked as its own command.  In 5.0, this still works via symlinks, but they will go away in future versions, so it is best to get accustomed to the new way of doing things.  To get help information about any GROMACS module, you can invoke either of the following commands:</p>
-
-<pre>gmx help (module)
-</pre>
-
-<p>or</p>
-
-<pre>gmx (module) -h
-</pre>
-
-<p>where (module) is replaced by the actual name of the command you're trying to issue.  Information will be printed to the terminal, including available algorithms, options, required file formats, known bugs and limitations, etc.  For new users of GROMACS, invoking the help information for common commands is a great way to learn about what each command can do.  Now, on to the fun stuff!</p>
-
-<h2>Lysozyme Tutorial</h2>
-
-<p>We must download the protein structure file with which we will be working.  For this tutorial, we will utilize hen egg white lysozyme (PDB code 1AKI).  Go to the <a href="http://www.rcsb.org/pdb/home/home.do" target="_blank">RCSB</a> website and download the PDB text for the crystal structure.</p>
-
-<p>Once you have downloaded the structure, you can visualize the structure using a viewing program such as VMD, Chimera, PyMOL, etc.  Once you've had a look at the molecule, you are going to want to strip out the crystal waters.  To delete the water molecules (residue "HOH" in the PDB file), either use a plain text editor like vi, emacs (Linux/Mac), or Notepad (Windows). Do not use word processing software! Alternatively, you can use <code>grep</code> to delete these lines very easily:</p>
-
-<pre>grep -v HOH 1aki.pdb &gt; 1AKI_clean.pdb
-</pre>
-
-<p>Note that such a procedure is <b>not universally appropriate</b> (e.g., the case of a tightly bound or otherwise functional active-site water molecule).  For our intentions here, we do not need crystal water.</p>
-
-<p>Always check your .pdb file for entries listed under the comment MISSING, as these entries indicate either atoms or whole residues that are not present in the crystal structure.  Terminal regions may be absent, and may not present a problem for dynamics.  Incomplete internal sequences or any amino acid residues that have missing atoms <b>will</b> cause pdb2gmx to fail.  These missing atoms/residues must be modeled in using other software packages.  Also note that pdb2gmx is not magic.  It cannot generate topologies for arbitrary molecules, just the residues defined by the force field (in the *.rtp files - generally proteins, nucleic acids, and a <b>very</b> finite amount of cofactors, like NAD(H) and ATP).</p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Bây gi&#7901;, khi n&#432;&#7899;c tinh th&#7875; &#273;ã bi&#7871;n m&#7845;t và chúng tôi &#273;ã xác minh r&#7857;ng t&#7845;t c&#7843; các nguyên t&#7917; c&#7847;n thi&#7871;t &#273;&#7873;u có m&#7863;t, t&#7879;p PDB s&#7869; ch&#7881; ch&#7913;a các nguyên t&#7917; protein và &#273;ã s&#7861;n sàng &#273;&#7875; nh&#7853;p vào mô-&#273;un GROMACS &#273;&#7847;u tiên, pdb2gmx. M&#7909;c &#273;ích c&#7911;a pdb2gmx là t&#7841;o ra ba t&#7879;p:
-
-</font></font></p><ol>
-  <li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">C&#7845;u trúc c&#7911;a phân t&#7917;.
-  </font></font></li><li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">M&#7897;t t&#7853;p tin h&#7841;n ch&#7871; v&#7883; trí.
-  </font></font></li><li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">M&#7897;t t&#7879;p c&#7845;u trúc &#273;&#432;&#7907;c x&#7917; lý sau.
-</font></font></li></ol>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">C&#7845;u trúc liên k&#7871;t (m&#7863;c &#273;&#7883;nh là topol.top) ch&#7913;a t&#7845;t c&#7843; thông tin c&#7847;n thi&#7871;t &#273;&#7875; xác &#273;&#7883;nh phân t&#7917; trong mô ph&#7887;ng. Thông tin này bao g&#7891;m các tham s&#7889; không liên k&#7871;t (lo&#7841;i nguyên t&#7917; và &#273;i&#7879;n tích) c&#361;ng nh&#432; các tham s&#7889; liên k&#7871;t (liên k&#7871;t, góc và dihedral). Chúng ta s&#7869; xem xét chi ti&#7871;t h&#417;n v&#7873; c&#7845;u trúc liên k&#7871;t sau khi c&#7845;u trúc &#273;&#432;&#7907;c t&#7841;o.</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Tr&#432;&#7901;ng l&#7921;c chúng ta s&#7869; s&#7917; d&#7909;ng trong h&#432;&#7899;ng d&#7851;n này là CHARMM36, l&#7845;y t&#7915; </font></font><a href="http://mackerell.umaryland.edu/charmm_ff.shtml#gromacs" target="_blank"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">trang web c&#7911;a phòng thí nghi&#7879;m MacKerell</font></font></a><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> . Trong khi &#273;ó, hãy t&#7843;i xu&#7889;ng t&#7879;p tarball tr&#432;&#7901;ng l&#7921;c CHARMM36 m&#7899;i nh&#7845;t (hi&#7879;n t&#7841;i là tháng 7 n&#259;m 2022). Sao chép th&#432; m&#7909;c này vào </font></font><code>$GMXLIB</code><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">v&#7883; trí (m&#7863;c &#273;&#7883;nh là </font></font><code>/usr/local/gromacs/share/gromacs/top</code><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">) ho&#7863;c &#273;&#417;n gi&#7843;n là gi&#7919; nó trong th&#432; m&#7909;c làm vi&#7879;c. N&#7871;u b&#7841;n ch&#7885;n làm vi&#7879;c v&#7899;i m&#7897;t b&#7843;n sao trong th&#432; m&#7909;c làm vi&#7879;c, giao di&#7879;n c&#7911;a tr&#432;&#7901;ng l&#7921;c này trong menu pdb2gmx bên d&#432;&#7899;i s&#7869; khác và b&#7841;n s&#7869; ph&#7843;i ch&#7885;n tùy ch&#7885;n 1 thay vì 9.</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Th&#7921;c thi pdb2gmx b&#7857;ng cách &#273;&#432;a ra l&#7879;nh sau:</font></font></p>
-
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">gmx pdb2gmx -f 1AKI_clean.pdb -o 1AKI_processed.gro -water tip3p 
-</font></font></pre>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">C&#7845;u trúc s&#7869; &#273;&#432;&#7907;c x&#7917; lý b&#7903;i pdb2gmx và b&#7841;n s&#7869; &#273;&#432;&#7907;c nh&#7855;c ch&#7885;n tr&#432;&#7901;ng l&#7921;c:</font></font></p>
-
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ch&#7885;n Tr&#432;&#7901;ng l&#7921;c:</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-T&#7915; '/usr/local/gromacs/share/gromacs/top':</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
- 1: Protein AMBER03, AMBER94 nucleic (Duan et al., J. Comp. Chem. 24, 1999-2012, 2003)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
- 2: Tr&#432;&#7901;ng l&#7921;c AMBER94 (Cornell và c&#7897;ng s&#7921;, JACS 117, 5179-5197, 1995)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
- 3: Protein AMBER96, nucleic AMBER94 (Kollman và c&#7897;ng s&#7921;, Acc. Chem. Res. 29, 461-469, 1996)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
- 4: Protein AMBER99, AMBER94 nucleic (Wang et al., J. Comp. Chem. 21, 1049-1074, 2000)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
- 5: Protein AMBER99SB, AMBER94 nucleic (Hornak et al., Protein 65, 712-725, 2006)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
- 6: Protein AMBER99SB-ILDN, nucleic AMBER94 (Lindorff-Larsen và c&#7897;ng s&#7921;, Protein 78, 1950-58, 2010)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
- 7: Tr&#432;&#7901;ng l&#7921;c AMBERGS (Garcia &amp; Sanbonmatsu, PNAS 99, 2782-2787, 2002)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
- 8: Tr&#432;&#7901;ng l&#7921;c toàn nguyên t&#7917; CHARMM27 (CHARM22 c&#7897;ng v&#7899;i CMAP dành cho protein)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
- 9: Tr&#432;&#7901;ng l&#7921;c GROMOS96 43a1</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-10: Tr&#432;&#7901;ng l&#7921;c GROMOS96 43a2 (c&#7843;i thi&#7879;n góc nghiêng ankan)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-11: Tr&#432;&#7901;ng l&#7921;c GROMOS96 45a3 (Schuler JCC 2001 22 1205)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-12: Tr&#432;&#7901;ng l&#7921;c GROMOS96 53a5 (JCC 2004 t&#7853;p 25 trang 1656)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-13: Tr&#432;&#7901;ng l&#7921;c GROMOS96 53a6 (JCC 2004 t&#7853;p 25 trang 1656)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-14: Tr&#432;&#7901;ng l&#7921;c GROMOS96 54a7 (Eur. Biophys. J. (2011), 40,, 843-856, DOI: 10.1007/s00249-011-0700-9)</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-15: Tr&#432;&#7901;ng l&#7921;c toàn nguyên t&#7917; OPLS-AA/L (2001 aminoacid dihedral)</font></font><font></font>
-</pre>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Tr&#432;&#7901;ng l&#7921;c s&#7869; ch&#7913;a thông tin s&#7869; &#273;&#432;&#7907;c ghi vào c&#7845;u trúc liên k&#7871;t. &#272;ây là m&#7897;t l&#7921;a ch&#7885;n r&#7845;t quan tr&#7885;ng! B&#7841;n nên luôn &#273;&#7885;c k&#7929; v&#7873; t&#7915;ng tr&#432;&#7901;ng l&#7921;c và quy&#7871;t &#273;&#7883;nh tr&#432;&#7901;ng l&#7921;c nào phù h&#7907;p nh&#7845;t v&#7899;i tình hu&#7889;ng c&#7911;a mình. Trong h&#432;&#7899;ng d&#7851;n này, chúng ta s&#7869; s&#7917; d&#7909;ng tr&#432;&#7901;ng l&#7921;c CHARMM36 nguyên t&#7917;, vì v&#7853;y hãy nh&#7853;p 9 t&#7841;i d&#7845;u nh&#7855;c l&#7879;nh, sau &#273;ó nh&#7845;n 'Enter'.</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Có nhi&#7873;u tùy ch&#7885;n khác có th&#7875; &#273;&#432;&#7907;c truy&#7873;n vào pdb2gmx. M&#7897;t s&#7889; tùy ch&#7885;n th&#432;&#7901;ng dùng &#273;&#432;&#7907;c li&#7879;t kê &#7903; &#273;ây:</font></font></p>
-
+<p>Káº¿t quáº£ táº¡o ra cÃ¡c tá»‡p:</p>
 <ul>
- <li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">-ignh: B&#7887; qua các nguyên t&#7917; H trong t&#7879;p PDB; &#273;&#7863;c bi&#7879;t h&#7919;u ích cho các c&#7845;u trúc NMR. N&#7871;u không, n&#7871;u có các nguyên t&#7917; H, chúng ph&#7843;i &#273;&#432;&#7907;c &#273;&#7863;t tên chính xác theo &#273;úng cách các tr&#432;&#7901;ng l&#7921;c trong GROMACS mong &#273;&#7907;i. Có nhi&#7873;u quy &#432;&#7899;c khác nhau, vì v&#7853;y vi&#7879;c x&#7917; lý các nguyên t&#7917; H &#273;ôi khi có th&#7875; gây &#273;au &#273;&#7847;u! N&#7871;u b&#7841;n c&#7847;n gi&#7919; nguyên t&#7885;a &#273;&#7897; H ban &#273;&#7847;u nh&#432;ng c&#7847;n &#273;&#7893;i tên, thì l&#7879;nh sed c&#7911;a Linux chính là l&#7921;a ch&#7885;n hoàn h&#7843;o. 
- </font></font></li><li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">-ter: Gán tr&#7841;ng thái &#273;i&#7879;n tích cho &#273;&#7847;u N và &#273;&#7847;u C m&#7897;t cách t&#432;&#417;ng tác.
- </font></font></li><li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">-inter: Gán tr&#7841;ng thái &#273;i&#7879;n tích t&#432;&#417;ng tác cho Glu, Asp, Lys, Arg và His; ch&#7885;n Cys nào tham gia vào liên k&#7871;t disulfide.
-</font></font></li></ul>
+  <li><code>1AKI_processed.gro</code> â€” cáº¥u trÃºc protein Ä‘Ã£ xá»­ lÃ½</li>
+  <li><code>topol.top</code> â€” topology cá»§a há»‡ thá»‘ng</li>
+  <li><code>posre.itp</code> â€” thÃ´ng tin rÃ ng buá»™c vá»‹ trÃ­</li>
+</ul>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Bây gi&#7901; b&#7841;n &#273;ã t&#7841;o ba t&#7879;p m&#7899;i: 1AKI_processed.gro, topol.top và posre.itp. 1AKI_processed.gro là t&#7879;p c&#7845;u trúc &#273;&#7883;nh d&#7841;ng GROMACS ch&#7913;a t&#7845;t c&#7843; các nguyên t&#7917; &#273;&#432;&#7907;c xác &#273;&#7883;nh trong tr&#432;&#7901;ng l&#7921;c (t&#7913;c là các nguyên t&#7917; H &#273;ã &#273;&#432;&#7907;c thêm vào các axit amin trong protein). T&#7879;p topol.top là c&#7845;u trúc liên k&#7871;t c&#7911;a h&#7879; th&#7889;ng (s&#7869; nói thêm v&#7873; &#273;i&#7873;u này sau). T&#7879;p posre.itp ch&#7913;a thông tin &#273;&#432;&#7907;c s&#7917; d&#7909;ng &#273;&#7875; h&#7841;n ch&#7871; v&#7883; trí c&#7911;a các nguyên t&#7917; n&#7863;ng (s&#7869; nói thêm v&#7873; &#273;i&#7873;u này sau).</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">L&#432;u ý cu&#7889;i cùng: nhi&#7873;u ng&#432;&#7901;i dùng cho r&#7857;ng t&#7879;p .gro là b&#7855;t bu&#7897;c.   </font></font><b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&#272;i&#7873;u này không &#273;úng</font></font></b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> . GROMACS có th&#7875; x&#7917; lý nhi&#7873;u &#273;&#7883;nh d&#7841;ng t&#7879;p khác nhau, v&#7899;i .gro ch&#7881; là m&#7863;c &#273;&#7883;nh cho các l&#7879;nh ghi t&#7879;p t&#7885;a &#273;&#7897;. &#272;ây là m&#7897;t &#273;&#7883;nh d&#7841;ng r&#7845;t g&#7885;n nh&#7865;, nh&#432;ng &#273;&#7897; chính xác l&#7841;i h&#7841;n ch&#7871;. Ví d&#7909;, n&#7871;u b&#7841;n mu&#7889;n s&#7917; d&#7909;ng &#273;&#7883;nh d&#7841;ng PDB, t&#7845;t c&#7843; nh&#7919;ng gì b&#7841;n c&#7847;n làm là ch&#7881; &#273;&#7883;nh tên t&#7879;p phù h&#7907;p v&#7899;i ph&#7847;n m&#7903; r&#7897;ng .pdb làm &#273;&#7847;u ra. M&#7909;c &#273;ích c&#7911;a pdb2gmx là t&#7841;o ra m&#7897;t c&#7845;u trúc liên k&#7871;t tuân th&#7911; tr&#432;&#7901;ng l&#7921;c; c&#7845;u trúc &#273;&#7847;u ra ph&#7847;n l&#7899;n là m&#7897;t tác d&#7909;ng ph&#7909; c&#7911;a m&#7909;c &#273;ích này và &#273;&#432;&#7907;c thi&#7871;t k&#7871; &#273;&#7875; thu&#7853;n ti&#7879;n cho ng&#432;&#7901;i dùng. &#272;&#7883;nh d&#7841;ng này có th&#7875; là b&#7845;t k&#7923; &#273;&#7883;nh d&#7841;ng nào b&#7841;n mu&#7889;n (xem h&#432;&#7899;ng d&#7851;n s&#7917; d&#7909;ng GROMACS &#273;&#7875; bi&#7871;t các &#273;&#7883;nh d&#7841;ng khác nhau).</font></font></p>
-
-<center>
-<table border="0" cellpadding="10">
-<tbody><tr>
- <td>
-	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/index.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Quay l&#7841;i: Gi&#7899;i thi&#7879;u</font></font></a></p>
- </td>
-
- <td>
-	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/02_topology.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ti&#7871;p theo: Topology</font></font></a></p>
- </td>
-</tr></tbody></table>
-</center>
-
- </td>
-</tr>
-</tbody></table>
-
-<a href="http://www.thelemkullab.com/" target="_blank"><img src="./2_files/LLLogo1_transparent.png" height="150"></a>
-
-<br>
-
-<p><font size="-1"><i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7843;n quy&#7873;n thi&#7871;t k&#7871; và n&#7897;i dung trang web thu&#7897;c v&#7873; Justin Lemkul. </font></font><br><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-Có v&#7845;n &#273;&#7873; gì v&#7899;i trang web? Hãy g&#7917;i cho </font></font><a href="mailto:jalemkul@vt.edu?subject=GROMACS%20Tutorials%20site"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Qu&#7843;n tr&#7883; viên web.</font></font></a></i></font></p>
-</font></center><font size="3">
-</font>
-
-
-<div id="goog-gt-tt" class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style="border-radius: 12px; margin: 0 0 0 -23px; padding: 0; font-family: &#39;Google Sans&#39;, Arial, sans-serif;" data-id=""><div id="goog-gt-vt" class="VIpgJd-yAWNEb-hvhgNd"><div class="VIpgJd-yAWNEb-hvhgNd-Ud7fr"><img src="./2_files/24px.svg" width="24" height="24" alt=""><div class=" VIpgJd-yAWNEb-hvhgNd-IuizWc-i3jM8c " dir="ltr">Original text</div></div><div class="VIpgJd-yAWNEb-hvhgNd-k77Iif"><div id="goog-gt-original-text" class="VIpgJd-yAWNEb-nVMfcd-fmcmS VIpgJd-yAWNEb-hvhgNd-axAV1"></div></div><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid ltr"><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid-B7I4Od ltr" dir="ltr"><div class="VIpgJd-yAWNEb-hvhgNd-UTujCb">Rate this translation</div><div class="VIpgJd-yAWNEb-hvhgNd-eO9mKe">Your feedback will be used to help improve Google Translate</div></div><div class="VIpgJd-yAWNEb-hvhgNd-xgov5 ltr"><button id="goog-gt-thumbUpButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Good translation" aria-label="Good translation" aria-pressed="false"><span id="goog-gt-thumbUpIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7H2v13h16c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM7 18H4V9h3v9zm14-7l-3 7H9V8l4.34-4.34L12 9h9v2z"></path></svg></span><span id="goog-gt-thumbUpIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7v13h11c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM5 7H1v13h4V7z"></path></svg></span></button><button id="goog-gt-thumbDownButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Poor translation" aria-label="Poor translation" aria-pressed="false"><span id="goog-gt-thumbDownIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7h5V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zM17 6h3v9h-3V6zM3 13l3-7h9v10l-4.34 4.34L12 15H3v-2z"></path></svg></span><span id="goog-gt-thumbDownIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zm16 0h4V4h-4v13z"></path></svg></span></button></div></div><div id="goog-gt-votingHiddenPane" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><form id="goog-gt-votingForm" action="http://translate.googleapis.com/translate_voting?client=te_lib" method="post" target="votingFrame" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><input type="text" name="sl" id="goog-gt-votingInputSrcLang"><input type="text" name="tl" id="goog-gt-votingInputTrgLang"><input type="text" name="query" id="goog-gt-votingInputSrcText"><input type="text" name="gtrans" id="goog-gt-votingInputTrgText"><input type="text" name="vote" id="goog-gt-votingInputVote"></form><iframe name="votingFrame" frameborder="0" src="./2_files/saved_resource.html"></iframe></div></div></div><a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a></body></html>
+<p>LÆ°u Ã½: ngoÃ i Ä‘á»‹nh dáº¡ng <code>.gro</code>, GROMACS cÃ²n há»— trá»£ nhiá»u Ä‘á»‹nh dáº¡ng khÃ¡c nhÆ° <code>.pdb</code>. 
+Tuy nhiÃªn, <code>.gro</code> thÆ°á»ng Ä‘Æ°á»£c sá»­ dá»¥ng máº·c Ä‘á»‹nh vÃ¬ gá»n nháº¹ vÃ  tÆ°Æ¡ng thÃ­ch tá»‘t vá»›i cÃ¡c cÃ´ng cá»¥ khÃ¡c.</p>
