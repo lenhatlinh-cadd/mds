@@ -130,6 +130,13 @@ aside{
   background: #094a9d;
 }
 
+.citation, .step-card, .card {
+  word-wrap: break-word;       /* hỗ trợ cũ */
+  overflow-wrap: anywhere;     /* hiện đại, tự ngắt từ */
+  white-space: normal;         /* cho phép xuống dòng */
+}
+
+
 footer{
   margin-top:22px;
   padding:16px;
@@ -137,6 +144,7 @@ footer{
   text-align:center;
   font-size:0.9rem;
 }
+
 
 
 
