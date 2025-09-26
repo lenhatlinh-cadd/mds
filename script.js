@@ -35,24 +35,6 @@ function enhanceCodeBlocks() {
 }
 
 
-
-// Load nội dung Step
-// function loadStep(step) {
-//   fetch(`steps/step${step}.html`)
-//     .then(res => res.text())
-//     .then(html => {
-//       content.innerHTML = html;
-//       enhanceCodeBlocks();
-//     })
-//     .catch(err => {
-//       console.error(err);
-//       content.innerHTML = `<h2>Step ${step}</h2><p style="color:red">Không tải được nội dung.</p>`;
-//     });
-
-//   stepButtons.forEach(b => b.classList.remove('active'));
-//   document.querySelector(`.toc button[data-step="${step}"]`).classList.add('active');
-// }
-
 // Load nội dung Step
 function loadStep(step) {
   fetch(`steps/step${step}.html`)
@@ -64,7 +46,7 @@ function loadStep(step) {
       const nav = document.createElement('div');
       nav.className = "step-nav";
 
-      if (step > 1) {
+      if (step > 0) {
         const prevBtn = document.createElement('button');
         prevBtn.textContent = "← Previous";
         prevBtn.className = "nav-btn";
@@ -101,6 +83,7 @@ stepButtons.forEach(btn => {
 
 // Mặc định load Step 1
 loadStep(0);
+
 
 
 
