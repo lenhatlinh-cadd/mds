@@ -1,58 +1,22 @@
+<h2>Step 0: Giới thiệu</h2>
 
-<!-- saved from url=(0050)http://www.mdtutorials.com/gmx/lysozyme/index.html -->
-<html class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title>Lysozyme trong n&#432;&#7899;c</title>
-<meta name="title" content="GROMACS Tutorial">
+<p>
+Tài liệu này được biên soạn nhằm hỗ trợ sinh viên bước đầu làm quen với mô phỏng phân tử bằng <b>GROMACS</b>. 
+Ví dụ minh họa xoay quanh protein <i>lysozyme</i> đặt trong môi trường nước có ion, giúp người học hình dung quy trình thiết lập một hệ thống mô phỏng cơ bản.
+</p>
 
-<!-- Google tag (gtag.js) -->
-<script async="" src="./1_files/js"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<p>
+Mỗi bước thực hiện kèm phần giải thích ngắn gọn, giúp sinh viên hiểu rõ ý nghĩa của dữ liệu đầu vào, kết quả đầu ra và cách sử dụng các thiết lập thường gặp. 
+Nội dung được xây dựng dựa trên phiên bản <b>GROMACS 2025.x</b> (thử nghiệm với bản 2025.2) để đảm bảo tính cập nhật.
+</p>
 
-  gtag('config', 'G-EBVNCYQWWG');
-</script>
-<link href="./1_files/style.css" rel="stylesheet" type="text/css">
-<link type="text/css" rel="stylesheet" charset="UTF-8" href="./1_files/m=el_main_css"></head>
-<body>
-<br>
-<center><h2><font size="+3"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">H&#432;&#7899;ng d&#7851;n GROMACS</font></font></font></h2>
-<h3><font size="+2"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Lysozyme trong n&#432;&#7899;c</font></font></font></h3>
-<p><b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ti&#7871;n s&#297; Justin A. Lemkul, </font></font></b><br>
-<i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Khoa H�a sinh, &#272;&#7841;i h&#7885;c Virginia Tech</font></font></i></p>
+<img src="images/intro_md.png" alt="Minh họa mô phỏng động lực học phân tử" width="500">
 
-<img src="./1_files/lysozyme_1aki.png" width="400">
+<p>
+Các file đầu vào (như <code>1AKI.pdb</code>) sẽ được cung cấp trong thư mục <code>files/</code>, và hình minh họa trong thư mục <code>images/</code>.
+</p>
 
-<br>
-<font size="3">
-
-<table width="900" border="0" cellpadding="20">
-<tbody><tr>
- <td>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">V� d&#7909; n�y s&#7869; h&#432;&#7899;ng d&#7851;n ng&#432;&#7901;i d�ng m&#7899;i quy tr�nh thi&#7871;t l&#7853;p h&#7879; th&#7889;ng m� ph&#7887;ng ch&#7913;a protein (lysozyme) trong m&#7897;t h&#7897;p n&#432;&#7899;c, c�ng v&#7899;i c�c ion. M&#7895;i b&#432;&#7899;c s&#7869; bao g&#7891;m ph&#7847;n gi&#7843;i th�ch v&#7873; &#273;&#7847;u v�o v� &#273;&#7847;u ra, s&#7917; d&#7909;ng c�c c�i &#273;&#7863;t th�ng th&#432;&#7901;ng cho m&#7909;c &#273;�ch s&#7917; d&#7909;ng chung.</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">H&#432;&#7899;ng d&#7851;n n�y gi&#7843; &#273;&#7883;nh b&#7841;n &#273;ang s&#7917; d&#7909;ng phi�n b&#7843;n GROMACS trong d�ng 2025.x. H&#432;&#7899;ng d&#7851;n n�y &#273;� &#273;&#432;&#7907;c chu&#7849;n b&#7883; v� th&#7917; nghi&#7879;m v&#7899;i phi�n b&#7843;n 2025.2.</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7841;n &#273;ang t�m phi�n b&#7843;n c&#361; h&#417;n (2018) c&#7911;a h&#432;&#7899;ng d&#7851;n n�y? B&#7841;n c� th&#7875; t�m th&#7845;y </font></font><a href="http://www.mdtutorials.com/gmx/2018/lysozyme/index.html" target="_blank"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">t&#7841;i &#273;�y</font></font></a><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> .</font></font></p>
-
-<center>
-<p><a href="http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7855;t &#273;&#7847;u h&#432;&#7899;ng d&#7851;n!</font></font></a></p>
-<p><a href="http://www.mdtutorials.com/gmx/index.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Trang ch&#7911; h&#432;&#7899;ng d&#7851;n</font></font></a></p>
-</center>
-
- </td>
-</tr>
-</tbody></table>
-
-<a href="http://www.thelemkullab.com/" target="_blank"><img src="./1_files/LLLogo1_transparent.png" height="150"></a>
-
-<br>
-
-<p><font size="-1"><i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7843;n quy&#7873;n thi&#7871;t k&#7871; v� n&#7897;i dung trang web thu&#7897;c v&#7873; Justin Lemkul. </font></font><br><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-C� th&#7855;c m&#7855;c? V&#7845;n &#273;&#7873; v&#7899;i trang web? G�p �? G&#7917;i cho Qu&#7843;n </font></font><a href="mailto:jalemkul@vt.edu?subject=GROMACS%20Tutorials%20site"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">tr&#7883; vi�n trang web.</font></font></a></i></font></p>
-</font></center><font size="3">
-</font><div id="goog-gt-tt" class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style="border-radius: 12px; margin: 0 0 0 -23px; padding: 0; font-family: &#39;Google Sans&#39;, Arial, sans-serif;" data-id=""><div id="goog-gt-vt" class="VIpgJd-yAWNEb-hvhgNd"><div class="VIpgJd-yAWNEb-hvhgNd-Ud7fr"><img src="./1_files/24px.svg" width="24" height="24" alt=""><div class=" VIpgJd-yAWNEb-hvhgNd-IuizWc-i3jM8c " dir="ltr">Original text</div></div><div class="VIpgJd-yAWNEb-hvhgNd-k77Iif"><div id="goog-gt-original-text" class="VIpgJd-yAWNEb-nVMfcd-fmcmS VIpgJd-yAWNEb-hvhgNd-axAV1"></div></div><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid ltr"><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid-B7I4Od ltr" dir="ltr"><div class="VIpgJd-yAWNEb-hvhgNd-UTujCb">Rate this translation</div><div class="VIpgJd-yAWNEb-hvhgNd-eO9mKe">Your feedback will be used to help improve Google Translate</div></div><div class="VIpgJd-yAWNEb-hvhgNd-xgov5 ltr"><button id="goog-gt-thumbUpButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Good translation" aria-label="Good translation" aria-pressed="false"><span id="goog-gt-thumbUpIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7H2v13h16c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM7 18H4V9h3v9zm14-7l-3 7H9V8l4.34-4.34L12 9h9v2z"></path></svg></span><span id="goog-gt-thumbUpIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7v13h11c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM5 7H1v13h4V7z"></path></svg></span></button><button id="goog-gt-thumbDownButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Poor translation" aria-label="Poor translation" aria-pressed="false"><span id="goog-gt-thumbDownIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7h5V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zM17 6h3v9h-3V6zM3 13l3-7h9v10l-4.34 4.34L12 15H3v-2z"></path></svg></span><span id="goog-gt-thumbDownIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zm16 0h4V4h-4v13z"></path></svg></span></button></div></div><div id="goog-gt-votingHiddenPane" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><form id="goog-gt-votingForm" action="http://translate.googleapis.com/translate_voting?client=te_lib" method="post" target="votingFrame" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><input type="text" name="sl" id="goog-gt-votingInputSrcLang"><input type="text" name="tl" id="goog-gt-votingInputTrgLang"><input type="text" name="query" id="goog-gt-votingInputSrcText"><input type="text" name="gtrans" id="goog-gt-votingInputTrgText"><input type="text" name="vote" id="goog-gt-votingInputVote"></form><iframe name="votingFrame" frameborder="0" src="./1_files/saved_resource.html"></iframe></div></div></div>
-
-
-<a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a></body></html>
+<div class="step-nav">
+  <div></div>
+  <button class="nav-btn" onclick="loadStep(1)">Next →</button>
+</div>
