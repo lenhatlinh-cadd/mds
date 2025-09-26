@@ -1,0 +1,101 @@
+
+<!-- saved from url=(0053)http://www.mdtutorials.com/gmx/lysozyme/06_equil.html -->
+<html class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title>Lysozyme trong n&#432;&#7899;c</title>
+<meta name="title" content="GROMACS Tutorial">
+
+<!-- Google tag (gtag.js) -->
+<script async="" src="./7_files/js"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-EBVNCYQWWG');
+</script>
+<link href="./7_files/style.css" rel="stylesheet" type="text/css">
+<link type="text/css" rel="stylesheet" charset="UTF-8" href="./7_files/m=el_main_css"></head>
+<body>
+<br>
+<center><h2><font size="+3">GROMACS Tutorial</font></h2>
+<p><font size="+1"><b>Step Six: Equilibration</b></font></p>
+
+<img src="./7_files/Steps_equil_highlight.jpg" width="679" height="32" usemap="#navmap">
+
+<map name="navmap">
+    <area shape="rect" coords="0,0,96,32" alt="pdb2gmx" href="http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html">
+    <area shape="rect" coords="96,0,192,32" alt="solv" href="http://www.mdtutorials.com/gmx/lysozyme/03_solvate.html">
+    <area shape="rect" coords="192,0,288,32" alt="ions" href="http://www.mdtutorials.com/gmx/lysozyme/04_ions.html">
+    <area shape="rect" coords="288,0,380,32" alt="minim" href="http://www.mdtutorials.com/gmx/lysozyme/05_EM.html">
+    <area shape="rect" coords="380,0,472,32" alt="equil" href="http://www.mdtutorials.com/gmx/lysozyme/06_equil.html">
+    <area shape="rect" coords="472,0,564,32" alt="md" href="http://www.mdtutorials.com/gmx/lysozyme/08_MD.html">
+    <area shape="rect" coords="564,0,679,32" alt="analysis" href="http://www.mdtutorials.com/gmx/lysozyme/09_analysis.html">
+</map>
+
+<font size="3">
+
+<table width="900" border="0" cellpadding="20">
+<tbody><tr>
+ <td>
+
+<p>EM ensured that we have a reasonable starting structure, in terms of geometry and solvent orientation.  To begin real dynamics, we must equilibrate the solvent and ions around the protein.  If we were to attempt unrestrained dynamics at this point, the system may collapse.  The reason is that the solvent is mostly optimized within itself, and not necessarily with the solute.  It needs to be brought to the temperature we wish to simulate and establish the proper orientation about the solute (the protein).  After we arrive at the correct temperature (based on kinetic energies), we will apply pressure to the system until it reaches the proper density.</p>
+
+<p>Remember that posre.itp file that pdb2gmx generated a long time ago?  We're going to use it now.  The purpose of posre.itp is to apply a <u>pos</u>ition <u>re</u>straining force on the heavy atoms of the protein (anything that is not a hydrogen).  Movement is permitted, but only after overcoming a substantial energy penalty.  The utility of position restraints is that they allow us to equilibrate our solvent around our protein, without the added variable of structural changes in the protein. The origin of the position restraints (the coordinates at which the restraint potential is zero) is provided via a coordinate file passed to the -r option of grompp.</p>
+
+<p>Equilibration is often conducted in two phases.  The first phase is conducted under an <i>NVT</i> ensemble (constant Number of particles, Volume, and Temperature).  This ensemble is also referred to as "isothermal-isochoric" or "canonical."  The timeframe for such a procedure is dependent upon the contents of the system, but in <i>NVT</i>, the temperature of the system should reach a plateau at the desired value.  If the temperature has not yet stabilized, additional time will be required.  Typically, 50-100 ps should suffice, and we will conduct a 100-ps <i>NVT</i> equilibration for this exercise.  Depending on your machine, this may take a while (just under an hour if run in parallel on 16 cores or so).  Using a modest, consumer-grade GPU to accelerate the calculation will allow you to complete this simulation in 1-2 minutes.  Get the .mdp file <a href="http://www.mdtutorials.com/gmx/lysozyme/Files/nvt.mdp">here</a>.</p>
+
+<p>We will call grompp and mdrun just as we did at the EM step:</p>
+
+<pre>gmx grompp -f inputs/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr<font></font>
+<font></font>
+gmx mdrun -deffnm nvt<font></font>
+</pre>
+
+<p>A full explanation of the parameters used can be found in the GROMACS manual, in addition to the comments provided.  Take note of a few parameters in the .mdp file:</p>
+
+<ul>
+ <li>gen_vel = yes: Initiates velocity generation. Using different random seeds (gen_seed) gives different initial velocities, and thus multiple (different) simulations can be conducted from the same starting structure. 
+ </li><li>tcoupl = V-rescale: The stochastic velocity rescaling thermostat of Bussi et al.
+ </li><li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">pcoupl = no: Không áp d&#7909;ng kh&#7899;p n&#7889;i áp su&#7845;t.
+</font></font></li></ul> 
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Chúng ta hãy phân tích s&#7921; ti&#7871;n tri&#7875;n c&#7911;a nhi&#7879;t &#273;&#7897;, m&#7897;t l&#7847;n n&#7919;a s&#7917; d&#7909;ng n&#259;ng l&#432;&#7907;ng:</font></font></p>
+
+<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">gmx n&#259;ng l&#432;&#7907;ng -f nvt.edr -o nhi&#7879;t &#273;&#7897;.xvg
+</font></font></pre>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Nh&#7853;p "16 0" t&#7841;i d&#7845;u nh&#7855;c &#273;&#7875; ch&#7885;n nhi&#7879;t &#273;&#7897; c&#7911;a h&#7879; th&#7889;ng và thoát. Bi&#7875;u &#273;&#7891; k&#7871;t qu&#7843; s&#7869; trông gi&#7889;ng nh&#432; sau:</font></font></p>
+
+<center>
+<img src="./7_files/plot_lyso_nvt_temperature.png" width="600">
+</center>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">T&#7915; bi&#7875;u &#273;&#7891;, rõ ràng nhi&#7879;t &#273;&#7897; c&#7911;a h&#7879; th&#7889;ng nhanh chóng &#273;&#7841;t &#273;&#7871;n giá tr&#7883; m&#7909;c tiêu (298 K) và duy trì &#7893;n &#273;&#7883;nh trong su&#7889;t th&#7901;i gian còn l&#7841;i c&#7911;a quá trình cân b&#7857;ng. &#272;&#7889;i v&#7899;i h&#7879; th&#7889;ng này, th&#7901;i gian cân b&#7857;ng ng&#7855;n h&#417;n (kho&#7843;ng 50 ps) có th&#7875; là &#273;&#7911;.</font></font></p>
+
+<center>
+<table border="0" cellpadding="10">
+<tbody><tr>
+ <td>
+	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/05_EM.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Quay l&#7841;i: Gi&#7843;m thi&#7875;u n&#259;ng l&#432;&#7907;ng</font></font></a></p>
+ </td>
+
+ <td>
+	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/07_equil2.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ti&#7871;p theo: Cân b&#7857;ng, Giai &#273;o&#7841;n 2</font></font></a></p>
+ </td>
+</tr></tbody></table>
+</center>
+
+ </td>
+</tr>
+</tbody></table>
+
+<a href="http://www.thelemkullab.com/" target="_blank"><img src="./7_files/LLLogo1_transparent.png" height="150"></a>
+
+<br>
+
+<p><font size="-1"><i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7843;n quy&#7873;n thi&#7871;t k&#7871; và n&#7897;i dung trang web thu&#7897;c v&#7873; Justin Lemkul. </font></font><br><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
+Có v&#7845;n &#273;&#7873; gì v&#7899;i trang web? Hãy g&#7917;i cho </font></font><a href="mailto:jalemkul@vt.edu?subject=GROMACS%20Tutorials%20site"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Qu&#7843;n tr&#7883; viên web.</font></font></a></i></font></p>
+</font></center><font size="3">
+</font>
+
+
+<div id="goog-gt-tt" class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style="border-radius: 12px; margin: 0 0 0 -23px; padding: 0; font-family: &#39;Google Sans&#39;, Arial, sans-serif;" data-id=""><div id="goog-gt-vt" class="VIpgJd-yAWNEb-hvhgNd"><div class="VIpgJd-yAWNEb-hvhgNd-Ud7fr"><img src="./7_files/24px.svg" width="24" height="24" alt=""><div class=" VIpgJd-yAWNEb-hvhgNd-IuizWc-i3jM8c " dir="ltr">Original text</div></div><div class="VIpgJd-yAWNEb-hvhgNd-k77Iif"><div id="goog-gt-original-text" class="VIpgJd-yAWNEb-nVMfcd-fmcmS VIpgJd-yAWNEb-hvhgNd-axAV1"></div></div><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid ltr"><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid-B7I4Od ltr" dir="ltr"><div class="VIpgJd-yAWNEb-hvhgNd-UTujCb">Rate this translation</div><div class="VIpgJd-yAWNEb-hvhgNd-eO9mKe">Your feedback will be used to help improve Google Translate</div></div><div class="VIpgJd-yAWNEb-hvhgNd-xgov5 ltr"><button id="goog-gt-thumbUpButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Good translation" aria-label="Good translation" aria-pressed="false"><span id="goog-gt-thumbUpIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7H2v13h16c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM7 18H4V9h3v9zm14-7l-3 7H9V8l4.34-4.34L12 9h9v2z"></path></svg></span><span id="goog-gt-thumbUpIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7v13h11c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM5 7H1v13h4V7z"></path></svg></span></button><button id="goog-gt-thumbDownButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Poor translation" aria-label="Poor translation" aria-pressed="false"><span id="goog-gt-thumbDownIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7h5V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zM17 6h3v9h-3V6zM3 13l3-7h9v10l-4.34 4.34L12 15H3v-2z"></path></svg></span><span id="goog-gt-thumbDownIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zm16 0h4V4h-4v13z"></path></svg></span></button></div></div><div id="goog-gt-votingHiddenPane" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><form id="goog-gt-votingForm" action="http://translate.googleapis.com/translate_voting?client=te_lib" method="post" target="votingFrame" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><input type="text" name="sl" id="goog-gt-votingInputSrcLang"><input type="text" name="tl" id="goog-gt-votingInputTrgLang"><input type="text" name="query" id="goog-gt-votingInputSrcText"><input type="text" name="gtrans" id="goog-gt-votingInputTrgText"><input type="text" name="vote" id="goog-gt-votingInputVote"></form><iframe name="votingFrame" frameborder="0" src="./7_files/saved_resource.html"></iframe></div></div></div><a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a></body></html>

@@ -1,0 +1,102 @@
+
+<!-- saved from url=(0056)http://www.mdtutorials.com/gmx/lysozyme/09_analysis.html -->
+<html class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title>Lysozyme trong n&#432;&#7899;c</title>
+<meta name="title" content="GROMACS Tutorial">
+
+<!-- Google tag (gtag.js) -->
+<script async="" src="./10_files/js"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-EBVNCYQWWG');
+</script>
+<link href="./10_files/style.css" rel="stylesheet" type="text/css">
+<link type="text/css" rel="stylesheet" charset="UTF-8" href="./10_files/m=el_main_css"></head>
+<body>
+<br>
+<center><h2><font size="+3"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">H&#432;&#7899;ng d&#7851;n GROMACS</font></font></font></h2>
+<p><font size="+1"><b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#432;&#7899;c chín: Phân tích</font></font></b></font></p>
+
+<img src="./10_files/Steps_analysis_highlight.jpg" width="679" height="32" usemap="#navmap">
+
+<map name="navmap">
+    <area shape="rect" coords="0,0,96,32" alt="pdb2gmx" href="http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html">
+    <area shape="rect" coords="96,0,192,32" alt="solv" href="http://www.mdtutorials.com/gmx/lysozyme/03_solvate.html">
+    <area shape="rect" coords="192,0,288,32" alt="ions" href="http://www.mdtutorials.com/gmx/lysozyme/04_ions.html">
+    <area shape="rect" coords="288,0,380,32" alt="minim" href="http://www.mdtutorials.com/gmx/lysozyme/05_EM.html">
+    <area shape="rect" coords="380,0,472,32" alt="equil" href="http://www.mdtutorials.com/gmx/lysozyme/06_equil.html">
+    <area shape="rect" coords="472,0,564,32" alt="md" href="http://www.mdtutorials.com/gmx/lysozyme/08_MD.html">
+    <area shape="rect" coords="564,0,679,32" alt="analysis" href="http://www.mdtutorials.com/gmx/lysozyme/09_analysis.html">
+</map>
+
+<font size="3">
+
+<table width="900" border="0" cellpadding="20">
+<tbody><tr>
+ <td>
+
+<h3><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Hi&#7879;u ch&#7881;nh các hi&#7879;u &#7913;ng chu k&#7923;</font></font></h3>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Bây gi&#7901; chúng ta &#273;ã mô ph&#7887;ng protein, chúng ta nên ch&#7841;y m&#7897;t s&#7889; phân tích trên h&#7879; th&#7889;ng. Lo&#7841;i d&#7919; li&#7879;u nào là quan tr&#7885;ng? &#272;ây là m&#7897;t câu h&#7887;i quan tr&#7885;ng c&#7847;n &#273;&#7863;t ra tr&#432;&#7899;c khi ch&#7841;y mô ph&#7887;ng, vì v&#7853;y b&#7841;n nên có m&#7897;t s&#7889; ý t&#432;&#7903;ng v&#7873; lo&#7841;i d&#7919; li&#7879;u b&#7841;n s&#7869; mu&#7889;n thu th&#7853;p trong h&#7879; th&#7889;ng c&#7911;a mình. Trong h&#432;&#7899;ng d&#7851;n này, m&#7897;t s&#7889; công c&#7909; c&#417; b&#7843;n s&#7869; &#273;&#432;&#7907;c gi&#7899;i thi&#7879;u.</font></font></p> 
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&#272;&#7847;u tiên là trjconv, &#273;&#432;&#7907;c s&#7917; d&#7909;ng nh&#432; m&#7897;t công c&#7909; h&#7853;u x&#7917; lý &#273;&#7875; lo&#7841;i b&#7887; t&#7885;a &#273;&#7897;, hi&#7879;u ch&#7881;nh tính chu k&#7923; ho&#7863;c thay &#273;&#7893;i th&#7911; công qu&#7929; &#273;&#7841;o (&#273;&#417;n v&#7883; th&#7901;i gian, t&#7847;n su&#7845;t khung hình, v.v.). Trong bài t&#7853;p này, chúng ta s&#7869; s&#7917; d&#7909;ng trjconv &#273;&#7875; tính &#273;&#7871;n b&#7845;t k&#7923; tính chu k&#7923; nào trong h&#7879; th&#7889;ng. Protein s&#7869; khu&#7871;ch tán qua ô &#273;&#417;n v&#7883;, và có th&#7875; trông "b&#7883; h&#7887;ng" ho&#7863;c "nh&#7843;y" sang phía bên kia c&#7911;a h&#7897;p. &#272;&#7875; tính &#273;&#7871;n nh&#7919;ng hành vi nh&#432; v&#7853;y, hãy &#273;&#432;a ra các ví d&#7909; sau:</font></font></p>
+
+<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">gmx trjconv -s md_0_10.tpr -f md_0_10.xtc -o md_0_10_noPBC.xtc -pbc mol -center
+</font></font></pre>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ch&#7885;n 1 ("Protein") làm nhóm c&#7847;n c&#259;n gi&#7919;a và 0 ("System") làm &#273;&#7847;u ra. Chúng tôi s&#7869; ti&#7871;n hành t&#7845;t c&#7843; các phân tích trên qu&#7929; &#273;&#7841;o "&#273;ã hi&#7879;u ch&#7881;nh" (chính th&#7913;c h&#417;n là "hình &#7843;nh l&#7841;i") này.</font></font></p>  
+
+<h3><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&#272;&#7897; l&#7879;ch c&#259;n b&#7853;c hai trung bình</font></font></h3>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Tr&#432;&#7899;c tiên, hãy xem xét các &#273;&#7897; l&#7879;ch c&#7845;u trúc. GROMACS có m&#7897;t ti&#7879;n ích tích h&#7907;p &#273;&#7875; tính toán RMSD g&#7885;i là rms. &#272;&#7875; s&#7917; d&#7909;ng rms, hãy ch&#7841;y l&#7879;nh này:</font></font></p>
+
+<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">gmx rms -s md_0_10.tpr -f md_0_10_noPBC.xtc -o rmsd.xvg -tu ns
+</font></font></pre>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ch&#7885;n 4 ("Backbone") cho c&#7843; phép kh&#7899;p bình ph&#432;&#417;ng nh&#7887; nh&#7845;t và nhóm &#273;&#7875; tính toán RMSD. C&#7901; -tu s&#7869; xu&#7845;t k&#7871;t qu&#7843; theo ns, m&#7863;c dù các khung hình trong qu&#7929; &#273;&#7841;o &#273;&#432;&#7907;c ghi v&#7899;i d&#7845;u th&#7901;i gian theo ps. &#272;i&#7873;u này &#273;&#432;&#7907;c th&#7921;c hi&#7879;n &#273;&#7875; làm rõ k&#7871;t qu&#7843; &#273;&#7847;u ra (&#273;&#7863;c bi&#7879;t n&#7871;u b&#7841;n có m&#7897;t mô ph&#7887;ng dài - "1e+05 ps" trông không &#273;&#7865;p b&#7857;ng "100 ns"). Bi&#7875;u &#273;&#7891; &#273;&#7847;u ra s&#7869; hi&#7875;n th&#7883; RMSD t&#432;&#417;ng &#273;&#7889;i v&#7899;i c&#7845;u trúc hi&#7879;n di&#7879;n trong h&#7879; th&#7889;ng cân b&#7857;ng, t&#7889;i thi&#7875;u hóa:</font></font></p>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">N&#7871;u mu&#7889;n tính RMSD liên quan &#273;&#7871;n c&#7845;u trúc tinh th&#7875;, chúng ta có th&#7875; dùng l&#7879;nh gmx rms sau. L&#432;u ý r&#7857;ng t&#7885;a &#273;&#7897; &#273;&#432;&#7907;c l&#432;u tr&#7919; trong em.tpr là h&#7879; th&#7889;ng solvat hóa ch&#432;a t&#7889;i gi&#7843;n, do &#273;ó t&#7885;a &#273;&#7897; protein &#273;&#432;&#7907;c l&#7845;y tr&#7921;c ti&#7871;p t&#7915; m&#7909;c nh&#7853;p PDB 1AKI, v&#7899;i các nguyên t&#7917; hydro &#273;&#432;&#7907;c thêm vào (dù sao thì chúng c&#361;ng không &#273;&#432;&#7907;c s&#7917; d&#7909;ng &#273;&#7875; tính RMSD).</font></font></p>
+
+<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">gmx rms -s em.tpr -f md_0_10_noPBC.xtc -o rmsd_xtal.xvg -tu ns
+</font></font></pre>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Khi bi&#7875;u di&#7877;n k&#7871;t qu&#7843;, chúng trông gi&#7889;ng nh&#432; sau:</font></font></p>
+
+<center>
+<img src="./10_files/plot_lyso_md_rmsd.png" width="500">
+</center>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">D&#7919; li&#7879;u thô (các &#273;i&#7875;m xám và h&#7891;ng) &#273;ã &#273;&#432;&#7907;c làm m&#7883;n trên c&#7917;a s&#7893; 500-ps (50 khung hình) b&#7857;ng tính n&#259;ng "Running Averages" trong XmGrace (&#273;&#432;&#7901;ng li&#7873;n). Tùy ch&#7885;n này &#273;&#432;&#7907;c kích ho&#7841;t b&#7857;ng cách ch&#7885;n D&#7919; li&#7879;u -&gt; Chuy&#7875;n &#273;&#7893;i -&gt; Running Averages, sau &#273;ó ch&#7885;n b&#7897; d&#7919; li&#7879;u &#273;&#7875; t&#7841;o c&#7917;a s&#7893; &#273;ã làm m&#7883;n và &#273;&#7897; dài c&#7917;a s&#7893;.</font></font></p>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">C&#7843; hai chu&#7895;i th&#7901;i gian &#273;&#7873;u cho th&#7845;y RMSD dao &#273;&#7897;ng quanh m&#7913;c trung bình 0,09 ± 0,01 nm (0,9 Å), cho th&#7845;y c&#7845;u trúc không thay &#273;&#7893;i nhi&#7873;u. S&#7921; khác bi&#7879;t tinh t&#7871; gi&#7919;a các bi&#7875;u &#273;&#7891; cho th&#7845;y c&#7845;u trúc t&#7841;i t = 0 ns h&#417;i khác so v&#7899;i c&#7845;u trúc tinh th&#7875; này. &#272;i&#7873;u này là d&#7877; hi&#7875;u, vì nó &#273;ã &#273;&#432;&#7907;c t&#7889;i thi&#7875;u hóa n&#259;ng l&#432;&#7907;ng, và vì các ràng bu&#7897;c v&#7883; trí không hoàn h&#7843;o 100%, nh&#432; &#273;ã th&#7843;o lu&#7853;n tr&#432;&#7899;c &#273;ó. </font></font><strong><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">L&#432;u ý</font></font></strong><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> r&#7857;ng RMSD không th&#7875; &#273;&#432;&#7907;c s&#7917; d&#7909;ng làm th&#432;&#7899;c &#273;o &#273;&#7875; &#273;ánh giá s&#7921; h&#7897;i t&#7909; c&#7911;a mô ph&#7887;ng ho&#7863;c xác &#273;&#7883;nh "tính &#7893;n &#273;&#7883;nh" c&#7911;a m&#7897;t h&#7879; th&#7889;ng vì nó là th&#432;&#7899;c &#273;o suy bi&#7871;n c&#7911;a s&#7921; thay &#273;&#7893;i c&#7845;u trúc, và là m&#7897;t &#273;&#7841;i l&#432;&#7907;ng ngo&#7841;i lai. M&#7897;t ph&#7913;c h&#7907;p protein l&#7899;n có th&#7875; có RMSD 1,0 nm (cao h&#417;n 10 l&#7847;n so v&#7899;i k&#7871;t qu&#7843; c&#7911;a chúng tôi &#7903; &#273;ây) nh&#432;ng khá b&#7845;t bi&#7871;n; &#273;&#7841;i l&#432;&#7907;ng này ch&#7881; &#273;&#417;n gi&#7843;n là s&#7921; tích l&#361;y c&#7911;a các &#273;&#7897; l&#7879;ch r&#7845;t nh&#7887; có th&#7875; x&#7843;y ra.</font></font></p>
+
+<center>
+<table border="0" cellpadding="10">
+<tbody><tr>
+ <td>
+	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/08_MD.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">M&#7863;t sau: Giám &#273;&#7889;c s&#7843;n xu&#7845;t</font></font></a></p>
+ </td>
+
+ <td>
+	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/10_analysis2.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ti&#7871;p theo: Phân tích thêm</font></font></a></p>
+ </td>
+</tr></tbody></table>
+</center>
+
+ </td>
+</tr>
+</tbody></table>
+
+<a href="http://www.thelemkullab.com/" target="_blank"><img src="./10_files/LLLogo1_transparent.png" height="150"></a>
+
+<br>
+
+<p><font size="-1"><i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7843;n quy&#7873;n thi&#7871;t k&#7871; và n&#7897;i dung trang web thu&#7897;c v&#7873; Justin Lemkul. </font></font><br><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
+Có v&#7845;n &#273;&#7873; gì v&#7899;i trang web? Hãy g&#7917;i cho </font></font><a href="mailto:jalemkul@vt.edu?subject=GROMACS%20Tutorials%20site"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Qu&#7843;n tr&#7883; viên web.</font></font></a></i></font></p>
+</font></center><font size="3">
+</font>
+
+
+<div id="goog-gt-tt" class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style="border-radius: 12px; margin: 0 0 0 -23px; padding: 0; font-family: &#39;Google Sans&#39;, Arial, sans-serif;" data-id=""><div id="goog-gt-vt" class="VIpgJd-yAWNEb-hvhgNd"><div class="VIpgJd-yAWNEb-hvhgNd-Ud7fr"><img src="./10_files/24px.svg" width="24" height="24" alt=""><div class=" VIpgJd-yAWNEb-hvhgNd-IuizWc-i3jM8c " dir="ltr">Original text</div></div><div class="VIpgJd-yAWNEb-hvhgNd-k77Iif"><div id="goog-gt-original-text" class="VIpgJd-yAWNEb-nVMfcd-fmcmS VIpgJd-yAWNEb-hvhgNd-axAV1"></div></div><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid ltr"><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid-B7I4Od ltr" dir="ltr"><div class="VIpgJd-yAWNEb-hvhgNd-UTujCb">Rate this translation</div><div class="VIpgJd-yAWNEb-hvhgNd-eO9mKe">Your feedback will be used to help improve Google Translate</div></div><div class="VIpgJd-yAWNEb-hvhgNd-xgov5 ltr"><button id="goog-gt-thumbUpButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Good translation" aria-label="Good translation" aria-pressed="false"><span id="goog-gt-thumbUpIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7H2v13h16c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM7 18H4V9h3v9zm14-7l-3 7H9V8l4.34-4.34L12 9h9v2z"></path></svg></span><span id="goog-gt-thumbUpIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7v13h11c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM5 7H1v13h4V7z"></path></svg></span></button><button id="goog-gt-thumbDownButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Poor translation" aria-label="Poor translation" aria-pressed="false"><span id="goog-gt-thumbDownIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7h5V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zM17 6h3v9h-3V6zM3 13l3-7h9v10l-4.34 4.34L12 15H3v-2z"></path></svg></span><span id="goog-gt-thumbDownIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zm16 0h4V4h-4v13z"></path></svg></span></button></div></div><div id="goog-gt-votingHiddenPane" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><form id="goog-gt-votingForm" action="http://translate.googleapis.com/translate_voting?client=te_lib" method="post" target="votingFrame" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><input type="text" name="sl" id="goog-gt-votingInputSrcLang"><input type="text" name="tl" id="goog-gt-votingInputTrgLang"><input type="text" name="query" id="goog-gt-votingInputSrcText"><input type="text" name="gtrans" id="goog-gt-votingInputTrgText"><input type="text" name="vote" id="goog-gt-votingInputVote"></form><iframe name="votingFrame" frameborder="0" src="./10_files/saved_resource.html"></iframe></div></div></div><a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a></body></html>

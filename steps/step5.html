@@ -1,0 +1,115 @@
+
+<!-- saved from url=(0050)http://www.mdtutorials.com/gmx/lysozyme/05_EM.html -->
+<html class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title>Lysozyme trong n&#432;&#7899;c</title>
+<meta name="title" content="GROMACS Tutorial">
+
+<!-- Google tag (gtag.js) -->
+<script async="" src="./6_files/js"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-EBVNCYQWWG');
+</script>
+<link href="./6_files/style.css" rel="stylesheet" type="text/css">
+<link type="text/css" rel="stylesheet" charset="UTF-8" href="./6_files/m=el_main_css"></head>
+<body>
+<br>
+<center><h2><font size="+3">GROMACS Tutorial</font></h2>
+<p><font size="+1"><b>Step Five: Energy Minimization</b></font></p>
+
+<img src="./6_files/Steps_EM_highlight.jpg" width="679" height="32" usemap="#navmap">
+
+<map name="navmap">
+    <area shape="rect" coords="0,0,96,32" alt="pdb2gmx" href="http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html">
+    <area shape="rect" coords="96,0,192,32" alt="solv" href="http://www.mdtutorials.com/gmx/lysozyme/03_solvate.html">
+    <area shape="rect" coords="192,0,288,32" alt="ions" href="http://www.mdtutorials.com/gmx/lysozyme/04_ions.html">
+    <area shape="rect" coords="288,0,380,32" alt="minim" href="http://www.mdtutorials.com/gmx/lysozyme/05_EM.html">
+    <area shape="rect" coords="380,0,472,32" alt="equil" href="http://www.mdtutorials.com/gmx/lysozyme/06_equil.html">
+    <area shape="rect" coords="472,0,564,32" alt="md" href="http://www.mdtutorials.com/gmx/lysozyme/08_MD.html">
+    <area shape="rect" coords="564,0,679,32" alt="analysis" href="http://www.mdtutorials.com/gmx/lysozyme/09_analysis.html">
+</map>
+
+<font size="3">
+
+<table width="900" border="0" cellpadding="20">
+<tbody><tr>
+ <td>
+
+<p>The solvated, electroneutral system is now assembled.  Before we can begin dynamics, we must ensure that the system has no steric clashes or inappropriate geometry.  The structure is relaxed through a process called energy minimization (EM).</p>
+
+<p>The process for EM is much like the addition of ions.  We are once again going to use grompp to assemble the structure, topology, and simulation parameters into a binary input file (.tpr), but this time, instead of passing the .tpr to genion, we will run the energy minimization through the GROMACS MD engine, mdrun.</p>
+
+<p>Assemble the binary input using grompp using <a href="http://www.mdtutorials.com/gmx/lysozyme/Files/minim.mdp">this</a> input parameter file:</p>
+
+<pre>gmx grompp -f inputs/minim.mdp -c 1AKI_solv_ions.gro -p topol.top -o em.tpr
+</pre>
+
+<p>Make sure you have been updating your topol.top file when running genbox and genion, or else you will get lots of nasty error messages ("number of coordinates in coordinate file does not match topology," etc).</p> 
+
+<p>We are now ready to invoke mdrun to carry out the EM:</p>
+
+<pre>gmx mdrun -v -deffnm em
+</pre>
+
+<p>The -v flag is for the impatient: it makes mdrun verbose, such that it prints its progress to the screen at every step.  The -deffnm flag will define the file names of the input and output.  So, if you did not name your grompp output "em.tpr," you will have to explicitly specify its name with the mdrun -s flag.  In our case, we will get the following files:</p>
+
+<ul>
+ <li>em.log: ASCII-text log file of the EM process
+ </li><li>em.edr: Binary energy file
+ </li><li>em.trr: Binary full-precision trajectory
+ </li><li>em.gro: Energy-minimized structure
+</li></ul>
+
+<p>The mdrun program will also print the final output of energy minimization (maximum force, and the potential energy of the system) to both the .log file and the terminal. You should see something like this in the terminal:</p>
+
+<pre>Steepest Descents converged to Fmax &lt; 1000 in 566 steps<font></font>
+Potential Energy  = -6.2751356e+05<font></font>
+Maximum force     =  9.8003864e+02 on atom 567<font></font>
+Norm of force     =  2.3013127e+01<font></font>
+</pre>
+
+<p>There are two very important factors to evaluate to determine if EM was successful.  The first is the potential energy (printed at the end of the EM process, even without -v).  E<sub>pot</sub> should be negative, and (for a simple protein in water) on the order of 10<sup>5</sup>-10<sup>6</sup>, depending on the system size and number of water molecules.  The second important feature is the maximum force, F<sub>max</sub>, the target for which was set in minim.mdp - "emtol = 1000.0" - indicating a target F<sub>max</sub> of no greater than 1000 kJ mol<sup>-1</sup> nm<sup>-1</sup>.  It is possible to arrive at a reasonable E<sub>pot</sub> with F<sub>max</sub> &gt; emtol.  If this happens, your system may not be stable enough for simulation.  Evaluate why it may be happening, and perhaps change your minimization parameters (integrator, emstep, etc).</p>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Hãy cùng phân tích m&#7897;t chút. T&#7879;p em.edr ch&#7913;a t&#7845;t c&#7843; các thu&#7853;t ng&#7919; n&#259;ng l&#432;&#7907;ng mà GROMACS thu th&#7853;p trong quá trình EM. B&#7841;n có th&#7875; phân tích b&#7845;t k&#7923; t&#7879;p .edr nào b&#7857;ng mô-&#273;un n&#259;ng l&#432;&#7907;ng GROMACS:</font></font></p>
+
+<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">gmx energy -f em.edr -o potential.xvg
+</font></font></pre>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">T&#7841;i d&#7845;u nh&#7855;c, nh&#7853;p "11 0" &#273;&#7875; ch&#7885;n Potential (11); s&#7889; không (0) s&#7869; k&#7871;t thúc quá trình nh&#7853;p. B&#7841;n s&#7869; th&#7845;y giá tr&#7883; trung bình c&#7911;a E </font></font><sub><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">pot</font></font></sub><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> , và m&#7897;t t&#7879;p có tên "potential.xvg" s&#7869; &#273;&#432;&#7907;c ghi. &#272;&#7875; v&#7869; &#273;&#7891; th&#7883; d&#7919; li&#7879;u này, b&#7841;n s&#7869; c&#7847;n công c&#7909; v&#7869; &#273;&#7891; th&#7883; </font></font><a href="http://plasma-gate.weizmann.ac.il/Grace/" target="_blank"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Xmgrace</font></font></a><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> . &#272;&#7891; th&#7883; k&#7871;t qu&#7843; s&#7869; trông gi&#7889;ng nh&#432; th&#7871; này, th&#7875; hi&#7879;n s&#7921; h&#7897;i t&#7909; &#7893;n &#273;&#7883;nh và &#273;&#7865;p m&#7855;t c&#7911;a E </font></font><sub><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">pot</font></font></sub><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> :</font></font></p>
+
+<center>
+<img src="./6_files/plot_lyso_em_potential.png" width="600">
+</center>
+
+<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Bây gi&#7901; h&#7879; th&#7889;ng c&#7911;a chúng ta &#273;ã &#273;&#7841;t &#273;&#7871;n m&#7913;c n&#259;ng l&#432;&#7907;ng t&#7889;i thi&#7875;u, chúng ta có th&#7875; b&#7855;t &#273;&#7847;u &#273;&#7897;ng l&#7921;c h&#7885;c th&#7921;c s&#7921;.</font></font></p>
+
+<center>
+<table border="0" cellpadding="10">
+<tbody><tr>
+ <td>
+	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/04_ions.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Quay l&#7841;i: Thêm ion</font></font></a></p>
+ </td>
+
+ <td>
+	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/06_equil.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ti&#7871;p theo: Cân b&#7857;ng</font></font></a></p>
+ </td>
+</tr></tbody></table>
+</center>
+
+ </td>
+</tr>
+</tbody></table>
+
+<a href="http://www.thelemkullab.com/" target="_blank"><img src="./6_files/LLLogo1_transparent.png" height="150"></a>
+
+<br>
+
+<p><font size="-1"><i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7843;n quy&#7873;n thi&#7871;t k&#7871; và n&#7897;i dung trang web thu&#7897;c v&#7873; Justin Lemkul. </font></font><br><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
+Có v&#7845;n &#273;&#7873; gì v&#7899;i trang web? Hãy g&#7917;i cho </font></font><a href="mailto:jalemkul@vt.edu?subject=GROMACS%20Tutorials%20site"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Qu&#7843;n tr&#7883; viên web.</font></font></a></i></font></p>
+</font></center><font size="3">
+</font>
+
+
+<div id="goog-gt-tt" class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style="border-radius: 12px; margin: 0 0 0 -23px; padding: 0; font-family: &#39;Google Sans&#39;, Arial, sans-serif;" data-id=""><div id="goog-gt-vt" class="VIpgJd-yAWNEb-hvhgNd"><div class="VIpgJd-yAWNEb-hvhgNd-Ud7fr"><img src="./6_files/24px.svg" width="24" height="24" alt=""><div class=" VIpgJd-yAWNEb-hvhgNd-IuizWc-i3jM8c " dir="ltr">Original text</div></div><div class="VIpgJd-yAWNEb-hvhgNd-k77Iif"><div id="goog-gt-original-text" class="VIpgJd-yAWNEb-nVMfcd-fmcmS VIpgJd-yAWNEb-hvhgNd-axAV1"></div></div><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid ltr"><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid-B7I4Od ltr" dir="ltr"><div class="VIpgJd-yAWNEb-hvhgNd-UTujCb">Rate this translation</div><div class="VIpgJd-yAWNEb-hvhgNd-eO9mKe">Your feedback will be used to help improve Google Translate</div></div><div class="VIpgJd-yAWNEb-hvhgNd-xgov5 ltr"><button id="goog-gt-thumbUpButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Good translation" aria-label="Good translation" aria-pressed="false"><span id="goog-gt-thumbUpIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7H2v13h16c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM7 18H4V9h3v9zm14-7l-3 7H9V8l4.34-4.34L12 9h9v2z"></path></svg></span><span id="goog-gt-thumbUpIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7v13h11c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM5 7H1v13h4V7z"></path></svg></span></button><button id="goog-gt-thumbDownButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Poor translation" aria-label="Poor translation" aria-pressed="false"><span id="goog-gt-thumbDownIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7h5V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zM17 6h3v9h-3V6zM3 13l3-7h9v10l-4.34 4.34L12 15H3v-2z"></path></svg></span><span id="goog-gt-thumbDownIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zm16 0h4V4h-4v13z"></path></svg></span></button></div></div><div id="goog-gt-votingHiddenPane" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><form id="goog-gt-votingForm" action="http://translate.googleapis.com/translate_voting?client=te_lib" method="post" target="votingFrame" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><input type="text" name="sl" id="goog-gt-votingInputSrcLang"><input type="text" name="tl" id="goog-gt-votingInputTrgLang"><input type="text" name="query" id="goog-gt-votingInputSrcText"><input type="text" name="gtrans" id="goog-gt-votingInputTrgText"><input type="text" name="vote" id="goog-gt-votingInputVote"></form><iframe name="votingFrame" frameborder="0" src="./6_files/saved_resource.html"></iframe></div></div></div><a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a></body></html>
