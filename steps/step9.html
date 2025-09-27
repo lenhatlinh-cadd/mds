@@ -8,7 +8,7 @@ Trong ví dụ này, chúng ta sẽ giới thiệu một số công cụ cơ b�
 <p>Trong quá trình mô phỏng, protein có thể khuếch tán trong hộp mô phỏng (unit cell), đôi khi trông như bị "gãy" hoặc "nhảy" sang phía bên kia của hộp do <b>điều kiện biên tuần hoàn</b>. 
 Để khắc phục, ta dùng công cụ <code>trjconv</code>:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx trjconv -s md_0_10.tpr -f md_0_10.xtc -o md_0_10_noPBC.xtc -pbc mol -center
 </pre>
@@ -20,7 +20,7 @@ Tất cả các phân tích sau sẽ được thực hiện trên quỹ đạo �
 <h3>Độ lệch bình phương trung bình (RMSD)</h3>
 <p>Công cụ <code>gmx rms</code> được dùng để tính RMSD, giúp đánh giá độ lệch cấu trúc theo thời gian:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx rms -s md_0_10.tpr -f md_0_10_noPBC.xtc -o rmsd.xvg -tu ns
 </pre>
@@ -32,7 +32,7 @@ Kết quả là biểu đồ RMSD so với cấu trúc protein đã được t�
 
 <p>Nếu muốn tính RMSD so với <b>cấu trúc tinh thể gốc (crystal structure)</b>, dùng lệnh sau:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx rms -s em.tpr -f md_0_10_noPBC.xtc -o rmsd_xtal.xvg -tu ns
 </pre>

@@ -4,7 +4,7 @@
 
 <p>Cách thực hiện tương tự như các bước trước: chúng ta sẽ dùng file checkpoint (lúc này đã lưu cả thông tin về áp suất) để chạy <code>grompp</code>. Trong ví dụ này, ta sẽ chạy mô phỏng MD trong <b>10 ns</b>:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx grompp -f inputs/md.mdp -c npt.gro -t npt.cpt -p topol.top -o md_0_10.tpr
 

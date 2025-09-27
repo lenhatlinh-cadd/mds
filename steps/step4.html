@@ -1,4 +1,4 @@
-<h2>Bước 3: Thêm ion để trung hòa hệ thống</h2>
+<h2>THÊM ION</h2>
 
 <p>Hiện tại, chúng ta đã có một hệ thống đã được hòa tan trong dung môi, nhưng protein mang điện tích dương tổng cộng là <b>+8e</b> (thông tin này được hiển thị trong kết quả của <code>pdb2gmx</code>). Nếu bạn bỏ sót, hãy xem dòng cuối trong mục <code>[ atoms ]</code> của file <code>topol.top</code>, sẽ có phần <code>qtot 8</code>. Vì trong thực tế sinh học không tồn tại hệ có điện tích tổng, nên chúng ta cần bổ sung ion để trung hòa.</p>
 
@@ -8,7 +8,7 @@
 
 <h3>Tạo file .tpr bằng grompp:</h3>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx grompp -f inputs/ions.mdp -c 1AKI_solv.gro -p topol.top -o ions.tpr
 </pre>
@@ -18,7 +18,7 @@ gmx grompp -f inputs/ions.mdp -c 1AKI_solv.gro -p topol.top -o ions.tpr
 
 <h3>Thêm ion bằng genion:</h3>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx genion -s ions.tpr -o 1AKI_solv_ions.gro -p topol.top -pname NA -nname CL -neutral
 </pre>
@@ -46,7 +46,7 @@ gmx genion -s ions.tpr -o 1AKI_solv_ions.gro -p topol.top -pname NA -nname CL -n
 
 <h3>Kết quả sau khi thêm ion:</h3>
 
-<div class="code-block">
+<div class="code-view">
 <pre>
 [molecules] 
 ; Compound        #mols

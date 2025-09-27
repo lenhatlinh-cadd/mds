@@ -1,4 +1,4 @@
-<h2>Bước 4: Tối ưu năng lượng (Energy Minimization)</h2>
+<h2>TỐI THIỂU HÓA NĂNG LƯỢNG</h2>
 
 <p>Sau khi đã có hệ thống hòa tan và trung hòa điện tích, chúng ta cần kiểm tra và loại bỏ các va chạm không gian (steric clashes) hay hình học không phù hợp. Việc này được thực hiện thông qua quá trình <b>tối ưu năng lượng</b> (Energy Minimization – EM).</p>
 
@@ -6,7 +6,7 @@
 
 <h3>Tạo file .tpr với grompp:</h3>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx grompp -f inputs/minim.mdp -c 1AKI_solv_ions.gro -p topol.top -o em.tpr
 </pre>
@@ -16,7 +16,7 @@ gmx grompp -f inputs/minim.mdp -c 1AKI_solv_ions.gro -p topol.top -o em.tpr
 
 <h3>Chạy tối ưu năng lượng với mdrun:</h3>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx mdrun -v -deffnm em
 </pre>
@@ -38,7 +38,7 @@ gmx mdrun -v -deffnm em
 
 <p><code>mdrun</code> cũng sẽ in ra thông số cuối cùng của EM, ví dụ:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 Steepest Descents converged to Fmax < 1000 in 566 steps
 Potential Energy  = -6.2751356e+05
@@ -59,7 +59,7 @@ Norm of force     =  2.3013127e+01
 
 <p>File <code>em.edr</code> chứa toàn bộ dữ liệu năng lượng trong quá trình EM. Ta có thể phân tích bằng công cụ <code>energy</code>:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx energy -f em.edr -o potential.xvg
 </pre>

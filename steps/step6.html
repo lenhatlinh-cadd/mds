@@ -1,5 +1,4 @@
-<h2>Bước 5: Cân bằng hệ thống (Equilibration – NVT)</h2>
-
+<h2>CÂN BẰNG HỆ THỐNG</h2>
 <p>Sau khi đã tối ưu năng lượng, chúng ta có một cấu trúc khởi đầu hợp lý về hình học và định hướng dung môi. Tuy nhiên, để bắt đầu mô phỏng động lực học phân tử (MD) thực sự, cần phải <b>cân bằng dung môi và ion</b> xung quanh protein. Nếu bỏ qua bước này và chạy ngay động lực học không hạn chế, hệ thống có thể sụp đổ vì dung môi mới chỉ tối ưu nội tại, chưa thích ứng với phân tử hòa tan (protein).</p>
 
 <p>Ở giai đoạn cân bằng, chúng ta sẽ đưa hệ thống về nhiệt độ mô phỏng mong muốn và sau đó áp suất sẽ được điều chỉnh để đạt mật độ phù hợp.</p>
@@ -8,7 +7,7 @@
 
 <p>Bạn còn nhớ file <code>posre.itp</code> được tạo bởi <code>pdb2gmx</code> không? Chúng ta sẽ dùng nó ngay bây giờ. File này áp dụng lực hạn chế vị trí lên các nguyên tử nặng (tức là trừ hydro) của protein. Các nguyên tử vẫn có thể di chuyển, nhưng cần vượt qua một “rào cản năng lượng” đáng kể. Ý nghĩa của việc này là giúp dung môi được cân bằng xung quanh protein, trong khi cấu trúc protein không bị biến dạng nhiều. Vị trí gốc của ràng buộc được cung cấp qua file tọa độ đi kèm tùy chọn <code>-r</code> trong lệnh <code>grompp</code>.</p>
 
-<h3>Quá trình NVT</h3>
+<h3>Quá trình cân bằng đẳng tích</h3>
 
 <p>Cân bằng thường được thực hiện qua hai pha. Pha đầu là <b>NVT ensemble</b> (giữ cố định số hạt, thể tích và nhiệt độ). Trong giai đoạn này, nhiệt độ hệ thống sẽ dần ổn định ở giá trị mong muốn. Thông thường, 50–100 ps là đủ; trong hướng dẫn này ta sẽ thực hiện 100 ps.</p>
 
@@ -16,7 +15,7 @@
 
 <h3>Chạy NVT bằng grompp và mdrun</h3>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx grompp -f inputs/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
 gmx mdrun -deffnm nvt
@@ -34,7 +33,7 @@ gmx mdrun -deffnm nvt
 
 <p>Để kiểm tra sự tiến triển nhiệt độ, dùng lệnh:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx energy -f nvt.edr -o temperature.xvg
 </pre>

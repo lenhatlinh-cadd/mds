@@ -1,21 +1,21 @@
-<h2>Khám phá nội dung của file topol.top</h2>
+<h2>KIỂM TRA TỆP CẤU TRÚC LIÊN KẾT</h2>
 
 <p>Sau khi chạy <code>pdb2gmx</code>, chúng ta thu được file topology <code>topol.top</code>.  
 Hãy mở file này bằng trình soạn thảo văn bản để quan sát nội dung. Sau một vài dòng chú thích (bắt đầu bằng <code>;</code>), bạn sẽ thấy dòng sau:</p>
 
-<div class="code">
+<div class="code-view">
 <pre>
 #include "charmm36.ff/forcefield.itp"
 </pre>
 </div>
 
-<p>Dòng này cho biết file đang sử dụng bộ tham số từ force field <b>CHARMM36</b>. Nó nằm ở đầu file, nghĩa là toàn bộ tham số tiếp theo đều dựa trên force field này.</p>
+<p>Dòng này cho biết file đang sử dụng bộ tham số từ trường lực <b>CHARMM36</b>. Nó nằm ở đầu file, nghĩa là toàn bộ tham số tiếp theo đều dựa trên trường lực này.</p>
 
 <h3>Moleculetype</h3>
 
 <p>Ngay sau đó là phần <code>[ moleculetype ]</code>:</p>
 
-<div class="code">
+<div class="code-view">
 <pre>
 ; Name            nrexcl
 Protein_chain_A     3
@@ -30,7 +30,7 @@ Chi tiết hơn về "exclusions" có thể tham khảo trong tài liệu hướ
 
 <p>Tiếp theo là phần <code>[ atoms ]</code>, mô tả chi tiết từng nguyên tử trong protein:</p>
 
-<div class="code">
+<div class="code-view">
 <pre>
 [ atoms ]
 ;   nr   type  resnr residue  atom   cgnr  charge   mass
@@ -64,7 +64,7 @@ Thông tin chi tiết hơn có trong Chương 5 của GROMACS manual.</p>
 
 <p>File <code>posre.itp</code> được sinh ra bởi <code>pdb2gmx</code>, dùng để giữ các nguyên tử cố định trong giai đoạn cân bằng:</p>
 
-<div class="code">
+<div class="code-view">
 <pre>
 ; Include Position restraint file
 #ifdef POSRES
@@ -77,7 +77,7 @@ Thông tin chi tiết hơn có trong Chương 5 của GROMACS manual.</p>
 
 <p>Tiếp theo, topology bổ sung phân tử dung môi. Ở đây là <b>TIP3P water</b>, do ta đã chọn tùy chọn <code>-water tip3p</code> khi chạy <code>pdb2gmx</code>:</p>
 
-<div class="code">
+<div class="code-view">
 <pre>
 ; Include water topology
 #include "charmm36.ff/tip3p.itp"
@@ -86,7 +86,7 @@ Thông tin chi tiết hơn có trong Chương 5 của GROMACS manual.</p>
 
 <p>Nước cũng có thể được ràng buộc vị trí (position restraints):</p>
 
-<div class="code">
+<div class="code-view">
 <pre>
 #ifdef POSRES_WATER
 [ position_restraints ]
@@ -100,7 +100,7 @@ Thông tin chi tiết hơn có trong Chương 5 của GROMACS manual.</p>
 
 <p>Sau nước là tham số cho các ion:</p>
 
-<div class="code">
+<div class="code-view">
 <pre>
 ; Include generic topology for ions
 #include "charmm36.ff/ions.itp"
@@ -111,7 +111,7 @@ Thông tin chi tiết hơn có trong Chương 5 của GROMACS manual.</p>
 
 <p>Phần cuối cùng của topology định nghĩa hệ thống:</p>
 
-<div class="code">
+<div class="code-view">
 <pre>
 [ system ]
 ; Name

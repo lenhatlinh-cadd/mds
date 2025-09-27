@@ -5,7 +5,7 @@
 Nếu protein ổn định ở trạng thái gấp nếp, giá trị Rg sẽ dao động quanh một giá trị cố định. 
 Nếu protein bị duỗi ra hoặc sụp đổ, Rg sẽ thay đổi theo thời gian.</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx gyrate -s md_0_10.tpr -f md_0_10_noPBC.xtc -o gyrate.xvg -sel Protein -tu ns
 </pre>
@@ -19,7 +19,7 @@ Tương tự RMSD, dữ liệu có thể được làm mượt bằng cửa sổ
 <p>Cấu trúc bậc hai của protein (α-helix, β-sheet, coil, …) phản ánh sự bền vững của cấu trúc trong quá trình mô phỏng. 
 GROMACS tích hợp thuật toán <b>DSSP (Dictionary of Secondary Structure of Proteins)</b> thông qua lệnh <code>gmx dssp</code> để phân tích:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx dssp -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -o dssp.dat -num dssp_num.xvg
 </pre>
@@ -39,7 +39,7 @@ Sau khi xử lý, bạn sẽ thu được biểu đồ thể hiện sự thay đ
 Các nhóm này phải hoặc giống hệt nhau, hoặc hoàn toàn tách biệt (không có nguyên tử chung).</p>
 
 <p><b>(a) Liên kết hydro trong khung chính (main chain)</b></p>
-<div class="code-block">
+<div class="code">
 <pre>
 gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_mainchain.xvg
 </pre>
@@ -48,7 +48,7 @@ gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_mainchain.xvg
 Lưu ý: nhóm “Backbone” trong GROMACS chỉ có N, Cα, C → không dùng được cho phân tích H-bond.</p>
 
 <p><b>(b) Liên kết hydro giữa các mạch bên (side chain)</b></p>
-<div class="code-block">
+<div class="code">
 <pre>
 gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_sidechain.xvg
 </pre>
@@ -56,7 +56,7 @@ gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_sidechain.xvg
 <p>Chọn nhóm <b>SideChain</b> (8) cho cả hai lựa chọn.</p>
 
 <p><b>(c) Liên kết hydro giữa protein và nước</b></p>
-<div class="code-block">
+<div class="code">
 <pre>
 gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_prot_wat.xvg
 </pre>

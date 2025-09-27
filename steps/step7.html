@@ -12,7 +12,7 @@
 
 <p>Chúng ta sẽ gọi <code>grompp</code> và <code>mdrun</code> giống như ở bước NVT. Lưu ý thêm cờ <code>-t</code> để đưa vào file checkpoint từ NVT (<code>nvt.cpt</code>), nhằm giữ lại vận tốc đã sinh ra ở bước trước. File tọa độ (<code>-c</code>) cũng chính là kết quả cuối cùng của NVT:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx grompp -f inputs/npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
 
@@ -23,7 +23,7 @@ gmx mdrun -deffnm npt
 <h3>Phân tích áp suất</h3>
 <p>Sử dụng lệnh <code>gmx energy</code> để xem sự thay đổi áp suất theo thời gian:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx energy -f npt.edr -o pressure.xvg
 </pre>
@@ -34,7 +34,7 @@ gmx energy -f npt.edr -o pressure.xvg
 <h3>Phân tích mật độ</h3>
 <p>Tiếp theo, ta phân tích mật độ bằng lệnh:</p>
 
-<div class="code-block">
+<div class="code">
 <pre>
 gmx energy -f npt.edr -o density.xvg
 </pre>
