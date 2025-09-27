@@ -73,7 +73,7 @@ aside{
 }
 
 /* Khối code */
-.code {
+.code, .code-block {
   position: relative;
   font-family: ui-monospace,Menlo,monospace;
   background:#0f172a;
@@ -153,6 +153,7 @@ footer{
   text-align:center;
   font-size:0.9rem;
 }
+
 
 
 
