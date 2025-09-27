@@ -83,6 +83,14 @@ aside{
   font-size:0.95rem;
   overflow:auto;
 }
+/* Khối pre */
+.pre-block {
+    white-space: pre;       /* Giữ nguyên khoảng trắng và xuống dòng */
+    overflow-x: auto;       /* Nếu nội dung dài quá, hiển thị thanh cuộn ngang */
+    overflow-y: hidden;     /* Ẩn scroll dọc nếu cần */
+    max-width: 100%;        /* Giữ thẻ không vượt quá chiều rộng container */
+    box-sizing: border-box; /* Bao gồm padding trong width */
+}
 
 
 /* Nút copy */
@@ -154,6 +162,7 @@ footer{
   text-align:center;
   font-size:0.9rem;
 }
+
 
 
 
