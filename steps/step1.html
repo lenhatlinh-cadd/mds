@@ -1,34 +1,114 @@
-<h2>Tạo tệp cấu trúc liên kết</h2>
+<h2>TẠO TỆP CẤU TRÚC LIÊN KẾT</h2>
 
-<p>Ở bước này, chúng ta sẽ chuẩn bị topology cho protein lysozyme (PDB ID: <code>1AKI</code>). 
-Đầu tiên, cần tải file cấu trúc PDB từ <a href="https://www.rcsb.org/structure/1AKI" target="_blank">RCSB Protein Data Bank</a>.</p>
+<h3>1. Một số kiến thức cơ bản về GROMACS</h3>
+<p>Kể từ phiên bản 5.0, tất cả các công cụ của GROMACS đều được tích hợp vào một tệp nhị phân duy nhất tên là <code>gmx</code>. 
+Ở các phiên bản trước, mỗi công cụ được gọi bằng một lệnh riêng. 
+Các lệnh cũ vẫn có thể dùng nhờ liên kết tượng trưng (symlink), nhưng trong các bản phát hành sau chúng sẽ bị loại bỏ. 
+Vì vậy, bạn nên làm quen với cách gọi lệnh mới qua <code>gmx</code>.</p>
 
-<div class="image-container">
-    <img src="images/lysozyme_structure.png" alt="Lysozyme structure" width="400">
+<p>Để xem thông tin trợ giúp của một mô-đun, có thể dùng một trong hai cách sau:</p>
+
+<div class="code">
+<pre>
+gmx (module) -h
+</pre>
 </div>
 
-<p>Sau khi tải, hãy loại bỏ các phân tử nước tinh thể (residue <code>HOH</code>) để thu được cấu trúc protein thuần. 
-Có thể dùng lệnh <code>grep</code>:</p>
+<p>Trong đó <code>(module)</code> là tên của công cụ, ví dụ <code>pdb2gmx</code>. 
+Khi chạy, thông tin chi tiết sẽ hiển thị trong terminal: các thuật toán có sẵn, tùy chọn, định dạng file yêu cầu, lỗi hoặc hạn chế đã biết,... 
+Đây là cách rất tốt để người mới học GROMACS làm quen với từng lệnh.</p>
 
-<div class="code"><pre>
-grep -v HOH files/1AKI.pdb > files/1AKI_clean.pdb
-</pre></div>
+<hr>
 
-<p>Tiếp theo, chạy công cụ <code>pdb2gmx</code> để tạo topology và cấu trúc đã xử lý:</p>
+<h3>2. Hướng dẫn với Lysozyme</h3>
+<p>Đầu tiên, chúng ta cần một cấu trúc protein để thực hành. Trong hướng dẫn này, ta dùng <b>lysozyme lòng trắng trứng gà</b> (PDB ID: <code>1AKI</code>). 
+Bạn có thể tải file PDB từ <a href="https://www.rcsb.org/structure/1AKI" target="_blank">RCSB Protein Data Bank</a>.</p>
 
-<div class="code"><pre>
-gmx pdb2gmx -f files/1AKI_clean.pdb -o files/1AKI_processed.gro -water tip3p
-</pre></div>
+<p>Sau khi tải xong, hãy mở và quan sát phân tử bằng phần mềm xem cấu trúc như VMD, Chimera hoặc PyMOL. 
+Tiếp theo, ta cần loại bỏ các phân tử nước tinh thể (residue <code>HOH</code>) bằng trình soạn thảo văn bản thuần túy (vi, emacs, Notepad), không nên dùng Word. 
+Cách nhanh hơn là dùng lệnh:</p>
 
-<p>Khi chạy lệnh này, chương trình sẽ yêu cầu chọn <b>force field</b>. 
-Trong hướng dẫn này, chúng ta chọn <code>CHARMM36</code> (số 9 trong danh sách).</p>
+<div class="code">
+<pre>
+grep -v HOH 1aki.pdb > 1AKI_clean.pdb
+</pre>
+</div>
 
-<p>Kết quả tạo ra các tệp:</p>
+<p>Lưu ý: không phải lúc nào cũng nên xóa nước. Nếu nước ở vị trí hoạt động hoặc tham gia chức năng quan trọng thì cần giữ lại.  
+Ngoài ra, hãy kiểm tra kỹ file PDB xem có dòng <b>MISSING</b> không. Nếu có, điều đó có nghĩa là có nguyên tử hoặc cả gốc amino acid bị thiếu. 
+Nếu chỉ thiếu một vài nguyên tử ở đầu hoặc cuối thì thường không sao, nhưng nếu bên trong chuỗi bị thiếu thì sẽ khiến <code>pdb2gmx</code> báo lỗi. 
+Các phần thiếu này cần được xây dựng lại bằng phần mềm khác. 
+Hãy nhớ rằng <code>pdb2gmx</code> không thể tạo topology cho mọi loại phân tử, nó chỉ hỗ trợ những gì được định nghĩa trong force field (protein, DNA/RNA, một số cofactor như NADH, ATP).</p>
+
+<hr>
+
+<h3>3. Tạo topology bằng pdb2gmx</h3>
+<p>Sau khi làm sạch nước và kiểm tra file, ta có <code>1AKI_clean.pdb</code> sẵn sàng để xử lý bằng <code>pdb2gmx</code>.  
+Công cụ này sẽ tạo ra ba file quan trọng:</p>
+
 <ul>
-  <li><code>1AKI_processed.gro</code> — cấu trúc protein đã xử lý</li>
-  <li><code>topol.top</code> — topology của hệ thống</li>
-  <li><code>posre.itp</code> — thông tin ràng buộc vị trí</li>
+  <li><b>Cấu trúc phân tử đã xử lý</b> (<code>1AKI_processed.gro</code>)</li>
+  <li><b>File hạn chế vị trí</b> (<code>posre.itp</code>)</li>
+  <li><b>Topology</b> (<code>topol.top</code>) – chứa thông tin về loại nguyên tử, điện tích, liên kết, góc, dihedral,...</li>
 </ul>
 
-<p>Lưu ý: ngoài định dạng <code>.gro</code>, GROMACS còn hỗ trợ nhiều định dạng khác như <code>.pdb</code>. 
-Tuy nhiên, <code>.gro</code> thường được sử dụng mặc định vì gọn nhẹ và tương thích tốt với các công cụ khác.</p>
+<p>Trong hướng dẫn này, chúng ta sẽ dùng <b>force field CHARMM36</b>. 
+Bạn cần tải bản CHARMM36 mới nhất (ví dụ tháng 7/2022) từ trang của <a href="http://mackerell.umaryland.edu/charmm_ff.shtml" target="_blank">MacKerell Lab</a>. 
+Sau đó, giải nén và đặt vào thư mục:</p>
+
+<div class="code">
+<pre>
+/usr/local/gromacs/share/gromacs/top
+</pre>
+</div>
+
+<p>Hoặc bạn có thể để trong thư mục làm việc. Lưu ý: nếu để trong thư mục làm việc, menu chọn force field trong <code>pdb2gmx</code> sẽ khác – bạn phải chọn số <b>1</b> thay vì <b>9</b>.</p>
+
+<p>Chạy lệnh:</p>
+
+<div class="code">
+<pre>
+gmx pdb2gmx -f 1AKI_clean.pdb -o 1AKI_processed.gro -water tip3p
+</pre>
+</div>
+
+<p>Khi chạy, bạn sẽ được hỏi chọn force field, ví dụ:</p>
+
+<div class="code">
+<pre>
+Chọn Force Field:
+ 1: AMBER03
+ 2: AMBER94
+ 3: AMBER96
+ ...
+ 8: CHARMM27
+ 9: GROMOS96 43a1
+ ...
+15: OPLS-AA/L
+</pre>
+</div>
+
+<p>Lựa chọn này cực kỳ quan trọng, vì force field sẽ quyết định toàn bộ tham số được ghi vào topology. 
+Trong hướng dẫn này, ta chọn <b>CHARMM36</b> (ví dụ nhập số 9 nếu để trong working directory).</p>
+
+<hr>
+
+<h3>4. Một số tùy chọn hữu ích khi chạy pdb2gmx</h3>
+<ul>
+  <li><code>-ignh</code>: bỏ qua các nguyên tử H có sẵn trong file PDB (thường dùng cho cấu trúc NMR). Nếu cần giữ nguyên tọa độ H nhưng chỉ muốn đổi tên, có thể dùng <code>sed</code> trong Linux.</li>
+  <li><code>-ter</code>: cho phép gán trạng thái điện tích ở đầu N và C.</li>
+  <li><code>-inter</code>: cho phép gán điện tích tương tác cho Glu, Asp, Lys, Arg, His; đồng thời chọn Cys nào tạo liên kết disulfide.</li>
+</ul>
+
+<p>Sau khi chạy xong, bạn sẽ có:</p>
+
+<ul>
+  <li><code>1AKI_processed.gro</code> – cấu trúc hoàn chỉnh (các nguyên tử H đã được thêm).</li>
+  <li><code>topol.top</code> – topology hệ thống.</li>
+  <li><code>posre.itp</code> – thông tin ràng buộc vị trí các nguyên tử nặng.</li>
+</ul>
+
+<p><b>Lưu ý cuối cùng:</b> không nhất thiết phải dùng định dạng <code>.gro</code>. 
+GROMACS hỗ trợ nhiều định dạng (như <code>.pdb</code>), chỉ cần đặt tên đuôi file đầu ra phù hợp. 
+Nhiệm vụ chính của <code>pdb2gmx</code> là tạo topology theo đúng force field; còn định dạng file cấu trúc đầu ra chỉ để tiện cho người dùng.</p>
+
