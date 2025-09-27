@@ -1,164 +1,130 @@
+<h2>Khám phá nội dung của file topol.top</h2>
 
-<!-- saved from url=(0056)http://www.mdtutorials.com/gmx/lysozyme/02_topology.html -->
-<html class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title>Lysozyme trong n&#432;&#7899;c</title>
-<meta name="title" content="GROMACS Tutorial">
+<p>Sau khi chạy <code>pdb2gmx</code>, chúng ta thu được file topology <code>topol.top</code>.  
+Hãy mở file này bằng trình soạn thảo văn bản để quan sát nội dung. Sau một vài dòng chú thích (bắt đầu bằng <code>;</code>), bạn sẽ thấy dòng sau:</p>
 
-<!-- Google tag (gtag.js) -->
-<script async="" src="./3_files/js"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-EBVNCYQWWG');
-</script>
-<link href="./3_files/style.css" rel="stylesheet" type="text/css">
-<link type="text/css" rel="stylesheet" charset="UTF-8" href="./3_files/m=el_main_css"></head>
-<body>
-<br>
-<center><h2><font size="+3">GROMACS Tutorial</font></h2>
-<p><font size="+1"><b>Step Two: Examine the Topology</b></font></p>
-
-<img src="./3_files/Steps_top_highlight.jpg" width="679" height="32" usemap="#navmap">
-
-<map name="navmap">
-    <area shape="rect" coords="0,0,96,32" alt="pdb2gmx" href="http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html">
-    <area shape="rect" coords="96,0,192,32" alt="solv" href="http://www.mdtutorials.com/gmx/lysozyme/03_solvate.html">
-    <area shape="rect" coords="192,0,288,32" alt="ions" href="http://www.mdtutorials.com/gmx/lysozyme/04_ions.html">
-    <area shape="rect" coords="288,0,380,32" alt="minim" href="http://www.mdtutorials.com/gmx/lysozyme/05_EM.html">
-    <area shape="rect" coords="380,0,472,32" alt="equil" href="http://www.mdtutorials.com/gmx/lysozyme/06_equil.html">
-    <area shape="rect" coords="472,0,564,32" alt="md" href="http://www.mdtutorials.com/gmx/lysozyme/08_MD.html">
-    <area shape="rect" coords="564,0,679,32" alt="analysis" href="http://www.mdtutorials.com/gmx/lysozyme/09_analysis.html">
-</map>
-
-<font size="3">
-
-<table width="900" border="0" cellpadding="20">
-<tbody><tr>
- <td>
-
-<p>Let's look at what is in the output topology (topol.top).  Again, using a plain text editor, inspect its contents.  After several comment lines (preceded by ;), you will find the following:</p>
-
-<pre>#include "charmm36.ff/forcefield.itp"
+<div class="code">
+<pre>
+#include "charmm36.ff/forcefield.itp"
 </pre>
+</div>
 
-<p>This line calls the parameters within the CHARMM36 force field.  It is at the beginning of the file, indicating that all subsequent parameters are derived from this force field. The next important line is <code>[ moleculetype ]</code>, below which you will find</p>
+<p>Dòng này cho biết file đang sử dụng bộ tham số từ force field <b>CHARMM36</b>. Nó nằm ở đầu file, nghĩa là toàn bộ tham số tiếp theo đều dựa trên force field này.</p>
 
-<pre>; Name            nrexcl<font></font>
-Protein_chain_A     3<font></font>
+<h3>Moleculetype</h3>
+
+<p>Ngay sau đó là phần <code>[ moleculetype ]</code>:</p>
+
+<div class="code">
+<pre>
+; Name            nrexcl
+Protein_chain_A     3
 </pre>
+</div>
 
-<p>The name "Protein_chain_A" defines the molecule name, based on the fact that the protein was labeled as chain A in the PDB file.  There are 3 exclusions for bonded neighbors.  More information on exclusions can be found in the GROMACS manual; a discussion of this information is beyond the scope of this tutorial.</p>
+<p>Ở đây, <code>Protein_chain_A</code> là tên phân tử, dựa theo nhãn "chain A" trong file PDB gốc.  
+Số <code>3</code> biểu thị số lượng ngoại lệ (exclusions) cho các nguyên tử liên kết gần nhau.  
+Chi tiết hơn về "exclusions" có thể tham khảo trong tài liệu hướng dẫn GROMACS.</p>
 
-<p>The next section defines the <code>[ atoms ]</code> in the protein.  The information is presented as columns:</p>
+<h3>Atoms</h3>
 
-<pre>[ atoms ]<font></font>
-;   nr       type  resnr residue  atom   cgnr     charge       mass  typeB    chargeB      massB<font></font>
-; residue   1 LYS rtp LYS  q +2.0<font></font>
-     1        NH3      1    LYS      N      1       -0.3     14.007<font></font>
-     2         HC      1    LYS     H1      2       0.33      1.008<font></font>
-     3         HC      1    LYS     H2      3       0.33      1.008<font></font>
-     4         HC      1    LYS     H3      4       0.33      1.008<font></font>
-     5        CT1      1    LYS     CA      5       0.21     12.011<font></font>
-     6        HB1      1    LYS     HA      6        0.1      1.008<font></font>
+<p>Tiếp theo là phần <code>[ atoms ]</code>, mô tả chi tiết từng nguyên tử trong protein:</p>
+
+<div class="code">
+<pre>
+[ atoms ]
+;   nr   type  resnr residue  atom   cgnr  charge   mass
+; residue   1 LYS rtp LYS  q +2.0
+     1    NH3     1    LYS      N      1   -0.3   14.007
+     2     HC     1    LYS     H1      2    0.33   1.008
+     3     HC     1    LYS     H2      3    0.33   1.008
+     4     HC     1    LYS     H3      4    0.33   1.008
+     5    CT1     1    LYS     CA      5    0.21  12.011
+     6    HB1     1    LYS     HA      6    0.1    1.008
 </pre>
+</div>
 
-<p>The interpretation of this information is as follows:<br>
-</p><ul>
- <li> nr: Atom number
-  <dd><font size="-1">For each moleculetype, this numbering must start from 1 and is a running count of the number of atoms in the molecule.</font></dd>
- </li><li> type: Atom type
-  <dd><font size="-1">The designation of an atom type determines the Lennard-Jones parameters assigned to each atom.</font></dd>
- </li><li> resnr: Amino acid residue number
- </li><li> residue: The amino acid residue name
-  <dd> <font size="-1">Note that this residue was "LYS" in the PDB file; the use of .rtp entry "LYS" indicates that the residue is protonated using the CHARMM naming convention (the predominant state at neutral pH). In this force field, "LSN" would indicate neutral (no net charge) lysine. </font></dd>
- </li><li> atom: Atom name
- </li><li> cgnr: Charge group number
-  <dd> <font size="-1">Charge groups define units of integer charge; this is an old convention for trying to speed up calculations and are largely irrelevant these days.</font></dd>
- </li><li> charge: The partial charge assigned to each atom.  
-  <dd> <font size="-1">The "qtot" descriptor is a running total of the charge on the molecule</font></dd>
- </li><li> mass: Self-explanatory
- </li><li> typeB, chargeB, massB: Used for free energy perturbation (not discussed here)
-</li></ul>
+<p>Ý nghĩa của các cột:</p>
+<ul>
+  <li><b>nr</b>: Số thứ tự nguyên tử (mỗi <code>moleculetype</code> bắt đầu từ 1).</li>
+  <li><b>type</b>: Kiểu nguyên tử, quyết định tham số Lennard-Jones.</li>
+  <li><b>resnr</b>: Số thứ tự amino acid.</li>
+  <li><b>residue</b>: Tên amino acid (ở đây là <code>LYS</code>, tức lysine đã được proton hóa theo quy ước CHARMM ở pH trung tính; nếu là dạng trung hòa sẽ ghi <code>LSN</code>).</li>
+  <li><b>atom</b>: Tên nguyên tử.</li>
+  <li><b>cgnr</b>: Số nhóm điện tích (charge group) – khái niệm cũ, ít còn quan trọng hiện nay.</li>
+  <li><b>charge</b>: Điện tích riêng phần của nguyên tử.</li>
+  <li><b>mass</b>: Khối lượng nguyên tử.</li>
+  <li><b>typeB, chargeB, massB</b>: Dùng trong tính toán biến đổi năng lượng tự do (FEP), không bàn chi tiết ở đây.</li>
+</ul>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">C�c ph&#7847;n ti&#7871;p theo bao g&#7891;m </font></font><code>[ bonds ], [ pairs ], [ angles ],</code><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">v� </font></font><code> [ dihedrals ]</code><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">. M&#7897;t s&#7889; ph&#7847;n n�y c� th&#7875; t&#7921; gi&#7843;i th�ch (li�n k&#7871;t, g�c v� dihedral). C�c tham s&#7889; v� ki&#7875;u h�m li�n quan &#273;&#7871;n c�c ph&#7847;n n�y &#273;&#432;&#7907;c tr�nh b�y chi ti&#7871;t trong Ch&#432;&#417;ng 5 c&#7911;a s&#7893; tay GROMACS. C�c t&#432;&#417;ng t�c &#273;&#7863;c bi&#7879;t t&#7915; 1-4 &#273;&#432;&#7907;c bao g&#7891;m trong ph&#7847;n "c&#7863;p" (ph&#7847;n 5.5.2 c&#7911;a s&#7893; tay GROMACS PDF ho&#7863;c </font></font><a href="https://manual.gromacs.org/current/reference-manual/functions/bonded-interactions.html" target="_blank"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">li�n k&#7871;t t&#7841;i &#273;�y</font></font></a><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> ).</font></font></p>
+<p>Các phần tiếp theo của file lần lượt là <code>[ bonds ]</code>, <code>[ pairs ]</code>, <code>[ angles ]</code>, và <code>[ dihedrals ]</code> để định nghĩa liên kết, góc, và mômen xoay.  
+Thông tin chi tiết hơn có trong Chương 5 của GROMACS manual.</p>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ph&#7847;n c�n l&#7841;i c&#7911;a t&#7879;p bao g&#7891;m vi&#7879;c &#273;&#7883;nh ngh&#297;a m&#7897;t s&#7889; c&#7845;u tr�c li�n k&#7871;t h&#7919;u �ch/c&#7847;n thi&#7871;t kh�c, b&#7855;t &#273;&#7847;u v&#7899;i c�c r�ng bu&#7897;c v&#7883; tr�. T&#7879;p "posre.itp" &#273;&#432;&#7907;c t&#7841;o b&#7903;i pdb2gmx; t&#7879;p n�y &#273;&#7883;nh ngh&#297;a m&#7897;t h&#7857;ng s&#7889; l&#7921;c &#273;&#432;&#7907;c s&#7917; d&#7909;ng &#273;&#7875; gi&#7919; c�c nguy�n t&#7917; t&#7841;i ch&#7895; trong qu� tr�nh c�n b&#7857;ng (s&#7869; n�i th�m v&#7873; &#273;i&#7873;u n�y sau).</font></font></p>
+<h3>Ràng buộc vị trí (Position restraints)</h3>
 
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">; Bao g&#7891;m t&#7879;p h&#7841;n ch&#7871; v&#7883; tr�</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-#ifdef POSRES</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-#include "posre.itp"</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-#k&#7871;t th�c n&#7871;u</font></font><font></font>
+<p>File <code>posre.itp</code> được sinh ra bởi <code>pdb2gmx</code>, dùng để giữ các nguyên tử cố định trong giai đoạn cân bằng:</p>
+
+<div class="code">
+<pre>
+; Include Position restraint file
+#ifdef POSRES
+#include "posre.itp"
+#endif
 </pre>
+</div>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&#272;&#7871;n &#273;�y l� k&#7871;t th�c &#273;&#7883;nh ngh&#297;a lo&#7841;i ph�n t&#7917; "Protein_chain_A". Ph&#7847;n c�n l&#7841;i c&#7911;a t&#7879;p c&#7845;u tr�c li�n k&#7871;t &#273;&#432;&#7907;c d�nh ri�ng &#273;&#7875; &#273;&#7883;nh ngh&#297;a c�c ph�n t&#7917; kh�c v� cung c&#7845;p m� t&#7843; &#7903; c&#7845;p &#273;&#7897; h&#7879; th&#7889;ng. Lo&#7841;i ph�n t&#7917; ti&#7871;p theo (theo m&#7863;c &#273;&#7883;nh) l� dung m�i, trong tr&#432;&#7901;ng h&#7907;p n�y l� n&#432;&#7899;c TIP3P. C�c l&#7921;a ch&#7885;n kh�c cho n&#432;&#7899;c bao g&#7891;m SPC, TIP3P v� TIP4P. Ch�ng t�i &#273;� ch&#7885;n m� h�nh n�y b&#7857;ng c�ch truy&#7873;n "-water tip3p" cho pdb2gmx. &#272;&#7875; xem t�m t&#7855;t tuy&#7879;t v&#7901;i v&#7873; nhi&#7873;u m� h�nh n&#432;&#7899;c kh�c nhau, h�y nh&#7845;p </font></font><a href="https://water.lsbu.ac.uk/water/water_models.html" target="_blank"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">v�o &#273;�y</font></font></a><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> , nh&#432;ng l&#432;u � r&#7857;ng kh�ng ph&#7843;i t&#7845;t c&#7843; c�c m� h�nh n�y &#273;&#7873;u c� trong GROMACS.</font></font></p>
+<h3>Mô hình nước</h3>
 
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">; Bao g&#7891;m c&#7845;u tr�c n&#432;&#7899;c</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-#include "charmm36.ff/tip3p.itp"</font></font><font></font>
-<font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-#ifdef POSRES_WATER</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-; V&#7883; tr� h&#7841;n ch&#7871; cho m&#7895;i oxy n&#432;&#7899;c</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-[ v&#7883; tr�_h&#7841;n ch&#7871; ]</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-; i funct fcx fcy fcz</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-   1 1 1000 1000 1000</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-#k&#7871;t th�c n&#7871;u</font></font><font></font>
+<p>Tiếp theo, topology bổ sung phân tử dung môi. Ở đây là <b>TIP3P water</b>, do ta đã chọn tùy chọn <code>-water tip3p</code> khi chạy <code>pdb2gmx</code>:</p>
+
+<div class="code">
+<pre>
+; Include water topology
+#include "charmm36.ff/tip3p.itp"
 </pre>
+</div>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Nh&#432; b&#7841;n c� th&#7875; th&#7845;y, n&#432;&#7899;c c&#361;ng c� th&#7875; &#273;&#432;&#7907;c h&#7841;n ch&#7871; v&#7883; tr� b&#7857;ng c�ch s&#7917; d&#7909;ng h&#7857;ng s&#7889; l&#7921;c ( </font></font><i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">k </font></font><sub><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">pr</font></font></sub></i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> ) l� 1000 kJ mol </font></font><sup><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">-1</font></font></sup><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> nm </font></font><sup><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">-2</font></font></sup><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> .</font></font></p>
+<p>Nước cũng có thể được ràng buộc vị trí (position restraints):</p>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">C�c th�ng s&#7889; ion &#273;&#432;&#7907;c bao g&#7891;m ti&#7871;p theo:</font></font></p>
-
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">; Bao g&#7891;m c&#7845;u tr�c chung cho c�c ion</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-#include "charmm36.ff/ions.itp"</font></font><font></font>
+<div class="code">
+<pre>
+#ifdef POSRES_WATER
+[ position_restraints ]
+;  i funct   fcx   fcy   fcz
+   1    1   1000  1000  1000
+#endif
 </pre>
+</div>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Cu&#7889;i c�ng l� c�c &#273;&#7883;nh ngh&#297;a &#7903; c&#7845;p &#273;&#7897; h&#7879; th&#7889;ng. </font></font><code>[ system ]</code><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ch&#7881; th&#7883; n�y cung c&#7845;p t�n c&#7911;a h&#7879; th&#7889;ng s&#7869; &#273;&#432;&#7907;c ghi v�o c�c t&#7879;p &#273;&#7847;u ra trong qu� tr�nh m� ph&#7887;ng. </font></font><code>[ molecules ]</code><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ch&#7881; th&#7883; n�y li&#7879;t k� t&#7845;t c&#7843; c�c ph�n t&#7917; trong h&#7879; th&#7889;ng.</font></font></p>
+<h3>Ion</h3>
 
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">[ h&#7879; th&#7889;ng ]</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-; T�n</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-LYSOZYM</font></font><font></font>
-<font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-[ ph�n t&#7917; ]</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-; H&#7907;p ch&#7845;t #mol</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-Chu&#7895;i protein A 1</font></font><font></font>
+<p>Sau nước là tham số cho các ion:</p>
+
+<div class="code">
+<pre>
+; Include generic topology for ions
+#include "charmm36.ff/ions.itp"
 </pre>
+</div>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">M&#7897;t s&#7889; l&#432;u � ch�nh v&#7873; </font></font><code>[ molecules ]</code><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">ch&#7881; th&#7883;:</font></font></p>
+<h3>Định nghĩa hệ thống</h3>
 
-<ol>
- <li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Th&#7913; t&#7921; c&#7911;a c�c ph�n t&#7917; &#273;&#432;&#7907;c li&#7879;t k� ph&#7843;i kh&#7899;p </font></font><b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">ch�nh x�c</font></font></b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> v&#7899;i th&#7913; t&#7921; c&#7911;a c�c ph�n t&#7917; trong t&#7879;p t&#7885;a &#273;&#7897; (trong tr&#432;&#7901;ng h&#7907;p n�y l� .gro).</font></font></li>
- <li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">T�n &#273;&#432;&#7907;c li&#7879;t k� ph&#7843;i tr�ng v&#7899;i </font></font><code>[ moleculetype ]</code><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">t�n c&#7911;a t&#7915;ng lo�i, kh�ng tr�ng v&#7899;i t�n ch&#7845;t c�n s�t l&#7841;i hay b&#7845;t k&#7923; t�n n�o kh�c.</font></font></li>
-</ol>
+<p>Phần cuối cùng của topology định nghĩa hệ thống:</p>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">N&#7871;u b&#7841;n kh�ng &#273;�p &#7913;ng &#273;&#432;&#7907;c c�c y�u c&#7847;u c&#7909; th&#7875; n�y b&#7845;t c&#7913; l�c n�o, b&#7841;n s&#7869; g&#7863;p ph&#7843;i l&#7895;i nghi�m tr&#7885;ng t&#7915; grompp (s&#7869; th&#7843;o lu&#7853;n sau) v&#7873; t�n kh�ng kh&#7899;p, kh�ng t�m th&#7845;y ph�n t&#7917; ho&#7863;c m&#7897;t s&#7889; l&#7895;i kh�c.</font></font></p>
+<div class="code">
+<pre>
+[ system ]
+; Name
+LYSOZYME
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B�y gi&#7901; ch�ng ta &#273;� ki&#7875;m tra n&#7897;i dung c&#7911;a t&#7879;p c&#7845;u tr�c, ch�ng ta c� th&#7875; ti&#7871;p t&#7909;c x�y d&#7921;ng h&#7879; th&#7889;ng c&#7911;a m�nh.</font></font></p>
+[ molecules ]
+; Compound        #mols
+Protein_chain_A     1
+</pre>
+</div>
 
-<center>
-<table border="0" cellpadding="10">
-<tbody><tr>
- <td>
-	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Quay l&#7841;i: pdb2gmx</font></font></a></p>
- </td>
-
- <td>
-	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/03_solvate.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ti&#7871;p theo: Gi&#7843;i quy&#7871;t</font></font></a></p>
- </td>
-</tr></tbody></table>
-</center>
-
- </td>
-</tr>
-</tbody></table>
-
-<a href="http://www.thelemkullab.com/" target="_blank"><img src="./3_files/LLLogo1_transparent.png" height="150"></a>
-
-<br>
-
-<p><font size="-2"><i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7843;n quy&#7873;n thi&#7871;t k&#7871; v� n&#7897;i dung trang web thu&#7897;c v&#7873; Justin Lemkul. </font></font><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-C� v&#7845;n &#273;&#7873; g� v&#7899;i trang web? H�y g&#7917;i cho </font></font><a href="mailto:jalemkul@vt.edu?subject=GROMACS%20Tutorials%20site"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Qu&#7843;n tr&#7883; vi�n web.</font></font></a></i></font></p>
-</font></center><font size="3">
-</font>
-
-
-<div id="goog-gt-tt" class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style="border-radius: 12px; margin: 0 0 0 -23px; padding: 0; font-family: &#39;Google Sans&#39;, Arial, sans-serif;" data-id=""><div id="goog-gt-vt" class="VIpgJd-yAWNEb-hvhgNd"><div class="VIpgJd-yAWNEb-hvhgNd-Ud7fr"><img src="./3_files/24px.svg" width="24" height="24" alt=""><div class=" VIpgJd-yAWNEb-hvhgNd-IuizWc-i3jM8c " dir="ltr">Original text</div></div><div class="VIpgJd-yAWNEb-hvhgNd-k77Iif"><div id="goog-gt-original-text" class="VIpgJd-yAWNEb-nVMfcd-fmcmS VIpgJd-yAWNEb-hvhgNd-axAV1"></div></div><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid ltr"><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid-B7I4Od ltr" dir="ltr"><div class="VIpgJd-yAWNEb-hvhgNd-UTujCb">Rate this translation</div><div class="VIpgJd-yAWNEb-hvhgNd-eO9mKe">Your feedback will be used to help improve Google Translate</div></div><div class="VIpgJd-yAWNEb-hvhgNd-xgov5 ltr"><button id="goog-gt-thumbUpButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Good translation" aria-label="Good translation" aria-pressed="false"><span id="goog-gt-thumbUpIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7H2v13h16c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM7 18H4V9h3v9zm14-7l-3 7H9V8l4.34-4.34L12 9h9v2z"></path></svg></span><span id="goog-gt-thumbUpIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7v13h11c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM5 7H1v13h4V7z"></path></svg></span></button><button id="goog-gt-thumbDownButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Poor translation" aria-label="Poor translation" aria-pressed="false"><span id="goog-gt-thumbDownIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7h5V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zM17 6h3v9h-3V6zM3 13l3-7h9v10l-4.34 4.34L12 15H3v-2z"></path></svg></span><span id="goog-gt-thumbDownIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zm16 0h4V4h-4v13z"></path></svg></span></button></div></div><div id="goog-gt-votingHiddenPane" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><form id="goog-gt-votingForm" action="http://translate.googleapis.com/translate_voting?client=te_lib" method="post" target="votingFrame" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><input type="text" name="sl" id="goog-gt-votingInputSrcLang"><input type="text" name="tl" id="goog-gt-votingInputTrgLang"><input type="text" name="query" id="goog-gt-votingInputSrcText"><input type="text" name="gtrans" id="goog-gt-votingInputTrgText"><input type="text" name="vote" id="goog-gt-votingInputVote"></form><iframe name="votingFrame" frameborder="0" src="./3_files/saved_resource.html"></iframe></div></div></div><a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a></body></html>
+<ul>
+  <li>Thứ tự các phân tử ở đây phải <b>trùng khớp</b> với thứ tự trong file tọa độ (.gro).</li>
+  <li>Tên phân tử phải đúng với tên trong <code>[ moleculetype ]</code>.</li>
+  <li>Nếu sai tên hoặc số lượng, lệnh <code>grompp</code> sẽ báo lỗi nghiêm trọng.</li>
+</ul>
