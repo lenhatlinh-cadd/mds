@@ -73,7 +73,7 @@ aside{
 }
 
 /* Khối code */
-.code {
+.code, .code-copy, .code-view {
   position: relative;
   font-family: ui-monospace,Menlo,monospace;
   background:#0f172a;
@@ -83,6 +83,7 @@ aside{
   font-size:0.95rem;
   overflow:auto;
 }
+
 
 /* Nút copy */
 .copy-btn {
@@ -153,6 +154,7 @@ footer{
   text-align:center;
   font-size:0.9rem;
 }
+
 
 
 
