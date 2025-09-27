@@ -75,13 +75,19 @@ aside{
 /* Khối code */
 .code, .code-copy, .code-view {
   position: relative;
-  font-family: ui-monospace,Menlo,monospace;
-  background:#0f172a;
-  color:#f8fafc;
-  padding:10px;
-  border-radius:8px;
-  font-size:0.95rem;
-  overflow:auto;
+  font-family: ui-monospace, Menlo, monospace;
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+
+  /* Giới hạn chiều ngang và hiển thị thanh trượt */
+  max-width: 100%;
+  overflow-x: auto;   /* bật thanh trượt ngang khi cần */
+  overflow-y: hidden; /* ẩn thanh dọc nếu muốn */
+  white-space: pre;   /* giữ định dạng text/spacing */
+  box-sizing: border-box;
 }
 
 
@@ -154,6 +160,7 @@ footer{
   text-align:center;
   font-size:0.9rem;
 }
+
 
 
 
