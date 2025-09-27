@@ -1,129 +1,73 @@
+<h2>Step 9: Phân tích nâng cao – Độ gọn (Rg), cấu trúc bậc hai & liên kết hydro</h2>
 
-<!-- saved from url=(0057)http://www.mdtutorials.com/gmx/lysozyme/10_analysis2.html -->
-<html class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title>Lysozyme trong n&#432;&#7899;c</title>
-<meta name="title" content="GROMACS Tutorial">
+<h3>Độ gọn của protein (Radius of Gyration – Rg)</h3>
+<p><b>Radius of gyration (Rg)</b> cho biết mức độ “gọn” của protein. 
+Nếu protein ổn định ở trạng thái gấp nếp, giá trị Rg sẽ dao động quanh một giá trị cố định. 
+Nếu protein bị duỗi ra hoặc sụp đổ, Rg sẽ thay đổi theo thời gian.</p>
 
-<!-- Google tag (gtag.js) -->
-<script async="" src="./12_files/js"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-EBVNCYQWWG');
-</script>
-<link href="./12_files/style.css" rel="stylesheet" type="text/css">
-<link type="text/css" rel="stylesheet" charset="UTF-8" href="./12_files/m=el_main_css"></head>
-<body>
-<br>
-<center><h2><font size="+3">GROMACS Tutorial</font></h2>
-<p><font size="+1"><b>Step Nine: Analysis</b></font></p>
-
-<img src="./12_files/Steps_analysis_highlight.jpg" width="679" height="32" usemap="#navmap">
-
-<map name="navmap">
-    <area shape="rect" coords="0,0,96,32" alt="pdb2gmx" href="http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html">
-    <area shape="rect" coords="96,0,192,32" alt="solv" href="http://www.mdtutorials.com/gmx/lysozyme/03_solvate.html">
-    <area shape="rect" coords="192,0,288,32" alt="ions" href="http://www.mdtutorials.com/gmx/lysozyme/04_ions.html">
-    <area shape="rect" coords="288,0,380,32" alt="minim" href="http://www.mdtutorials.com/gmx/lysozyme/05_EM.html">
-    <area shape="rect" coords="380,0,472,32" alt="equil" href="http://www.mdtutorials.com/gmx/lysozyme/06_equil.html">
-    <area shape="rect" coords="472,0,564,32" alt="md" href="http://www.mdtutorials.com/gmx/lysozyme/08_MD.html">
-    <area shape="rect" coords="564,0,679,32" alt="analysis" href="http://www.mdtutorials.com/gmx/lysozyme/09_analysis.html">
-</map>
-
-<font size="3">
-
-<table width="900" border="0" cellpadding="20">
-<tbody><tr>
- <td>
-
-
-<h3>Analyzing Compactness: <i>R<sub>g</sub></i></h3>
-
-<p>The radius of gyration of a protein is a measure of its compactness.  If a protein is stably folded, it will likely maintain a relatively steady value of <i>R<sub>g</sub></i>.  If a protein unfolds, its <i>R<sub>g</sub></i> will change over time.  Let's analyze the radius of gyration for lysozyme in our simulation:</p>
-
-<pre>gmx gyrate -s md_0_10.tpr -f md_0_10_noPBC.xtc -o gyrate.xvg -sel Protein -tu ns
+<div class="code-block">
+<pre>
+gmx gyrate -s md_0_10.tpr -f md_0_10_noPBC.xtc -o gyrate.xvg -sel Protein -tu ns
 </pre>
+</div>
 
-<center>
-<img src="./12_files/plot_lyso_md_rg.png" width="500">
-</center>
+<p>Trong ví dụ với lysozyme, giá trị Rg ổn định quanh <b>1.409 ± 0.008 nm</b>, cho thấy protein duy trì trạng thái gấp nếp trong suốt 10 ns ở 298 K. 
+Kết quả này là hợp lý và minh họa cho khả năng phân tích nâng cao có sẵn trong GROMACS. 
+Tương tự RMSD, dữ liệu có thể được làm mượt bằng cửa sổ trượt 500 ps trong XmGrace.</p>
 
-<p>We can see from the reasonably invariant <i>R<sub>g</sub></i> values (1.409 � 0.008 nm) that the protein does not undergo any substantial elongation or compaction relative to its starting structure. Thus, it remains in its compact (folded) form over the course of 10 ns at 298 K.  This result is not unexpected, but illustrates an advanced capacity of GROMACS analysis that comes built-in. As with the RMSD plot on the previous page, the data have been smoothed over 500-ps running windows in XmGrace.</p>
+<h3>Cấu trúc bậc hai (Secondary Structure)</h3>
+<p>Cấu trúc bậc hai của protein (α-helix, β-sheet, coil, …) phản ánh sự bền vững của cấu trúc trong quá trình mô phỏng. 
+GROMACS tích hợp thuật toán <b>DSSP (Dictionary of Secondary Structure of Proteins)</b> thông qua lệnh <code>gmx dssp</code> để phân tích:</p>
 
-<!--// MORE - DSSP, H-Bonds, etc. //-->
-
-<h3>Secondary Structure</h3>
-
-<p>Protein structure is often assessed in terms of secondary structure, that is, the persistence of &#945;-helices, &#946;-sheets, etc. The GROMACS program gmx dssp invokes the Dictionary of Secondary Structure of Proteins (DSSP) algorithm to assign secondary structure to each residue in the protein. To run this analysis, execute the following command:</p>
-
-<pre>gmx dssp -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -o dssp.dat -num dssp_num.xvg
+<div class="code-block">
+<pre>
+gmx dssp -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -o dssp.dat -num dssp_num.xvg
 </pre>
+</div>
 
-<p>After making some adjustments to labeling (there are misformatted characters in the output of version 2025.2) and reordering the data series, one can obtain a plot similar to the following in XmGrace from dssp_num.xvg. The solid lines again correspond to a 500-ps (50-frame) running average to smooth fluctuations.</p>
+<p>Kết quả đầu ra có thể cần chỉnh lại nhãn (label) và sắp xếp dữ liệu. 
+Sau khi xử lý, bạn sẽ thu được biểu đồ thể hiện sự thay đổi tỉ lệ các loại cấu trúc bậc hai theo thời gian. 
+Để quan sát rõ hơn, dữ liệu có thể được làm mượt với trung bình trượt 500 ps.</p>
 
-<center>
-<img src="./12_files/plot_lyso_md_dssp.png" width="600">
-</center>
+<h3>Liên kết hydro (Hydrogen Bonds)</h3>
+<p>Liên kết hydro trong GROMACS được xác định dựa trên 2 tiêu chí:</p>
+<ul>
+  <li>Khoảng cách donor–H ≤ 0.35 nm (có thể chỉnh với <code>-hbr</code>)</li>
+  <li>Góc donor–acceptor–H ≤ 30° (tương ứng góc H–donor–acceptor trong khoảng 150°–180°)</li>
+</ul>
+<p>Công cụ sử dụng là <code>gmx hbond</code>. Khi chạy, chương trình sẽ yêu cầu chọn 2 nhóm để kiểm tra. 
+Các nhóm này phải hoặc giống hệt nhau, hoặc hoàn toàn tách biệt (không có nguyên tử chung).</p>
 
-<h3>Hydrogen Bonds</h3>
-
-<p>GROMACS uses two criteria to determine if a hydrogen bond exists between two groups: (1) the donor-H distance (defaults to 0.35 nm or less, can be tuned with -hbr) and (2) the donor-acceptor-H angle (defaults to 30�, can be tuned with -hba). Note the order of atoms in the angle criterion; GROMACS does not use the donor-H-acceptor angle as is employed in other software. Hydrogen bonds are highly directional and are strongest when linear, so the use of donor-acceptor-H &#8804; 30� means that donor-H-acceptor angles will range from 150� - 180�.</p>
-
-<p>The user is prompted for two selections when computing hydrogen bonds. These groups must be either identical or completely distinct (no shared atoms). Several examples are illustrated below. The first is the number of hydrogen bonds within the backbone of the protein.</p>
-
-<pre>gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_mainchain.xvg
+<p><b>(a) Liên kết hydro trong khung chính (main chain)</b></p>
+<div class="code-block">
+<pre>
+gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_mainchain.xvg
 </pre>
+</div>
+<p>Chọn nhóm <b>MainChain+H</b> (7) cho cả hai lựa chọn. 
+Lưu ý: nhóm “Backbone” trong GROMACS chỉ có N, Cα, C → không dùng được cho phân tích H-bond.</p>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ch&#7885;n nh�m "MainChain+H" (7) cho c&#7843; hai l&#7921;a ch&#7885;n khi &#273;&#432;&#7907;c nh&#7855;c. Trong GROMACS, nh�m "MainChain" ch&#7913;a c�c nguy�n t&#7917; N, C&#945;, C v� O. "MainChain+H" bao g&#7891;m b&#7889;n nguy�n t&#7917; &#273;�, c&#7897;ng v&#7899;i nguy�n t&#7917; H c&#7911;a amide, c&#7847;n thi&#7871;t cho vi&#7879;c x�c &#273;&#7883;nh li�n k&#7871;t hydro. Trong quy &#432;&#7899;c GROMACS, "Backbone" ch&#7881; ch&#7913;a c�c nguy�n t&#7917; N, C&#945; v� C; kh�ng th&#7875; t�nh to�n li�n k&#7871;t hydro t&#7915; nh�m n�y, m&#7863;c d� c� thu&#7853;t ng&#7919; chuy�n ng�nh l� "li�n k&#7871;t hydro x&#432;&#417;ng s&#7889;ng".</font></font></p>
+<p><b>(b) Liên kết hydro giữa các mạch bên (side chain)</b></p>
+<div class="code-block">
+<pre>
+gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_sidechain.xvg
+</pre>
+</div>
+<p>Chọn nhóm <b>SideChain</b> (8) cho cả hai lựa chọn.</p>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ti&#7871;p theo, t�nh to�n c�c li�n k&#7871;t hydro &#273;&#432;&#7907;c h�nh th�nh gi&#7919;a c�c nguy�n t&#7917; chu&#7895;i b�n:</font></font></p> 
+<p><b>(c) Liên kết hydro giữa protein và nước</b></p>
+<div class="code-block">
+<pre>
+gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_prot_wat.xvg
+</pre>
+</div>
+<p>Chọn <b>Protein</b> (1) và <b>Water (12)</b> hoặc <b>SOL (13)</b> (hai nhóm này tương đương).</p>
 
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_sidechain.xvg
-</font></font></pre>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ch&#7885;n nh�m "SideChain" (8) cho c&#7843; hai l&#7921;a ch&#7885;n.</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Cu&#7889;i c�ng, ch�ng ta s&#7869; t�nh to�n li�n k&#7871;t hydro gi&#7919;a protein v� n&#432;&#7899;c:</font></font></p>
-
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_prot_wat.xvg
-</font></font></pre>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ch&#7885;n "Protein" (1) v� "Water" (12) ho&#7863;c "SOL" (13) v� hai nh�m n�y ("Water" v� "SOL" l� t&#432;&#417;ng &#273;&#432;&#417;ng).</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Khi bi&#7875;u di&#7877;n k&#7871;t qu&#7843;, ch�ng ta s&#7869; th&#7845;y k&#7871;t qu&#7843; t&#432;&#417;ng t&#7921; nh&#432; h�nh d&#432;&#7899;i &#273;�y:</font></font></p>
-
-<center>
-<img src="./12_files/plot_lyso_md_hbonds.png" width="600">
-</center>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Trong m&#7895;i tr&#432;&#7901;ng h&#7907;p, s&#7889; l&#432;&#7907;ng li�n k&#7871;t hydro t&#432;&#417;ng &#273;&#7889;i &#7893;n &#273;&#7883;nh theo th&#7901;i gian, &#273;i&#7873;u n�y ho�n to�n c� th&#7875; d&#7921; &#273;o�n &#273;&#432;&#7907;c trong tr&#432;&#7901;ng h&#7907;p m� ph&#7887;ng ng&#7855;n nh&#432; th&#7871; n�y. Lysozyme t&#7841;o ra m&#7897;t s&#7889; l&#432;&#7907;ng l&#7899;n li�n k&#7871;t hydro v&#7899;i n&#432;&#7899;c, kho&#7843;ng 55 li�n k&#7871;t trong "x&#432;&#417;ng s&#7889;ng" (MainChain+H), v� �t h&#417;n (~20) li�n k&#7871;t gi&#7919;a c�c nguy�n t&#7917; chu&#7895;i b�n.</font></font></p>
-
-<center>
-<table border="0" cellpadding="10">
-<tbody><tr>
- <td>
-	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/09_analysis.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Quay l&#7841;i: Ph�n t�ch</font></font></a></p>
- </td>
-
- <td>
-	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/11_summary.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ti&#7871;p theo: T�m t&#7855;t</font></font></a></p>
- </td>
-</tr></tbody></table>
-</center>
-
- </td>
-</tr>
-</tbody></table>
-
-<a href="http://www.thelemkullab.com/" target="_blank"><img src="./12_files/LLLogo1_transparent.png" height="150"></a>
-
-<br>
-
-<p><font size="-1"><i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7843;n quy&#7873;n thi&#7871;t k&#7871; v� n&#7897;i dung trang web thu&#7897;c v&#7873; Justin Lemkul. </font></font><br><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-C� v&#7845;n &#273;&#7873; g� v&#7899;i trang web? H�y g&#7917;i cho </font></font><a href="mailto:jalemkul@vt.edu?subject=GROMACS%20Tutorials%20site"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Qu&#7843;n tr&#7883; vi�n web.</font></font></a></i></font></p>
-</font></center><font size="3">
-</font>
-
-
-<div id="goog-gt-tt" class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style="border-radius: 12px; margin: 0 0 0 -23px; padding: 0; font-family: &#39;Google Sans&#39;, Arial, sans-serif;" data-id=""><div id="goog-gt-vt" class="VIpgJd-yAWNEb-hvhgNd"><div class="VIpgJd-yAWNEb-hvhgNd-Ud7fr"><img src="./12_files/24px.svg" width="24" height="24" alt=""><div class=" VIpgJd-yAWNEb-hvhgNd-IuizWc-i3jM8c " dir="ltr">Original text</div></div><div class="VIpgJd-yAWNEb-hvhgNd-k77Iif"><div id="goog-gt-original-text" class="VIpgJd-yAWNEb-nVMfcd-fmcmS VIpgJd-yAWNEb-hvhgNd-axAV1"></div></div><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid ltr"><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid-B7I4Od ltr" dir="ltr"><div class="VIpgJd-yAWNEb-hvhgNd-UTujCb">Rate this translation</div><div class="VIpgJd-yAWNEb-hvhgNd-eO9mKe">Your feedback will be used to help improve Google Translate</div></div><div class="VIpgJd-yAWNEb-hvhgNd-xgov5 ltr"><button id="goog-gt-thumbUpButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Good translation" aria-label="Good translation" aria-pressed="false"><span id="goog-gt-thumbUpIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7H2v13h16c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM7 18H4V9h3v9zm14-7l-3 7H9V8l4.34-4.34L12 9h9v2z"></path></svg></span><span id="goog-gt-thumbUpIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7v13h11c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM5 7H1v13h4V7z"></path></svg></span></button><button id="goog-gt-thumbDownButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Poor translation" aria-label="Poor translation" aria-pressed="false"><span id="goog-gt-thumbDownIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7h5V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zM17 6h3v9h-3V6zM3 13l3-7h9v10l-4.34 4.34L12 15H3v-2z"></path></svg></span><span id="goog-gt-thumbDownIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zm16 0h4V4h-4v13z"></path></svg></span></button></div></div><div id="goog-gt-votingHiddenPane" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><form id="goog-gt-votingForm" action="http://translate.googleapis.com/translate_voting?client=te_lib" method="post" target="votingFrame" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><input type="text" name="sl" id="goog-gt-votingInputSrcLang"><input type="text" name="tl" id="goog-gt-votingInputTrgLang"><input type="text" name="query" id="goog-gt-votingInputSrcText"><input type="text" name="gtrans" id="goog-gt-votingInputTrgText"><input type="text" name="vote" id="goog-gt-votingInputVote"></form><iframe name="votingFrame" frameborder="0" src="./12_files/saved_resource.html"></iframe></div></div></div><a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a></body></html>
+<h3>Đọc kết quả</h3>
+<p>Khi vẽ biểu đồ, bạn sẽ thấy:</p>
+<ul>
+  <li>Số lượng H-bond trong khung chính (MainChain+H) khá ổn định, khoảng 55 liên kết.</li>
+  <li>Mạch bên (SideChain) ít hơn, khoảng ~20 liên kết.</li>
+  <li>Protein hình thành nhiều H-bond với phân tử nước, phản ánh sự hòa tan tốt.</li>
+</ul>
+<p>Tất cả kết quả đều ổn định theo thời gian, điều này phù hợp với một mô phỏng ngắn (10 ns).</p>
