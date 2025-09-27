@@ -46,11 +46,30 @@ function loadStep(step) {
       const nav = document.createElement('div');
       nav.className = "step-nav";
 
+      // if (step > 0) {
+      //   const prevBtn = document.createElement('button');
+      //   prevBtn.textContent = "← Previous";
+      //   prevBtn.className = "nav-btn";
+      //   prevBtn.addEventListener('click', () => loadStep(step - 1));
+      //   nav.appendChild(prevBtn);
+      // }
+
+      // if (step < stepButtons.length) {
+      //   const nextBtn = document.createElement('button');
+      //   nextBtn.textContent = "Next →";
+      //   nextBtn.className = "nav-btn";
+      //   nextBtn.addEventListener('click', () => loadStep(step + 1));
+      //   nav.appendChild(nextBtn);
+      // }
+
       if (step > 0) {
         const prevBtn = document.createElement('button');
         prevBtn.textContent = "← Previous";
         prevBtn.className = "nav-btn";
-        prevBtn.addEventListener('click', () => loadStep(step - 1));
+        prevBtn.addEventListener('click', () => {
+          loadStep(step - 1);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
         nav.appendChild(prevBtn);
       }
 
@@ -58,10 +77,12 @@ function loadStep(step) {
         const nextBtn = document.createElement('button');
         nextBtn.textContent = "Next →";
         nextBtn.className = "nav-btn";
-        nextBtn.addEventListener('click', () => loadStep(step + 1));
+        nextBtn.addEventListener('click', () => {
+          loadStep(step + 1);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
         nav.appendChild(nextBtn);
       }
-
       content.appendChild(nav);
 
       // Thêm nút Copy cho code block
@@ -83,6 +104,7 @@ stepButtons.forEach(btn => {
 
 // Mặc định load Step 1
 loadStep(0);
+
 
 
 
