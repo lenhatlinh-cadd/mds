@@ -1,111 +1,45 @@
+<h2>Step 6: Cân bằng NPT</h2>
 
-<!-- saved from url=(0054)http://www.mdtutorials.com/gmx/lysozyme/07_equil2.html -->
-<html class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title>Lysozyme trong n&#432;&#7899;c</title>
-<meta name="title" content="GROMACS Tutorial">
+<p>Trong bước trước (NVT), hệ thống đã ổn định về <b>nhiệt độ</b>. Tuy nhiên, trước khi thu thập dữ liệu, chúng ta cũng cần ổn định <b>áp suất</b> (và do đó cả <b>mật độ</b> của hệ). Quá trình này được gọi là cân bằng trong tập hợp <b>NPT</b>, nơi số hạt (N), áp suất (P) và nhiệt độ (T) được giữ không đổi. Tập hợp này còn gọi là <i>đẳng nhiệt - đẳng áp</i> và gần giống nhất với điều kiện thí nghiệm thực tế.</p>
 
-<!-- Google tag (gtag.js) -->
-<script async="" src="./8_files/js"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<p>Tập tin <code>.mdp</code> dùng cho quá trình cân bằng NPT 500 ps có thể tải tại đây. Nó không khác nhiều so với tập tin tham số của bước NVT, chỉ khác ở chỗ bước này thường cần thời gian dài hơn, vì áp suất mất nhiều thời gian để ổn định hơn nhiệt độ. Trong phần tham số có bổ sung thêm <b>pressure coupling</b> bằng <i>C-rescale barostat</i>.</p>
 
-  gtag('config', 'G-EBVNCYQWWG');
-</script>
-<link href="./8_files/style.css" rel="stylesheet" type="text/css">
-<link type="text/css" rel="stylesheet" charset="UTF-8" href="./8_files/m=el_main_css"></head>
-<body>
-<br>
-<center><h2><font size="+3">GROMACS Tutorial</font></h2>
-<p><font size="+1"><b>Step Seven: Equilibration, Part 2</b></font></p>
-
-<img src="./8_files/Steps_equil_highlight.jpg" width="679" height="32" usemap="#navmap">
-
-<map name="navmap">
-    <area shape="rect" coords="0,0,96,32" alt="pdb2gmx" href="http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html">
-    <area shape="rect" coords="96,0,192,32" alt="solv" href="http://www.mdtutorials.com/gmx/lysozyme/03_solvate.html">
-    <area shape="rect" coords="192,0,288,32" alt="ions" href="http://www.mdtutorials.com/gmx/lysozyme/04_ions.html">
-    <area shape="rect" coords="288,0,380,32" alt="minim" href="http://www.mdtutorials.com/gmx/lysozyme/05_EM.html">
-    <area shape="rect" coords="380,0,472,32" alt="equil" href="http://www.mdtutorials.com/gmx/lysozyme/06_equil.html">
-    <area shape="rect" coords="472,0,564,32" alt="md" href="http://www.mdtutorials.com/gmx/lysozyme/08_MD.html">
-    <area shape="rect" coords="564,0,679,32" alt="analysis" href="http://www.mdtutorials.com/gmx/lysozyme/09_analysis.html">
-</map>
-
-<font size="3">
-
-<table width="900" border="0" cellpadding="20">
-<tbody><tr>
- <td>
-
-<p>The previous step, <i>NVT</i> equilibration, stabilized the temperature of the system.  Prior to data collection, we must also stabilize the pressure (and thus also the density) of the system.  Equilibration of pressure is conducted under an <i>NPT</i> ensemble, wherein the Number of particles, Pressure, and Temperature are all constant.  The ensemble is also called the "isothermal-isobaric" ensemble, and most closely resembles experimental conditions.</p>
-
-<p>The .mdp file used for a 500-ps <i>NPT</i> equilibration can be found <a href="http://www.mdtutorials.com/gmx/lysozyme/Files/npt.mdp">here</a>.  It is not drastically different from the parameter file used for <i>NVT</i> equilibration, though this phase of equilibration usually takes somewhat longer than <i>NVT</i> equilibration because pressure takes a little longer to relax than temperature.  Note the addition of the pressure coupling section, using the C-rescale barostat.</p>
-
-<p>A few other changes:</p>
-
+<p>Một vài thay đổi quan trọng:</p>
 <ul>
- <li>continuation = yes: We are continuing the simulation from the <i>NVT</i> equilibration phase
- </li><li>gen_vel = no: Velocities are read from the trajectory (see below)
-</li></ul>
+  <li><code>continuation = yes</code>: Tiếp tục mô phỏng từ bước NVT.</li>
+  <li><code>gen_vel = no</code>: Vận tốc được lấy từ kết quả của NVT trước đó.</li>
+</ul>
 
-<p>We will call grompp and mdrun just as we did for <i>NVT</i> equilibration.  Note that we are now including the -t flag to include the checkpoint file from the <i>NVT</i> equilibration; this file contains all the necessary state variables to continue our simulation.  To conserve the velocities produced during <i>NVT</i>, we must include this file.  The coordinate file (-c) is the final output of the <i>NVT</i> simulation.</p>
+<p>Chúng ta sẽ gọi <code>grompp</code> và <code>mdrun</code> giống như ở bước NVT. Lưu ý thêm cờ <code>-t</code> để đưa vào file checkpoint từ NVT (<code>nvt.cpt</code>), nhằm giữ lại vận tốc đã sinh ra ở bước trước. File tọa độ (<code>-c</code>) cũng chính là kết quả cuối cùng của NVT:</p>
 
-<pre>gmx grompp -f inputs/npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr<font></font>
-<font></font>
-gmx mdrun -deffnm npt<font></font>
+<div class="code-block">
+<pre>
+gmx grompp -f inputs/npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
+
+gmx mdrun -deffnm npt
 </pre>
+</div>
 
-<p>Let's analyze the pressure progression, again using energy:</p>
+<h3>Phân tích áp suất</h3>
+<p>Sử dụng lệnh <code>gmx energy</code> để xem sự thay đổi áp suất theo thời gian:</p>
 
-<pre>gmx energy -f npt.edr -o pressure.xvg
+<div class="code-block">
+<pre>
+gmx energy -f npt.edr -o pressure.xvg
 </pre>
+</div>
 
-<p>Type "17 0" at the prompt to select the pressure of the system and exit.  The resulting plot should look something like the following:</p>
+<p>Nhập <code>17 0</code> tại dấu nhắc để chọn áp suất. Kết quả thường cho thấy áp suất dao động khá mạnh trong khoảng 100 ps, điều này là bình thường. Giá trị trung bình của hệ ở đây là <b>-3 ± 11 bar</b>, so với áp suất tham chiếu là 1 bar. Vì áp suất dao động nhiều trong mô phỏng MD, nên về mặt thống kê, kết quả này vẫn phù hợp.</p>
 
-<center>
-<img src="./8_files/plot_lyso_npt_pressure.png" width="500">
-</center>
+<h3>Phân tích mật độ</h3>
+<p>Tiếp theo, ta phân tích mật độ bằng lệnh:</p>
 
-<p>The pressure value fluctuates widely over the course of the 100-ps equilibration phase, but this behavior is not unexpected.  The running average of these data are plotted as the red line in the plot.  Over the course of the equilibration, the average value of the pressure is -3 � 11 bar. Note that the reference pressure was set to 1 bar, so is this outcome acceptable? Pressure is a quantity that fluctuates widely over the course of an MD simulation, as is clear from the error bar (11 bar), so statistically speaking, one cannot distinguish a difference between the obtained average (-3 � 11 bar) and the target/reference value (1 bar).</p>
-
-<p>Let's take a look at density as well, this time using energy and entering "23 0" at the prompt.</p>
-
-<pre>gmx energy -f npt.edr -o density.xvg
+<div class="code-block">
+<pre>
+gmx energy -f npt.edr -o density.xvg
 </pre>
+</div>
 
-<center>
-<img src="./8_files/plot_lyso_npt_density.png" width="500">
-</center>
+<p>Nhập <code>23 0</code> để chọn mật độ. Kết quả trung bình trong 500 ps là <b>1025,3 ± 0,5 kg/m³</b>, cao hơn so với giá trị thực nghiệm (1000 kg/m³) và so với mật độ dự đoán của mô hình TIP3P (986 kg/m³). Điều này hợp lý, bởi vì hệ của chúng ta không chỉ chứa nước tinh khiết, mà còn có protein và ion, nên không thể khớp hoàn toàn. Quan trọng là mật độ đã ổn định trong suốt quá trình cân bằng.</p>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">T&#432;&#417;ng t&#7921; nh&#432; �p su&#7845;t, gi� tr&#7883; trung b�nh &#273;&#7897;ng c&#7911;a m&#7853;t &#273;&#7897; c&#361;ng &#273;&#432;&#7907;c bi&#7875;u th&#7883; b&#7857;ng m�u &#273;&#7887;. Gi� tr&#7883; trung b�nh trong qu� tr�nh 500 ps l� 1025,3 � 0,5 kg m </font></font><sup><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">-3</font></font></sup><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> , cao h&#417;n gi� tr&#7883; th&#7921;c nghi&#7879;m l� 1000 kg m </font></font><sup><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">-3</font></font></sup><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> v� m&#7853;t &#273;&#7897; d&#7921; ki&#7871;n &#8203;&#8203;c&#7911;a m� h�nh TIP3P l� 986 kg m </font></font><sup><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">-3</font></font></sup><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> . K&#7871;t qu&#7843; n�y c� h&#7907;p l� kh�ng? Ch�ng t�i kh�ng m� ph&#7887;ng n&#432;&#7899;c tinh khi&#7871;t; thay v�o &#273;�, c� m&#7897;t protein trong h&#7879; th&#7889;ng c&#7911;a ch�ng t�i v� m&#7897;t s&#7889; ion khu&#7871;ch t�n. Do &#273;�, ch�ng t�i kh�ng n�n mong &#273;&#7907;i m&#7897;t s&#7921; tr�ng kh&#7899;p ch�nh x�c, v� trong qu� tr�nh c�n b&#7857;ng, ch�ng t�i ch&#7881; c&#7847;n quan s�t xem m&#7853;t &#273;&#7897; &#273;� &#7893;n &#273;&#7883;nh ch&#432;a.</font></font></p> 
-
-<p><b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Xin l&#432;u �:</font></font></b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> T�i th&#432;&#7901;ng xuy�n nh&#7853;n &#273;&#432;&#7907;c c�u h&#7887;i v&#7873; l� do t&#7841;i sao c�c gi� tr&#7883; m&#7853;t &#273;&#7897; thu &#273;&#432;&#7907;c kh�ng kh&#7899;p v&#7899;i k&#7871;t qu&#7843; c&#7911;a t�i. C�c thu&#7853;t ng&#7919; li�n quan &#273;&#7871;n �p su&#7845;t h&#7897;i t&#7909; ch&#7853;m, v� c� nh&#7919;ng y&#7871;u t&#7889; ng&#7851;u nhi�n trong b&#7845;t k&#7923; m� ph&#7887;ng MD n�o. B&#7841;n g&#7847;n nh&#432; ch&#7855;c ch&#7855;n s&#7869; kh�ng t�i t&#7841;o ch�nh x�c k&#7871;t qu&#7843; n�y.</font></font></p> 
-
-<center>
-<table border="0" cellpadding="10">
-<tbody><tr>
- <td>
-	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/06_equil.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">M&#7863;t sau: C�n b&#7857;ng NVT</font></font></a></p>
- </td>
-
- <td>
-	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/08_MD.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ti&#7871;p theo: Gi�m &#273;&#7889;c s&#7843;n xu&#7845;t</font></font></a></p>
- </td>
-</tr></tbody></table>
-</center>
-
- </td>
-</tr>
-</tbody></table>
-
-<a href="http://www.thelemkullab.com/" target="_blank"><img src="./8_files/LLLogo1_transparent.png" height="150"></a>
-
-<br>
-
-<p><font size="-1"><i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7843;n quy&#7873;n thi&#7871;t k&#7871; v� n&#7897;i dung trang web thu&#7897;c v&#7873; Justin Lemkul. </font></font><br><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-C� v&#7845;n &#273;&#7873; g� v&#7899;i trang web? H�y g&#7917;i cho </font></font><a href="mailto:jalemkul@vt.edu?subject=GROMACS%20Tutorials%20site"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Qu&#7843;n tr&#7883; vi�n web.</font></font></a></i></font></p>
-</font></center><font size="3">
-</font>
-
-
-<div id="goog-gt-tt" class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style="border-radius: 12px; margin: 0 0 0 -23px; padding: 0; font-family: &#39;Google Sans&#39;, Arial, sans-serif;" data-id=""><div id="goog-gt-vt" class="VIpgJd-yAWNEb-hvhgNd"><div class="VIpgJd-yAWNEb-hvhgNd-Ud7fr"><img src="./8_files/24px.svg" width="24" height="24" alt=""><div class=" VIpgJd-yAWNEb-hvhgNd-IuizWc-i3jM8c " dir="ltr">Original text</div></div><div class="VIpgJd-yAWNEb-hvhgNd-k77Iif"><div id="goog-gt-original-text" class="VIpgJd-yAWNEb-nVMfcd-fmcmS VIpgJd-yAWNEb-hvhgNd-axAV1"></div></div><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid ltr"><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid-B7I4Od ltr" dir="ltr"><div class="VIpgJd-yAWNEb-hvhgNd-UTujCb">Rate this translation</div><div class="VIpgJd-yAWNEb-hvhgNd-eO9mKe">Your feedback will be used to help improve Google Translate</div></div><div class="VIpgJd-yAWNEb-hvhgNd-xgov5 ltr"><button id="goog-gt-thumbUpButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Good translation" aria-label="Good translation" aria-pressed="false"><span id="goog-gt-thumbUpIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7H2v13h16c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM7 18H4V9h3v9zm14-7l-3 7H9V8l4.34-4.34L12 9h9v2z"></path></svg></span><span id="goog-gt-thumbUpIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7v13h11c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM5 7H1v13h4V7z"></path></svg></span></button><button id="goog-gt-thumbDownButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Poor translation" aria-label="Poor translation" aria-pressed="false"><span id="goog-gt-thumbDownIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7h5V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zM17 6h3v9h-3V6zM3 13l3-7h9v10l-4.34 4.34L12 15H3v-2z"></path></svg></span><span id="goog-gt-thumbDownIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zm16 0h4V4h-4v13z"></path></svg></span></button></div></div><div id="goog-gt-votingHiddenPane" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><form id="goog-gt-votingForm" action="http://translate.googleapis.com/translate_voting?client=te_lib" method="post" target="votingFrame" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><input type="text" name="sl" id="goog-gt-votingInputSrcLang"><input type="text" name="tl" id="goog-gt-votingInputTrgLang"><input type="text" name="query" id="goog-gt-votingInputSrcText"><input type="text" name="gtrans" id="goog-gt-votingInputTrgText"><input type="text" name="vote" id="goog-gt-votingInputVote"></form><iframe name="votingFrame" frameborder="0" src="./8_files/saved_resource.html"></iframe></div></div></div><a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a></body></html>
+<p><i>Lưu ý:</i> Kết quả mật độ của bạn có thể khác so với ví dụ này. Các giá trị liên quan đến áp suất thường hội tụ chậm và mô phỏng MD luôn có tính ngẫu nhiên, vì vậy đừng lo lắng nếu không tái tạo được con số y hệt.</p>
