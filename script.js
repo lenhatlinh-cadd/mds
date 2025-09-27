@@ -59,15 +59,11 @@ function getInitialStep() {
 }
 
 // Hàm load nội dung step (không thay đổi history)
-function loadStep(stepArg) {
-  let stepIndex = parseInt(stepArg, 10);
-  if (Number.isNaN(stepIndex) || stepIndex < 0) stepIndex = 0;
+function loadStep(step) {
+  step = parseInt(step); // Đảm bảo step là số nguyên
 
-  fetch(`steps/step${stepIndex}.html`)
-    .then(res => {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.text();
-    })
+  fetch(`steps/step${step}.html`)
+    .then(res => res.text())
     .then(html => {
       content.innerHTML = html;
 
@@ -75,16 +71,43 @@ function loadStep(stepArg) {
       const nav = document.createElement('div');
       nav.className = "step-nav";
 
-      // Previous (nếu không phải step đầu)
-      if (stepIndex > 0) {
+      // Nút Previous (chỉ hiện nếu step > 0)
+      if (step > 0) {
         const prevBtn = document.createElement('button');
         prevBtn.textContent = "← Previous";
         prevBtn.className = "nav-btn";
-        prevBtn.addEventListener('click', () => {
-          goToStep(stepIndex - 1, true);
-        });
+        prevBtn.addEventListener('click', () => loadStep(step - 1));
         nav.appendChild(prevBtn);
       }
+
+      // Nút Next (chỉ hiện nếu chưa phải step cuối)
+      if (step < stepButtons.length - 1) {
+        const nextBtn = document.createElement('button');
+        nextBtn.textContent = "Next →";
+        nextBtn.className = "nav-btn";
+        nextBtn.addEventListener('click', () => loadStep(step + 1));
+        nav.appendChild(nextBtn);
+      }
+
+      content.appendChild(nav);
+
+      // Thêm nút Copy cho code block
+      enhanceCodeBlocks();
+
+      // Cuộn lên đầu trang
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    })
+    .catch(err => {
+      console.error(err);
+      content.innerHTML = `<h2>Step ${step}</h2><p style="color:red">Không tải được nội dung.</p>`;
+    });
+
+  // Active TOC
+  stepButtons.forEach(b => b.classList.remove('active'));
+  const activeBtn = document.querySelector(`.toc button[data-step="${step}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+}
+
 
       // Next (nếu chưa phải step cuối)
       if (stepIndex < stepButtons.length - 1) {
@@ -158,3 +181,4 @@ window.addEventListener('popstate', (ev) => {
 
 // Mặc định load step khởi tạo (từ hash/query nếu có) — không push history
 goToStep(getInitialStep(), false);
+
