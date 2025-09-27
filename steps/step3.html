@@ -1,100 +1,76 @@
+<h2>Xây dựng hệ thống với hộp và dung môi</h2>
 
-<!-- saved from url=(0055)http://www.mdtutorials.com/gmx/lysozyme/03_solvate.html -->
-<html class="translated-ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title>Lysozyme trong n&#432;&#7899;c</title>
-<meta name="title" content="GROMACS Tutorial">
+<p>Sau khi đã quen với nội dung của file topology trong GROMACS, chúng ta sẽ tiếp tục xây dựng hệ thống.  
+Trong ví dụ này, ta sẽ mô phỏng một hệ protein đơn giản trong nước.  
+Thực tế, bạn có thể mô phỏng protein trong nhiều loại dung môi khác nhau, miễn là có sẵn tham số tốt cho tất cả các phân tử liên quan.</p>
 
-<!-- Google tag (gtag.js) -->
-<script async="" src="./4_files/js"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<p>Việc thêm dung môi gồm 2 bước:</p>
+<ol>
+  <li>Xác định kích thước hộp bằng module <code>editconf</code>.</li>
+  <li>Đổ đầy nước vào hộp bằng module <code>solvate</code> (trước đây gọi là <code>genbox</code>).</li>
+</ol>
 
-  gtag('config', 'G-EBVNCYQWWG');
-</script>
-<link href="./4_files/style.css" rel="stylesheet" type="text/css">
-<link type="text/css" rel="stylesheet" charset="UTF-8" href="./4_files/m=el_main_css"></head>
-<body>
-<br>
-<center><h2><font size="+3"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">H&#432;&#7899;ng d&#7851;n GROMACS</font></font></font></h2>
-<p><font size="+1"><b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#432;&#7899;c ba: X�c &#273;&#7883;nh � &#273;&#417;n v&#7883; v� th�m dung m�i</font></font></b></font></p>
+<h3>Định nghĩa hộp mô phỏng</h3>
 
-<img src="./4_files/Steps_box_highlight.jpg" width="679" height="32" usemap="#navmap">
+<p>Trong hướng dẫn này, ta chọn hộp <b>hình lập phương</b> để đơn giản.  
+Với kinh nghiệm hơn, bạn có thể dùng <b>hình khối 12 mặt thoi (rhombic dodecahedron)</b>, vốn chỉ chiếm khoảng 71% thể tích của hộp lập phương cùng khoảng cách tuần hoàn. Điều này giúp tiết kiệm số lượng phân tử nước cần thêm.</p>
 
-<map name="navmap">
-    <area shape="rect" coords="0,0,96,32" alt="pdb2gmx" href="http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html">
-    <area shape="rect" coords="96,0,192,32" alt="solv" href="http://www.mdtutorials.com/gmx/lysozyme/03_solvate.html">
-    <area shape="rect" coords="192,0,288,32" alt="ions" href="http://www.mdtutorials.com/gmx/lysozyme/04_ions.html">
-    <area shape="rect" coords="288,0,380,32" alt="minim" href="http://www.mdtutorials.com/gmx/lysozyme/05_EM.html">
-    <area shape="rect" coords="380,0,472,32" alt="equil" href="http://www.mdtutorials.com/gmx/lysozyme/06_equil.html">
-    <area shape="rect" coords="472,0,564,32" alt="md" href="http://www.mdtutorials.com/gmx/lysozyme/08_MD.html">
-    <area shape="rect" coords="564,0,679,32" alt="analysis" href="http://www.mdtutorials.com/gmx/lysozyme/09_analysis.html">
-</map>
+<p>Lệnh định nghĩa hộp bằng <code>editconf</code>:</p>
 
-<font size="3">
-
-<table width="900" border="0" cellpadding="20">
-<tbody><tr>
- <td>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B�y gi&#7901; b&#7841;n &#273;� quen thu&#7897;c v&#7899;i n&#7897;i dung c&#7911;a c&#7845;u tr�c GROMACS, &#273;� &#273;&#7871;n l�c ti&#7871;p t&#7909;c x�y d&#7921;ng h&#7879; th&#7889;ng c&#7911;a ch�ng ta. Trong v� d&#7909; n�y, ch�ng ta s&#7869; m� ph&#7887;ng m&#7897;t h&#7879; th&#7889;ng n&#432;&#7899;c &#273;&#417;n gi&#7843;n. C� th&#7875; m� ph&#7887;ng protein v� c�c ph�n t&#7917; kh�c trong c�c dung m�i kh�c nhau, mi&#7877;n l� c� c�c th�ng s&#7889; ph� h&#7907;p cho t&#7845;t c&#7843; c�c lo�i li�n quan.</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">C� hai b&#432;&#7899;c &#273;&#7875; x�c &#273;&#7883;nh h&#7897;p v� &#273;&#7893; dung m�i v�o &#273;�:</font></font><br>
-
-</p><ol>
- <li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">X�c &#273;&#7883;nh k�ch th&#432;&#7899;c h&#7897;p b&#7857;ng m�-&#273;un editconf.
- </font></font></li><li><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&#272;&#7893; &#273;&#7847;y n&#432;&#7899;c v�o h&#7897;p b&#7857;ng m�-&#273;un solvat (tr&#432;&#7899;c &#273;�y g&#7885;i l� genbox).
-</font></font></li></ol>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B�y gi&#7901; b&#7841;n c� m&#7897;t l&#7921;a ch&#7885;n v&#7873; c�ch x&#7917; l� � &#273;&#417;n v&#7883;. Trong h&#432;&#7899;ng d&#7851;n n�y, ch�ng ta s&#7869; s&#7917; d&#7909;ng m&#7897;t h&#7897;p l&#7853;p ph&#432;&#417;ng &#273;&#417;n gi&#7843;n l�m � &#273;&#417;n v&#7883;. Khi b&#7841;n &#273;� quen v&#7899;i c�c &#273;i&#7873;u ki&#7879;n bi�n tu&#7847;n ho�n v� c�c lo&#7841;i h&#7897;p, t�i th&#7921;c s&#7921; khuy�n b&#7841;n n�n s&#7917; d&#7909;ng kh&#7889;i m&#432;&#7901;i hai m&#7863;t thoi, v� th&#7875; t�ch c&#7911;a n� b&#7857;ng kho&#7843;ng 71% th&#7875; t�ch c&#7911;a h&#7897;p l&#7853;p ph&#432;&#417;ng c� c�ng chu k&#7923; tu&#7847;n ho�n, do &#273;� ti&#7871;t ki&#7879;m &#273;&#432;&#7907;c s&#7889; l&#432;&#7907;ng ph�n t&#7917; n&#432;&#7899;c c&#7847;n th�m v�o &#273;&#7875; solvat h�a protein.</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">H�y &#273;&#7883;nh ngh&#297;a h&#7897;p b&#7857;ng c�ch s&#7917; d&#7909;ng editconf:</font></font></p>
-
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">gmx editconf -f 1HERE_processed.gro -o 1HERE_newbox.gro -c -d 1.2 -bt cubic
-</font></font></pre>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">L&#7879;nh tr�n s&#7869; c&#259;n gi&#7919;a protein trong h&#7897;p (-c) v� &#273;&#7863;t n� c�ch m�p h&#7897;p �t nh&#7845;t 1,2 nm (-d 1,2). Ki&#7875;u h&#7897;p &#273;&#432;&#7907;c &#273;&#7883;nh ngh&#297;a l� kh&#7889;i l&#7853;p ph&#432;&#417;ng (-bt kh&#7889;i l&#7853;p ph&#432;&#417;ng). Kho&#7843;ng c�ch &#273;&#7871;n m�p h&#7897;p l� m&#7897;t tham s&#7889; quan tr&#7885;ng. V� ch�ng ta s&#7869; s&#7917; d&#7909;ng c�c &#273;i&#7873;u ki&#7879;n bi�n tu&#7847;n ho�n, ch�ng ta ph&#7843;i &#273;�p &#7913;ng quy &#432;&#7899;c h�nh &#7843;nh t&#7889;i thi&#7875;u. Ngh&#297;a l�, m&#7897;t protein kh�ng bao gi&#7901; &#273;&#432;&#7907;c nh�n th&#7845;y h�nh &#7843;nh tu&#7847;n ho�n c&#7911;a n�, n&#7871;u kh�ng c�c l&#7921;c &#273;&#432;&#7907;c t�nh to�n s&#7869; l� sai. Ch&#7881; &#273;&#7883;nh kho&#7843;ng c�ch h&#7897;p ch&#7845;t tan l� 1,2 nm s&#7869; c� ngh&#297;a l� c� �t nh&#7845;t 2,4 nm gi&#7919;a b&#7845;t k&#7923; hai h�nh &#7843;nh tu&#7847;n ho�n n�o c&#7911;a m&#7897;t protein. Kho&#7843;ng c�ch n�y s&#7869; &#273;&#7911; cho h&#7847;u h&#7871;t m&#7885;i s&#417; &#273;&#7891; c&#7855;t th&#432;&#7901;ng &#273;&#432;&#7907;c s&#7917; d&#7909;ng trong m� ph&#7887;ng.</font></font></p>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B�y gi&#7901; ch�ng ta &#273;� &#273;&#7883;nh ngh&#297;a m&#7897;t h&#7897;p, ch�ng ta c� th&#7875; &#273;&#7893; dung m�i (n&#432;&#7899;c) v�o h&#7897;p. Qu� tr�nh solvat h�a &#273;&#432;&#7907;c th&#7921;c hi&#7879;n b&#7857;ng c�ch s&#7917; d&#7909;ng solvat:</font></font></p>
-
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">gmx h�a tan -cp 1AKI_newbox.gro -cs spc216.gro -o 1AKI_solv.gro -p topol.top
-</font></font></pre>
-
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">C&#7845;u h�nh c&#7911;a protein (-cp) n&#7857;m trong &#273;&#7847;u ra c&#7911;a b&#432;&#7899;c editconf tr&#432;&#7899;c &#273;�, v� c&#7845;u h�nh c&#7911;a dung m�i (-cs) l� m&#7897;t ph&#7847;n c&#7911;a c�i &#273;&#7863;t GROMACS ti�u chu&#7849;n. Ch�ng t�i &#273;ang s&#7917; d&#7909;ng spc216.gro, m&#7897;t m� h�nh dung m�i 3 &#273;i&#7875;m c�n b&#7857;ng chung. B&#7841;n c� th&#7875; s&#7917; d&#7909;ng spc216.gro l�m c&#7845;u h�nh dung m�i cho n&#432;&#7899;c SPC, SPC/E ho&#7863;c TIP3P, v� t&#7845;t c&#7843; ch�ng &#273;&#7873;u l� m� h�nh n&#432;&#7899;c ba &#273;i&#7875;m. &#272;&#7847;u ra &#273;&#432;&#7907;c g&#7885;i l� 1AKI_solv.gro, v� ch�ng t�i cung c&#7845;p cho solvate t�n c&#7911;a t&#7879;p c&#7845;u tr�c li�n k&#7871;t (topol.top) &#273;&#7875; c� th&#7875; ch&#7881;nh s&#7917;a. L&#432;u � nh&#7919;ng thay &#273;&#7893;i trong ch&#7881; </font></font><code>[ molecules ]</code><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">th&#7883; topol.top:</font></font></p>
-
-<pre><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">[ ph�n t&#7917; ]</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-; H&#7907;p ch&#7845;t #mol</font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-Chu&#7895;i protein A 1  </font></font><font></font><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-SOL 12596</font></font><font></font>
+<div class="code">
+<pre>
+gmx editconf -f 1AKI_processed.gro -o 1AKI_newbox.gro -c -d 1.2 -bt cubic
 </pre>
+</div>
 
-<p><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Nhi&#7879;m v&#7909; c&#7911;a solvat l� theo d�i s&#7889; l&#432;&#7907;ng ph�n t&#7917; n&#432;&#7899;c &#273;� th�m v�o, sau &#273;� ghi v�o c&#7845;u tr�c li�n k&#7871;t c&#7911;a b&#7841;n &#273;&#7875; ph&#7843;n �nh nh&#7919;ng thay &#273;&#7893;i &#273;� &#273;&#432;&#7907;c th&#7921;c hi&#7879;n. L&#432;u � r&#7857;ng n&#7871;u b&#7841;n s&#7917; d&#7909;ng b&#7845;t k&#7923; dung m�i n�o kh�c (kh�ng ph&#7843;i n&#432;&#7899;c), solvat s&#7869; kh�ng t&#7841;o ra nh&#7919;ng thay &#273;&#7893;i n�y cho c&#7845;u tr�c li�n k&#7871;t c&#7911;a b&#7841;n! Kh&#7843; n&#259;ng t&#432;&#417;ng th�ch c&#7911;a solvat v&#7899;i vi&#7879;c c&#7853;p nh&#7853;t ph�n t&#7917; n&#432;&#7899;c &#273;&#432;&#7907;c m� h�a c&#7913;ng. </font></font><b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Xin l&#432;u �:</font></font></b><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;"> nh&#7919;ng thay &#273;&#7893;i nh&#7887; trong ki&#7871;n &#8203;&#8203;tr�c m�y t�nh v� tr�nh bi�n d&#7883;ch c� th&#7875; d&#7851;n &#273;&#7871;n s&#7921; kh�c bi&#7879;t r&#7845;t nh&#7887; v&#7873; s&#7889; l&#432;&#7907;ng ph�n t&#7917; n&#432;&#7899;c &#273;&#432;&#7907;c th�m v�o trong b&#432;&#7899;c n�y.</font></font></p>
+<p>Trong đó:</p>
+<ul>
+  <li><code>-f</code>: file cấu trúc đầu vào (sau khi xử lý bằng pdb2gmx).</li>
+  <li><code>-o</code>: file cấu trúc đầu ra sau khi định nghĩa hộp.</li>
+  <li><code>-c</code>: đặt protein vào giữa hộp.</li>
+  <li><code>-d 1.2</code>: khoảng cách tối thiểu từ protein đến thành hộp là 1.2 nm.</li>
+  <li><code>-bt cubic</code>: chọn hộp hình lập phương.</li>
+</ul>
 
-<center>
-<table border="0" cellpadding="10">
-<tbody><tr>
- <td>
-	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/02_topology.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">M&#7863;t sau: Topology</font></font></a></p>
- </td>
+<p>Khoảng cách <code>-d</code> rất quan trọng.  
+Vì mô phỏng sử dụng <b>điều kiện biên tuần hoàn (PBC)</b>, nên cần đảm bảo protein không nhìn thấy "ảnh tuần hoàn" của chính nó.  
+Khoảng cách 1.2 nm đảm bảo ít nhất 2.4 nm giữa 2 ảnh tuần hoàn gần nhất của protein, phù hợp cho hầu hết các sơ đồ cutoff.</p>
 
- <td>
-	<p><a href="http://www.mdtutorials.com/gmx/lysozyme/04_ions.html"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Ti&#7871;p theo: Th�m ion</font></font></a></p>
- </td>
-</tr></tbody></table>
-</center>
+<h3>Thêm dung môi</h3>
 
- </td>
-</tr>
-</tbody></table>
+<p>Khi hộp đã được định nghĩa, ta sẽ thêm dung môi bằng module <code>solvate</code>:</p>
 
-<a href="http://www.thelemkullab.com/" target="_blank"><img src="./4_files/LLLogo1_transparent.png" height="150"></a>
+<div class="code">
+<pre>
+gmx solvate -cp 1AKI_newbox.gro -cs spc216.gro -o 1AKI_solv.gro -p topol.top
+</pre>
+</div>
 
-<br>
+<p>Trong đó:</p>
+<ul>
+  <li><code>-cp</code>: cấu hình protein, lấy từ bước <code>editconf</code>.</li>
+  <li><code>-cs</code>: cấu hình dung môi chuẩn từ GROMACS (ở đây dùng <code>spc216.gro</code>).</li>
+  <li><code>-o</code>: file đầu ra sau khi đã thêm nước.</li>
+  <li><code>-p</code>: chỉ định file topology để cập nhật số phân tử dung môi.</li>
+</ul>
 
-<p><font size="-1"><i><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">B&#7843;n quy&#7873;n thi&#7871;t k&#7871; v� n&#7897;i dung trang web thu&#7897;c v&#7873; Justin Lemkul. </font></font><br><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">
-C� v&#7845;n &#273;&#7873; g� v&#7899;i trang web? H�y g&#7917;i cho </font></font><a href="mailto:jalemkul@vt.edu?subject=GROMACS%20Tutorials%20site"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Qu&#7843;n tr&#7883; vi�n web.</font></font></a></i></font></p>
-</font></center><font size="3">
-</font>
+<p>Mô hình <code>spc216.gro</code> là dung dịch cân bằng sẵn của nước 3 điểm,  
+có thể dùng cho các mô hình SPC, SPC/E hoặc TIP3P vì chúng đều là loại 3 điểm.</p>
 
+<h3>Cập nhật topology</h3>
 
-<div id="goog-gt-tt" class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style="border-radius: 12px; margin: 0 0 0 -23px; padding: 0; font-family: &#39;Google Sans&#39;, Arial, sans-serif;" data-id=""><div id="goog-gt-vt" class="VIpgJd-yAWNEb-hvhgNd"><div class="VIpgJd-yAWNEb-hvhgNd-Ud7fr"><img src="./4_files/24px.svg" width="24" height="24" alt=""><div class=" VIpgJd-yAWNEb-hvhgNd-IuizWc-i3jM8c " dir="ltr">Original text</div></div><div class="VIpgJd-yAWNEb-hvhgNd-k77Iif"><div id="goog-gt-original-text" class="VIpgJd-yAWNEb-nVMfcd-fmcmS VIpgJd-yAWNEb-hvhgNd-axAV1"></div></div><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid ltr"><div class="VIpgJd-yAWNEb-hvhgNd-N7Eqid-B7I4Od ltr" dir="ltr"><div class="VIpgJd-yAWNEb-hvhgNd-UTujCb">Rate this translation</div><div class="VIpgJd-yAWNEb-hvhgNd-eO9mKe">Your feedback will be used to help improve Google Translate</div></div><div class="VIpgJd-yAWNEb-hvhgNd-xgov5 ltr"><button id="goog-gt-thumbUpButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Good translation" aria-label="Good translation" aria-pressed="false"><span id="goog-gt-thumbUpIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7H2v13h16c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM7 18H4V9h3v9zm14-7l-3 7H9V8l4.34-4.34L12 9h9v2z"></path></svg></span><span id="goog-gt-thumbUpIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M21 7h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 0S7.08 6.85 7 7v13h11c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73V9c0-1.1-.9-2-2-2zM5 7H1v13h4V7z"></path></svg></span></button><button id="goog-gt-thumbDownButton" type="button" class="VIpgJd-yAWNEb-hvhgNd-bgm6sf" title="Poor translation" aria-label="Poor translation" aria-pressed="false"><span id="goog-gt-thumbDownIcon"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7h5V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zM17 6h3v9h-3V6zM3 13l3-7h9v10l-4.34 4.34L12 15H3v-2z"></path></svg></span><span id="goog-gt-thumbDownIconFilled"><svg width="24" height="24" viewBox="0 0 24 24" focusable="false" class="VIpgJd-yAWNEb-hvhgNd-THI6Vb NMm5M"><path d="M3 17h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 24s7.09-6.85 7.17-7V4H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2zm16 0h4V4h-4v13z"></path></svg></span></button></div></div><div id="goog-gt-votingHiddenPane" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><form id="goog-gt-votingForm" action="http://translate.googleapis.com/translate_voting?client=te_lib" method="post" target="votingFrame" class="VIpgJd-yAWNEb-hvhgNd-aXYTce"><input type="text" name="sl" id="goog-gt-votingInputSrcLang"><input type="text" name="tl" id="goog-gt-votingInputTrgLang"><input type="text" name="query" id="goog-gt-votingInputSrcText"><input type="text" name="gtrans" id="goog-gt-votingInputTrgText"><input type="text" name="vote" id="goog-gt-votingInputVote"></form><iframe name="votingFrame" frameborder="0" src="./4_files/saved_resource.html"></iframe></div></div></div><a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a></body></html>
+<p>Sau khi chạy <code>solvate</code>, file topology sẽ được cập nhật ở phần <code>[ molecules ]</code> như sau:</p>
+
+<div class="code">
+<pre>
+[ molecules ] 
+; Compound        #mols
+Protein_chain_A     1  
+SOL             12596 
+</pre>
+</div>
+
+<p><b>Ý nghĩa:</b> solvate tự động ghi lại số lượng phân tử nước (<code>SOL</code>) đã được thêm và cập nhật vào file topology.  
+Lưu ý: việc cập nhật này chỉ áp dụng cho <b>nước</b>. Nếu bạn thêm dung môi khác, solvate sẽ không sửa topology, bạn phải cập nhật thủ công.</p>
+
+<p><i>Chú ý nhỏ:</i> số lượng phân tử nước có thể chênh lệch một chút tùy vào phần cứng và trình biên dịch, nhưng điều này không ảnh hưởng đến kết quả mô phỏng.</p>
