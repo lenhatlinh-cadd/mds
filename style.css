@@ -4,7 +4,7 @@ body {
       padding: 0;
       background: #f8fafc;
     }
-    header {
+    /* header {
       background: #fff;
       padding: 20px;
       border-bottom: 1px solid #e5e7eb;
@@ -18,7 +18,18 @@ body {
       font-weight: bold;
       border-radius: 8px;
       padding: 8px 14px;
-    }
+    } */
+      header{display:flex;align-items:center;gap:16px}
+      .logo{
+        width:64px;height:64px;border-radius:10px;
+        background:linear-gradient(135deg,var(--accent),#06b6d4);
+        display:flex;align-items:center;justify-content:center;
+        color:white;font-weight:700;font-size:20px;
+        box-shadow:0 6px 18px rgba(11,114,217,0.15);
+      }
+      h1{margin:0;font-size:1.6rem}
+      p.lead{margin:6px 0 0;color:var(--muted)}
+
     header h1 {
       margin: 0;
       font-size: 20px;
@@ -120,4 +131,5 @@ footer{
     justify-content: center; 
     margin: 20px 0; 
 }
+
 
