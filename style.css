@@ -114,4 +114,10 @@ footer{
   text-align:center;
   font-size:0.9rem;
 }
+.image-container {
+    width: 100%; 
+    display: flex; 
+    justify-content: center; 
+    margin: 20px 0; 
+}
 
