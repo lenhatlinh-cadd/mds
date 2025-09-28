@@ -1,0 +1,32 @@
+<h2 style="text-transform: uppercase;">
+  Chuẩn bị peptide KALP15
+</h2>
+
+<p>Protein được sử dụng ở đây là <b>KALP model peptide</b>, ký hiệu <b>KALP15</b>, với trình tự: 
+<code>Ac-GKK(LA)<sub>4</sub>LKKA-NH<sub>2</sub></code>. 
+Quy trình mô phỏng này dựa trên hệ thống được xây dựng bởi <i>Kandasamy và Larson</i> trong nghiên cứu về <b>hydrophobic mismatch</b>. 
+Tài liệu gốc có thể tham khảo tại nguồn liên quan.</p>
+
+<p>Peptide được chuẩn bị nội bộ bằng module <code>xLeap</code> của AmberTools, sử dụng hình học lý tưởng của một α-helix 
+(φ = -60°, ψ = -40°). File <code>.pdb</code> được định hướng theo trục z bằng <code>editconf -princ</code>, sau đó xoay quanh trục y. 
+Lưu ý: Trong <b>GROMACS-3.3.x</b>, tùy chọn <code>-princ</code> mặc định định hướng trục chính của cấu trúc (ở đây là trục helix) theo trục z, 
+nhưng từ <b>GROMACS-4.0.4</b>, trục chính mặc định được định hướng theo trục x. 
+Nếu bạn muốn bỏ qua việc tự dựng peptide, có thể sử dụng sẵn file đã được định hướng đúng.</p>
+
+<h3>Chạy lệnh pdb2gmx</h3>
+<p>Thực thi lệnh sau:</p>
+
+<div class="code">
+  <pre>gmx pdb2gmx -f KALP-15_princ.pdb -o KALP-15_processed.gro -ignh -ter -water spc</pre>
+</div>
+
+<p>Khi được hỏi, chọn bộ tham số <b>GROMOS96 53A6</b>. 
+Ở phần cấu hình <i>termini</i>, chọn <b>"None"</b> vì chúng ta đã thêm nhóm acetyl (đầu N) và amide (đầu C). 
+Do đó, không cần pdb2gmx tự động tạo nhóm amine/carboxyl mặc định, mà chỉ cần thêm liên kết với các nhóm capping đã có. </p>
+
+<p>Tùy chọn <code>-ignh</code> cho pdb2gmx bỏ qua toàn bộ nguyên tử hydro trong file đầu vào. 
+Điều này là cần thiết vì <code>xLeap</code> tạo cấu trúc all-atom (theo AMBER force field) với tên nguyên tử H có thể không khớp 
+với quy ước của GROMOS96. Khi bỏ qua, pdb2gmx sẽ tự động thêm lại chỉ những hydro cần thiết theo đúng force field.</p>
+
+<h3>Điều chỉnh topology</h3>
+<p>Sau bước này, chúng ta sẽ cần thực hiện một số chỉnh sửa trong file topology.</p>
