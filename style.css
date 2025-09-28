@@ -25,6 +25,7 @@ header {
   color: #fff;
   font-weight: 700;
   font-size: 20px;
+text-decoration: none;
   box-shadow: 0 6px 18px rgba(11, 114, 217, 0.15);
 }
 
@@ -136,6 +137,7 @@ footer{
     justify-content: center; 
     margin: 20px 0; 
 }
+
 
 
 
