@@ -18,18 +18,7 @@ body {
       font-weight: bold;
       border-radius: 8px;
       padding: 8px 14px;
-    } */
-      header{display:flex;align-items:center;gap:16px}
-      .logo{
-        width:64px;height:64px;border-radius:10px;
-        background:linear-gradient(135deg,var(--accent),#06b6d4);
-        display:flex;align-items:center;justify-content:center;
-        color:white;font-weight:700;font-size:20px;
-        box-shadow:0 6px 18px rgba(11,114,217,0.15);
-      }
-      h1{margin:0;font-size:1.6rem}
-      p.lead{margin:6px 0 0;color:var(--muted)}
-
+    }
     header h1 {
       margin: 0;
       font-size: 20px;
@@ -39,7 +28,50 @@ body {
       margin: 0;
       font-size: 14px;
       color: #555;
-    }
+    } */
+
+/* Header */
+header {
+  background: #fff;
+  padding: 16px 20px;             /* thêm padding đều */
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 16px;                      /* giữ khoảng cách hợp lý */
+}
+
+/* Logo */
+.logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent, #007bff), #06b6d4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 20px;
+  box-shadow: 0 6px 18px rgba(11, 114, 217, 0.15);
+}
+
+/* Tiêu đề */
+header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+/* Kết thúc */
+
+/* Subtext / Lead */
+header p.lead {
+  margin: 6px 0 0;
+  color: var(--muted, #6b7280);
+  font-size: 0.95rem;
+}
+
+
     main {
       display: flex;
       max-width: 1200px;
@@ -131,5 +163,6 @@ footer{
     justify-content: center; 
     margin: 20px 0; 
 }
+
 
 
