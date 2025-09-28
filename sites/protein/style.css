@@ -16,7 +16,6 @@ body{margin:0;background:var(--bg);color:#0f172a;line-height:1.6}
 .wrap{max-width:var(--maxw);margin:28px auto;padding:20px}
 
 header{
-  position: fixed;
   display:flex;align-items:center;gap:16px}
 .logo{
   width:64px;height:64px;border-radius:10px;
