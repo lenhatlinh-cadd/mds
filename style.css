@@ -39,7 +39,7 @@ header h1 {
 
 /* Subtext / Lead */
 header p.lead {
-  margin: 3px 0 0;
+  margin: 6px 0;
   color: var(--muted, #6b7280);
   font-size: 0.95rem;
 }
@@ -136,6 +136,7 @@ footer{
     justify-content: center; 
     margin: 20px 0; 
 }
+
 
 
 
