@@ -1,0 +1,179 @@
+:root {
+  --accent:#0b72d9;
+  --muted:#6b7280;
+  --bg:#f7fafc;
+  --card:#ffffff;
+  --radius:12px;
+  --maxw:1080px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+p {
+  text-align: justify;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#0f172a;line-height:1.6}
+.wrap{max-width:var(--maxw);margin:28px auto;padding:20px}
+
+header{
+  display:flex;align-items:center;gap:16px}
+.logo{
+  width:64px;height:64px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),#06b6d4);
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-weight:700;font-size:20px;
+  box-shadow:0 6px 18px rgba(11,114,217,0.15);
+  text-decoration: none;
+}
+h1{margin:0;font-size:1.6rem}
+p.lead{margin:3px 0;color:var(--muted)}
+
+main{
+  margin-top:22px;
+  display:grid;
+  grid-template-columns:1fr 280px; /* trái: content, phải: sidebar */
+  gap:18px;
+}
+@media (max-width:900px){
+  main{grid-template-columns:1fr}
+  aside{position:static;}
+}
+
+.card{
+  background:var(--card);
+  padding:16px;
+  border-radius:var(--radius);
+  box-shadow:0 6px 20px rgba(2,6,23,0.05);
+  margin-bottom:16px;
+}
+section h2{margin-top:0}
+
+aside{
+  position:sticky;
+  top:20px;
+  align-self:start;
+  height:fit-content;
+}
+
+.toc{display:flex;flex-direction:column;gap:6px}
+.toc button{
+  display:block;
+  width:100%;
+  text-align:left;
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  background:transparent;
+  color:var(--accent);
+  font-weight:600;
+  cursor:pointer;
+  transition:0.2s;
+}
+.toc button:hover{
+  background:rgba(11,114,217,0.08);
+}
+.toc button.active{
+  background:var(--accent);
+  color:white;
+}
+
+/* Khối code */
+.code, .code-copy, .code-view {
+  position: relative;
+  font-family: ui-monospace,Menlo,monospace;
+  background:#0f172a;
+  color:#f8fafc;
+  padding:10px;
+  border-radius:8px;
+  font-size:0.95rem;
+  overflow:auto;
+}
+/* Khối pre */
+.pre-block {
+    white-space: pre;       /* Giữ nguyên khoảng trắng và xuống dòng */
+    overflow-x: auto;       /* Nếu nội dung dài quá, hiển thị thanh cuộn ngang */
+    overflow-y: hidden;     /* Ẩn scroll dọc nếu cần */
+    max-width: 100%;        /* Giữ thẻ không vượt quá chiều rộng container */
+    box-sizing: border-box; /* Bao gồm padding trong width */
+}
+
+
+/* Nút copy */
+.copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: white;       /* nền trắng mặc định */
+  color: black;            /* chữ đen mặc định */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.copy-btn:hover {
+  background: #f3f4f6;     /* xám nhạt khi hover */
+}
+.copy-btn.copied {
+  background: #22c55e; /* xanh lá */
+  color: white;              /* chữ trắng */
+}
+
+/*Thêm nút điều hướng*/
+.step-nav {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nav-btn {
+  background: #0b72d9;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.nav-btn:hover {
+  background: #094a9d;
+}
+
+.citation {
+  word-wrap: break-word;       /* hỗ trợ cũ */
+  overflow-wrap: anywhere;     /* hiện đại, tự ngắt từ */
+  white-space: normal;         /* cho phép xuống dòng */
+}
+.card a {
+  word-break: break-all;
+}
+
+.image-container {
+    width: 100%; 
+    display: flex; 
+    justify-content: center; 
+    margin: 20px 0; 
+}
+
+footer{
+  margin-top:22px;
+  padding:16px;
+  color:var(--muted);
+  text-align:center;
+  font-size:0.9rem;
+}
+
+
+
+
+
+
+
+
+
+
