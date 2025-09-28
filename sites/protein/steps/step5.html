@@ -1,0 +1,70 @@
+<h2>TỐI THIỂU HÓA NĂNG LƯỢNG</h2>
+
+<p>Sau khi đã có hệ thống hòa tan và trung hòa điện tích, chúng ta cần kiểm tra và loại bỏ các va chạm không gian (steric clashes) hay hình học không phù hợp. Việc này được thực hiện thông qua quá trình <b>tối ưu năng lượng</b> (Energy Minimization – EM).</p>
+
+<p>Quy trình EM khá giống với bước thêm ion. Chúng ta tiếp tục dùng <code>grompp</code> để kết hợp cấu trúc, topology và thông số mô phỏng thành file nhị phân <code>.tpr</code>. Sau đó, thay vì chạy <code>genion</code>, ta sẽ sử dụng công cụ <code>mdrun</code> của GROMACS để thực hiện tối ưu năng lượng.</p>
+
+<h3>Tạo file .tpr với grompp</h3>
+
+<div class="code">
+<pre>
+gmx grompp -f inputs/minim.mdp -c 1AKI_solv_ions.gro -p topol.top -o em.tpr
+</pre>
+</div>
+
+<p>Lưu ý: hãy chắc chắn rằng file <code>topol.top</code> đã được cập nhật sau các bước <code>genbox</code> và <code>genion</code>, nếu không bạn sẽ gặp lỗi như “số tọa độ trong file không khớp với topology.”</p>
+
+<h3>Chạy tối ưu năng lượng với mdrun</h3>
+
+<div class="code">
+<pre>
+gmx mdrun -v -deffnm em
+</pre>
+</div>
+
+<p>Trong đó:</p>
+<ul>
+  <li><code>-v</code>: hiển thị chi tiết tiến trình từng bước (verbose mode)</li>
+  <li><code>-deffnm em</code>: đặt tên mặc định cho các file đầu ra</li>
+</ul>
+
+<p>Kết quả sẽ gồm các file:</p>
+<ul>
+  <li><b>em.log</b>: nhật ký EM (text)</li>
+  <li><b>em.edr</b>: file năng lượng (nhị phân)</li>
+  <li><b>em.trr</b>: quỹ đạo đầy đủ độ chính xác</li>
+  <li><b>em.gro</b>: cấu trúc sau tối ưu năng lượng</li>
+</ul>
+
+<p><code>mdrun</code> cũng sẽ in ra thông số cuối cùng của EM, ví dụ:</p>
+
+<div class="code">
+<pre>
+Steepest Descents converged to Fmax < 1000 in 566 steps
+Potential Energy  = -6.2751356e+05
+Maximum force     =  9.8003864e+02 on atom 567
+Norm of force     =  2.3013127e+01
+</pre>
+</div>
+
+<h3>Đánh giá kết quả</h3>
+<ul>
+  <li><b>Năng lượng thế (Epot)</b> phải âm, và với hệ protein trong nước thường nằm trong khoảng 10<sup>5</sup>–10<sup>6</sup>, tùy số lượng phân tử nước.</li>
+  <li><b>Lực cực đại (Fmax)</b> phải nhỏ hơn giá trị đặt trong <code>minim.mdp</code>, ở đây là <code>emtol = 1000.0</code> kJ·mol<sup>-1</sup>·nm<sup>-1</sup>.</li>
+</ul>
+
+<p>Nếu Epot hợp lý nhưng Fmax vẫn lớn hơn ngưỡng, hệ thống có thể chưa ổn định để mô phỏng. Khi đó, bạn nên xem lại thông số minimization (ví dụ: <code>integrator</code>, <code>emstep</code>, v.v.).</p>
+
+<h3>Phân tích năng lượng</h3>
+
+<p>File <code>em.edr</code> chứa toàn bộ dữ liệu năng lượng trong quá trình EM. Ta có thể phân tích bằng công cụ <code>energy</code>:</p>
+
+<div class="code">
+<pre>
+gmx energy -f em.edr -o potential.xvg
+</pre>
+</div>
+
+<p>Khi được hỏi, nhập <b>11 0</b> để chọn Potential (11) và kết thúc bằng 0. Kết quả sẽ gồm giá trị trung bình của Epot và một file <code>potential.xvg</code>. File này có thể được vẽ bằng phần mềm Xmgrace, cho đồ thị hội tụ năng lượng như hình minh họa.</p>
+
+<p>Sau khi hệ thống đã đạt trạng thái tối ưu năng lượng, chúng ta có thể bắt đầu chạy mô phỏng động lực học phân tử thực sự.</p>

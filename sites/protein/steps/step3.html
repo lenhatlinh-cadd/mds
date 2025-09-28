@@ -1,0 +1,76 @@
+<h2>TẠO HỘP MÔ PHỎNG & THÊM DUNG MÔI</h2>
+
+<p>Sau khi đã quen với nội dung của tệp topology trong GROMACS, chúng ta sẽ tiếp tục xây dựng hệ thống.  
+Trong ví dụ này, ta sẽ mô phỏng một hệ protein đơn giản trong nước.  
+Thực tế, bạn có thể mô phỏng protein trong nhiều loại dung môi khác nhau, miễn là có sẵn tham số tốt cho tất cả các phân tử liên quan.</p>
+
+<p>Việc thêm dung môi gồm 2 bước:</p>
+<ol>
+  <li>Xác định kích thước hộp bằng module <code>editconf</code>.</li>
+  <li>Đổ đầy nước vào hộp bằng module <code>solvate</code> (trước đây gọi là <code>genbox</code>).</li>
+</ol>
+
+<h3>Định nghĩa hộp mô phỏng</h3>
+
+<p>Trong hướng dẫn này, ta chọn hộp <b>hình lập phương</b> để đơn giản.  
+Với kinh nghiệm hơn, bạn có thể dùng <b>hình khối 12 mặt thoi (rhombic dodecahedron)</b>, vốn chỉ chiếm khoảng 71% thể tích của hộp lập phương cùng khoảng cách tuần hoàn. Điều này giúp tiết kiệm số lượng phân tử nước cần thêm.</p>
+
+<p>Lệnh định nghĩa hộp bằng <code>editconf</code>:</p>
+
+<div class="code">
+<pre>
+gmx editconf -f 1AKI_processed.gro -o 1AKI_newbox.gro -c -d 1.2 -bt cubic
+</pre>
+</div>
+
+<p>Trong đó:</p>
+<ul>
+  <li><code>-f</code>: file cấu trúc đầu vào (sau khi xử lý bằng pdb2gmx).</li>
+  <li><code>-o</code>: file cấu trúc đầu ra sau khi định nghĩa hộp.</li>
+  <li><code>-c</code>: đặt protein vào giữa hộp.</li>
+  <li><code>-d 1.2</code>: khoảng cách tối thiểu từ protein đến thành hộp là 1.2 nm.</li>
+  <li><code>-bt cubic</code>: chọn hộp hình lập phương.</li>
+</ul>
+
+<p>Khoảng cách <code>-d</code> rất quan trọng.  
+Vì mô phỏng sử dụng <b>điều kiện biên tuần hoàn (PBC)</b>, nên cần đảm bảo protein không nhìn thấy "ảnh tuần hoàn" của chính nó.  
+Khoảng cách 1.2 nm đảm bảo ít nhất 2.4 nm giữa 2 ảnh tuần hoàn gần nhất của protein, phù hợp cho hầu hết các sơ đồ cutoff.</p>
+
+<h3>Thêm dung môi</h3>
+
+<p>Khi hộp đã được định nghĩa, ta sẽ thêm dung môi bằng module <code>solvate</code>:</p>
+
+<div class="code">
+<pre>
+gmx solvate -cp 1AKI_newbox.gro -cs spc216.gro -o 1AKI_solv.gro -p topol.top
+</pre>
+</div>
+
+<p>Trong đó:</p>
+<ul>
+  <li><code>-cp</code>: cấu hình protein, lấy từ bước <code>editconf</code>.</li>
+  <li><code>-cs</code>: cấu hình dung môi chuẩn từ GROMACS (ở đây dùng <code>spc216.gro</code>).</li>
+  <li><code>-o</code>: file đầu ra sau khi đã thêm nước.</li>
+  <li><code>-p</code>: chỉ định file topology để cập nhật số phân tử dung môi.</li>
+</ul>
+
+<p>Mô hình <code>spc216.gro</code> là dung dịch cân bằng sẵn của nước 3 điểm,  
+có thể dùng cho các mô hình SPC, SPC/E hoặc TIP3P vì chúng đều là loại 3 điểm.</p>
+
+<h3>Cập nhật topology</h3>
+
+<p>Sau khi chạy <code>solvate</code>, file topology sẽ được cập nhật ở phần <code>[ molecules ]</code> như sau:</p>
+
+<div class="code-view">
+<pre>
+[ molecules ] 
+; Compound        #mols
+Protein_chain_A     1  
+SOL             12596 
+</pre>
+</div>
+
+<p><b>Ý nghĩa:</b> solvate tự động ghi lại số lượng phân tử nước (<code>SOL</code>) đã được thêm và cập nhật vào file topology.  
+Lưu ý: việc cập nhật này chỉ áp dụng cho <b>nước</b>. Nếu bạn thêm dung môi khác, solvate sẽ không sửa topology, bạn phải cập nhật thủ công.</p>
+
+<p><i>Chú ý nhỏ:</i> số lượng phân tử nước có thể chênh lệch một chút tùy vào phần cứng và trình biên dịch, nhưng điều này không ảnh hưởng đến kết quả mô phỏng.</p>
