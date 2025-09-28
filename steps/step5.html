@@ -4,7 +4,7 @@
 
 <p>Quy trình EM khá giống với bước thêm ion. Chúng ta tiếp tục dùng <code>grompp</code> để kết hợp cấu trúc, topology và thông số mô phỏng thành file nhị phân <code>.tpr</code>. Sau đó, thay vì chạy <code>genion</code>, ta sẽ sử dụng công cụ <code>mdrun</code> của GROMACS để thực hiện tối ưu năng lượng.</p>
 
-<h3>Tạo file .tpr với grompp:</h3>
+<h3>Tạo file .tpr với grompp</h3>
 
 <div class="code">
 <pre>
@@ -14,7 +14,7 @@ gmx grompp -f inputs/minim.mdp -c 1AKI_solv_ions.gro -p topol.top -o em.tpr
 
 <p>Lưu ý: hãy chắc chắn rằng file <code>topol.top</code> đã được cập nhật sau các bước <code>genbox</code> và <code>genion</code>, nếu không bạn sẽ gặp lỗi như “số tọa độ trong file không khớp với topology.”</p>
 
-<h3>Chạy tối ưu năng lượng với mdrun:</h3>
+<h3>Chạy tối ưu năng lượng với mdrun</h3>
 
 <div class="code">
 <pre>
@@ -47,7 +47,7 @@ Norm of force     =  2.3013127e+01
 </pre>
 </div>
 
-<h3>Đánh giá kết quả EM:</h3>
+<h3>Đánh giá kết quả</h3>
 <ul>
   <li><b>Năng lượng thế (Epot)</b> phải âm, và với hệ protein trong nước thường nằm trong khoảng 10<sup>5</sup>–10<sup>6</sup>, tùy số lượng phân tử nước.</li>
   <li><b>Lực cực đại (Fmax)</b> phải nhỏ hơn giá trị đặt trong <code>minim.mdp</code>, ở đây là <code>emtol = 1000.0</code> kJ·mol<sup>-1</sup>·nm<sup>-1</sup>.</li>
@@ -55,7 +55,7 @@ Norm of force     =  2.3013127e+01
 
 <p>Nếu Epot hợp lý nhưng Fmax vẫn lớn hơn ngưỡng, hệ thống có thể chưa ổn định để mô phỏng. Khi đó, bạn nên xem lại thông số minimization (ví dụ: <code>integrator</code>, <code>emstep</code>, v.v.).</p>
 
-<h3>Phân tích năng lượng:</h3>
+<h3>Phân tích năng lượng</h3>
 
 <p>File <code>em.edr</code> chứa toàn bộ dữ liệu năng lượng trong quá trình EM. Ta có thể phân tích bằng công cụ <code>energy</code>:</p>
 

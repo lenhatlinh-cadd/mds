@@ -1,45 +1,8 @@
-<h2>Step 8: Phân tích quỹ đạo – Hiệu chỉnh tính tuần hoàn & RMSD</h2>
+<h2>KẾT THÚC HƯỚNG DẪN</h2>
+<p>Bạn đã hoàn thành một mô phỏng động lực học phân tử (MD) với GROMACS và tiến hành một số phân tích kết quả cơ bản. Lưu ý rằng đây chỉ là phần hướng dẫn nhập môn, chưa bao quát hết các loại mô phỏng có thể thực hiện với GROMACS. Một số ví dụ khác bao gồm: tính toán năng lượng tự do, MD phi cân bằng, hay phân tích mode dao động chuẩn.</p>
 
-<p>Sau khi đã chạy mô phỏng MD, bước tiếp theo là tiến hành <b>phân tích dữ liệu</b>. 
-Trước khi bắt đầu, bạn cần tự đặt câu hỏi: “Mình muốn thu được những loại dữ liệu gì từ mô phỏng này?”.
-Trong ví dụ này, chúng ta sẽ giới thiệu một số công cụ cơ bản của GROMACS để xử lý và phân tích quỹ đạo.</p>
+<p>Khi áp dụng vào nghiên cứu thực tế, bạn nên tham khảo thêm tài liệu khoa học và <i>GROMACS manual</i> để điều chỉnh các file <code>.mdp</code> nhằm đạt hiệu quả và độ chính xác cao hơn.</p>
 
-<h3>Hiệu chỉnh tính tuần hoàn (Periodicity)</h3>
-<p>Trong quá trình mô phỏng, protein có thể khuếch tán trong hộp mô phỏng (unit cell), đôi khi trông như bị "gãy" hoặc "nhảy" sang phía bên kia của hộp do <b>điều kiện biên tuần hoàn</b>. 
-Để khắc phục, ta dùng công cụ <code>trjconv</code>:</p>
+<p>Nếu bạn có góp ý cải thiện nội dung, phát hiện lỗi, hoặc thấy chỗ nào chưa rõ ràng, hãy liên hệ với tác giả qua email. Xin lưu ý: đây không phải là kênh hỗ trợ cá nhân cho các vấn đề về GROMACS. Nếu bạn cần hỏi đáp, vui lòng sử dụng <a href="https://gromacs.bioexcel.eu/" target="_blank">GROMACS User Forum</a>, nơi mọi người có thể cùng trao đổi và hỗ trợ lẫn nhau.</p>
 
-<div class="code">
-<pre>
-gmx trjconv -s md_0_10.tpr -f md_0_10.xtc -o md_0_10_noPBC.xtc -pbc mol -center
-</pre>
-</div>
-
-<p>Tại các lựa chọn, chọn <b>1 ("Protein")</b> để làm trung tâm và <b>0 ("System")</b> cho đầu ra.
-Tất cả các phân tích sau sẽ được thực hiện trên quỹ đạo đã hiệu chỉnh này (<code>md_0_10_noPBC.xtc</code>).</p>
-
-<h3>Độ lệch bình phương trung bình (RMSD)</h3>
-<p>Công cụ <code>gmx rms</code> được dùng để tính RMSD, giúp đánh giá độ lệch cấu trúc theo thời gian:</p>
-
-<div class="code">
-<pre>
-gmx rms -s md_0_10.tpr -f md_0_10_noPBC.xtc -o rmsd.xvg -tu ns
-</pre>
-</div>
-
-<p>Chọn <b>4 ("Backbone")</b> cho cả bước fit least-squares và nhóm tính RMSD.
-Tùy chọn <code>-tu ns</code> chuyển đơn vị thời gian từ ps sang ns cho dễ đọc. 
-Kết quả là biểu đồ RMSD so với cấu trúc protein đã được tối ưu năng lượng và cân bằng.</p>
-
-<p>Nếu muốn tính RMSD so với <b>cấu trúc tinh thể gốc (crystal structure)</b>, dùng lệnh sau:</p>
-
-<div class="code">
-<pre>
-gmx rms -s em.tpr -f md_0_10_noPBC.xtc -o rmsd_xtal.xvg -tu ns
-</pre>
-</div>
-
-<h3>Đọc kết quả</h3>
-<p>Khi vẽ RMSD từ hai cách trên, ta thấy giá trị dao động quanh <b>0.09 ± 0.01 nm (≈ 0.9 Å)</b>, chứng tỏ cấu trúc protein không thay đổi nhiều sau khi mô phỏng. 
-Sự khác biệt nhỏ giữa hai đường cong là do sự khác biệt giữa cấu trúc đã tối ưu hóa và cấu trúc tinh thể gốc – điều này là bình thường.</p>
-
-<p>Lưu ý: RMSD <b>không thể</b> dùng làm thước đo duy nhất để đánh giá tính ổn định hay hội tụ của mô phỏng. Một phức hợp protein lớn có thể có RMSD ≈ 1.0 nm (gấp 10 lần ví dụ này) nhưng vẫn ổn định, vì RMSD chỉ phản ánh sự tích lũy của các dịch chuyển nhỏ.</p>
+<p><b>Chúc bạn mô phỏng thành công!</b></p>

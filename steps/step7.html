@@ -1,45 +1,20 @@
-<h2>Step 6: Cân bằng NPT</h2>
+<h2>TIẾN HÀNH MÔ PHỎNG</h2>
 
-<p>Trong bước trước (NVT), hệ thống đã ổn định về <b>nhiệt độ</b>. Tuy nhiên, trước khi thu thập dữ liệu, chúng ta cũng cần ổn định <b>áp suất</b> (và do đó cả <b>mật độ</b> của hệ). Quá trình này được gọi là cân bằng trong tập hợp <b>NPT</b>, nơi số hạt (N), áp suất (P) và nhiệt độ (T) được giữ không đổi. Tập hợp này còn gọi là <i>đẳng nhiệt - đẳng áp</i> và gần giống nhất với điều kiện thí nghiệm thực tế.</p>
+<p>Sau khi hoàn tất hai giai đoạn cân bằng (NVT và NPT), hệ thống đã ổn định ở nhiệt độ và áp suất mong muốn. Giờ đây chúng ta có thể <b>gỡ bỏ ràng buộc vị trí</b> và tiến hành mô phỏng động lực học phân tử (MD) để thu thập dữ liệu thực tế.</p>
 
-<p>Tập tin <code>.mdp</code> dùng cho quá trình cân bằng NPT 500 ps có thể tải tại đây. Nó không khác nhiều so với tập tin tham số của bước NVT, chỉ khác ở chỗ bước này thường cần thời gian dài hơn, vì áp suất mất nhiều thời gian để ổn định hơn nhiệt độ. Trong phần tham số có bổ sung thêm <b>pressure coupling</b> bằng <i>C-rescale barostat</i>.</p>
-
-<p>Một vài thay đổi quan trọng:</p>
-<ul>
-  <li><code>continuation = yes</code>: Tiếp tục mô phỏng từ bước NVT.</li>
-  <li><code>gen_vel = no</code>: Vận tốc được lấy từ kết quả của NVT trước đó.</li>
-</ul>
-
-<p>Chúng ta sẽ gọi <code>grompp</code> và <code>mdrun</code> giống như ở bước NVT. Lưu ý thêm cờ <code>-t</code> để đưa vào file checkpoint từ NVT (<code>nvt.cpt</code>), nhằm giữ lại vận tốc đã sinh ra ở bước trước. File tọa độ (<code>-c</code>) cũng chính là kết quả cuối cùng của NVT:</p>
+<p>Cách thực hiện tương tự như các bước trước: chúng ta sẽ dùng file checkpoint (lúc này đã lưu cả thông tin về áp suất) để chạy <code>grompp</code>. Trong ví dụ này, ta sẽ chạy mô phỏng MD trong <b>10 ns</b>:</p>
 
 <div class="code">
 <pre>
-gmx grompp -f inputs/npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
+gmx grompp -f inputs/md.mdp -c npt.gro -t npt.cpt -p topol.top -o md_0_10.tpr
 
-gmx mdrun -deffnm npt
+gmx mdrun -deffnm md_0_10
 </pre>
 </div>
 
-<h3>Phân tích áp suất</h3>
-<p>Sử dụng lệnh <code>gmx energy</code> để xem sự thay đổi áp suất theo thời gian:</p>
+<h3>Tăng tốc bằng GPU</h3>
+<p>Kể từ phiên bản GROMACS 2025, các tính toán PME có thể được xử lý trên GPU, giúp mô phỏng nhanh hơn rất nhiều. Ví dụ, với card Titan Xp, tốc độ có thể đạt tới <b>196 ns/ngày</b> cho hệ thống này!</p>
 
-<div class="code">
-<pre>
-gmx energy -f npt.edr -o pressure.xvg
-</pre>
-</div>
+<p>Trên thực tế, từ phiên bản 4.6, GROMACS đã hỗ trợ GPU cho mô phỏng MD. Đến phiên bản 2018, hầu hết các tương tác không liên kết (nonbonded) và tính toán PME đều chạy trên GPU, trong khi các lực liên kết (bonded forces) vẫn do CPU xử lý. Khi cài đặt GROMACS (xem hướng dẫn tại <a href="https://www.gromacs.org" target="_blank">www.gromacs.org</a>), chương trình sẽ tự động nhận diện GPU nếu có sẵn. Điều kiện tối thiểu để sử dụng GPU tăng tốc là có thư viện CUDA, SDK và GPU với compute capability ≥ 2.0.</p>
 
-<p>Nhập <code>17 0</code> tại dấu nhắc để chọn áp suất. Kết quả thường cho thấy áp suất dao động khá mạnh trong khoảng 100 ps, điều này là bình thường. Giá trị trung bình của hệ ở đây là <b>-3 ± 11 bar</b>, so với áp suất tham chiếu là 1 bar. Vì áp suất dao động nhiều trong mô phỏng MD, nên về mặt thống kê, kết quả này vẫn phù hợp.</p>
-
-<h3>Phân tích mật độ</h3>
-<p>Tiếp theo, ta phân tích mật độ bằng lệnh:</p>
-
-<div class="code">
-<pre>
-gmx energy -f npt.edr -o density.xvg
-</pre>
-</div>
-
-<p>Nhập <code>23 0</code> để chọn mật độ. Kết quả trung bình trong 500 ps là <b>1025,3 ± 0,5 kg/m³</b>, cao hơn so với giá trị thực nghiệm (1000 kg/m³) và so với mật độ dự đoán của mô hình TIP3P (986 kg/m³). Điều này hợp lý, bởi vì hệ của chúng ta không chỉ chứa nước tinh khiết, mà còn có protein và ion, nên không thể khớp hoàn toàn. Quan trọng là mật độ đã ổn định trong suốt quá trình cân bằng.</p>
-
-<p><i>Lưu ý:</i> Kết quả mật độ của bạn có thể khác so với ví dụ này. Các giá trị liên quan đến áp suất thường hội tụ chậm và mô phỏng MD luôn có tính ngẫu nhiên, vì vậy đừng lo lắng nếu không tái tạo được con số y hệt.</p>
+<p>Nếu bạn có nhiều GPU hoặc muốn tùy chỉnh cách phân chia công việc trong sơ đồ song song lai (hybrid parallelization), hãy tham khảo chi tiết trong <i>GROMACS manual</i> và trang chủ GROMACS. Những chi tiết kỹ thuật nâng cao này nằm ngoài phạm vi của hướng dẫn hiện tại.</p>

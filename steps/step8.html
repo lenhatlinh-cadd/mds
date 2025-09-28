@@ -1,20 +1,117 @@
-<h2>TIẾN HÀNH MÔ PHỎNG</h2>
+<h2>PHÂN TÍCH KẾT QUẢ MÔ PHỎNG</h2>
 
-<p>Sau khi hoàn tất hai giai đoạn cân bằng (NVT và NPT), hệ thống đã ổn định ở nhiệt độ và áp suất mong muốn. Giờ đây chúng ta có thể <b>gỡ bỏ ràng buộc vị trí</b> và tiến hành mô phỏng động lực học phân tử (MD) để thu thập dữ liệu thực tế.</p>
+<p>Sau khi đã chạy mô phỏng MD, bước tiếp theo là tiến hành <b>phân tích dữ liệu</b>. 
+Trước khi bắt đầu, bạn cần tự đặt câu hỏi: “Mình muốn thu được những loại dữ liệu gì từ mô phỏng này?”.
+Trong ví dụ này, chúng ta sẽ giới thiệu một số công cụ cơ bản của GROMACS để xử lý và phân tích quỹ đạo.</p>
 
-<p>Cách thực hiện tương tự như các bước trước: chúng ta sẽ dùng file checkpoint (lúc này đã lưu cả thông tin về áp suất) để chạy <code>grompp</code>. Trong ví dụ này, ta sẽ chạy mô phỏng MD trong <b>10 ns</b>:</p>
+<h3>Hiệu chỉnh tính tuần hoàn (Periodicity)</h3>
+<p>Trong quá trình mô phỏng, protein có thể khuếch tán trong hộp mô phỏng (unit cell), đôi khi trông như bị "gãy" hoặc "nhảy" sang phía bên kia của hộp do <b>điều kiện biên tuần hoàn</b>. 
+Để khắc phục, ta dùng công cụ <code>trjconv</code>:</p>
 
 <div class="code">
 <pre>
-gmx grompp -f inputs/md.mdp -c npt.gro -t npt.cpt -p topol.top -o md_0_10.tpr
-
-gmx mdrun -deffnm md_0_10
+gmx trjconv -s md_0_10.tpr -f md_0_10.xtc -o md_0_10_noPBC.xtc -pbc mol -center
 </pre>
 </div>
 
-<h3>Tăng tốc bằng GPU</h3>
-<p>Kể từ phiên bản GROMACS 2025, các tính toán PME có thể được xử lý trên GPU, giúp mô phỏng nhanh hơn rất nhiều. Ví dụ, với card Titan Xp, tốc độ có thể đạt tới <b>196 ns/ngày</b> cho hệ thống này!</p>
+<p>Tại các lựa chọn, chọn <b>1 ("Protein")</b> để làm trung tâm và <b>0 ("System")</b> cho đầu ra.
+Tất cả các phân tích sau sẽ được thực hiện trên quỹ đạo đã hiệu chỉnh này (<code>md_0_10_noPBC.xtc</code>).</p>
 
-<p>Trên thực tế, từ phiên bản 4.6, GROMACS đã hỗ trợ GPU cho mô phỏng MD. Đến phiên bản 2018, hầu hết các tương tác không liên kết (nonbonded) và tính toán PME đều chạy trên GPU, trong khi các lực liên kết (bonded forces) vẫn do CPU xử lý. Khi cài đặt GROMACS (xem hướng dẫn tại <a href="https://www.gromacs.org" target="_blank">www.gromacs.org</a>), chương trình sẽ tự động nhận diện GPU nếu có sẵn. Điều kiện tối thiểu để sử dụng GPU tăng tốc là có thư viện CUDA, SDK và GPU với compute capability ≥ 2.0.</p>
+<h3>Độ lệch bình phương trung bình (RMSD)</h3>
+<p>Công cụ <code>gmx rms</code> được dùng để tính RMSD, giúp đánh giá độ lệch cấu trúc theo thời gian:</p>
 
-<p>Nếu bạn có nhiều GPU hoặc muốn tùy chỉnh cách phân chia công việc trong sơ đồ song song lai (hybrid parallelization), hãy tham khảo chi tiết trong <i>GROMACS manual</i> và trang chủ GROMACS. Những chi tiết kỹ thuật nâng cao này nằm ngoài phạm vi của hướng dẫn hiện tại.</p>
+<div class="code">
+<pre>
+gmx rms -s md_0_10.tpr -f md_0_10_noPBC.xtc -o rmsd.xvg -tu ns
+</pre>
+</div>
+
+<p>Chọn <b>4 ("Backbone")</b> cho cả bước fit least-squares và nhóm tính RMSD.
+Tùy chọn <code>-tu ns</code> chuyển đơn vị thời gian từ ps sang ns cho dễ đọc. 
+Kết quả là biểu đồ RMSD so với cấu trúc protein đã được tối ưu năng lượng và cân bằng.</p>
+
+<p>Nếu muốn tính RMSD so với <b>cấu trúc tinh thể gốc (crystal structure)</b>, dùng lệnh sau:</p>
+
+<div class="code">
+<pre>
+gmx rms -s em.tpr -f md_0_10_noPBC.xtc -o rmsd_xtal.xvg -tu ns
+</pre>
+</div>
+
+<h3>Đọc kết quả</h3>
+<p>Khi vẽ RMSD từ hai cách trên, ta thấy giá trị dao động quanh <b>0.09 ± 0.01 nm (≈ 0.9 Å)</b>, chứng tỏ cấu trúc protein không thay đổi nhiều sau khi mô phỏng. 
+Sự khác biệt nhỏ giữa hai đường cong là do sự khác biệt giữa cấu trúc đã tối ưu hóa và cấu trúc tinh thể gốc – điều này là bình thường.</p>
+
+<p>Lưu ý: RMSD <b>không thể</b> dùng làm thước đo duy nhất để đánh giá tính ổn định hay hội tụ của mô phỏng. Một phức hợp protein lớn có thể có RMSD ≈ 1.0 nm (gấp 10 lần ví dụ này) nhưng vẫn ổn định, vì RMSD chỉ phản ánh sự tích lũy của các dịch chuyển nhỏ.</p>
+
+<h3>Bán kính quay (Radius of Gyration - Rg)</h3>
+<p><b>Radius of gyration (Rg)</b> cho biết mức độ “gọn” của protein. 
+Nếu protein ổn định ở trạng thái gấp nếp, giá trị Rg sẽ dao động quanh một giá trị cố định. 
+Nếu protein bị duỗi ra hoặc sụp đổ, Rg sẽ thay đổi theo thời gian.</p>
+
+<div class="code">
+<pre>
+gmx gyrate -s md_0_10.tpr -f md_0_10_noPBC.xtc -o gyrate.xvg -sel Protein -tu ns
+</pre>
+</div>
+
+<p>Trong ví dụ với lysozyme, giá trị Rg ổn định quanh <b>1.409 ± 0.008 nm</b>, cho thấy protein duy trì trạng thái gấp nếp trong suốt 10 ns ở 298 K. 
+Kết quả này là hợp lý và minh họa cho khả năng phân tích nâng cao có sẵn trong GROMACS. 
+Tương tự RMSD, dữ liệu có thể được làm mượt bằng cửa sổ trượt 500 ps trong XmGrace.</p>
+
+<h3>Cấu trúc bậc hai (Secondary Structure)</h3>
+<p>Cấu trúc bậc hai của protein (α-helix, β-sheet, coil, …) phản ánh sự bền vững của cấu trúc trong quá trình mô phỏng. 
+GROMACS tích hợp thuật toán <b>DSSP (Dictionary of Secondary Structure of Proteins)</b> thông qua lệnh <code>gmx dssp</code> để phân tích:</p>
+
+<div class="code">
+<pre>
+gmx dssp -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -o dssp.dat -num dssp_num.xvg
+</pre>
+</div>
+
+<p>Kết quả đầu ra có thể cần chỉnh lại nhãn (label) và sắp xếp dữ liệu. 
+Sau khi xử lý, bạn sẽ thu được biểu đồ thể hiện sự thay đổi tỉ lệ các loại cấu trúc bậc hai theo thời gian. 
+Để quan sát rõ hơn, dữ liệu có thể được làm mượt với trung bình trượt 500 ps.</p>
+
+<h3>Liên kết hydro (Hydrogen Bonds)</h3>
+<p>Liên kết hydro trong GROMACS được xác định dựa trên 2 tiêu chí:</p>
+<ul>
+  <li>Khoảng cách donor-H ≤ 0.35 nm (có thể chỉnh với <code>-hbr</code>)</li>
+  <li>Góc donor-acceptor-H ≤ 30° (tương ứng góc H-donor-acceptor trong khoảng 150°-180°)</li>
+</ul>
+<p>Công cụ sử dụng là <code>gmx hbond</code>. Khi chạy, chương trình sẽ yêu cầu chọn 2 nhóm để kiểm tra. 
+Các nhóm này phải hoặc giống hệt nhau, hoặc hoàn toàn tách biệt (không có nguyên tử chung).</p>
+
+<p><b>(a) Liên kết hydro trong khung chính (main chain)</b></p>
+<div class="code">
+<pre>
+gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_mainchain.xvg
+</pre>
+</div>
+<p>Chọn nhóm <b>MainChain+H</b> (7) cho cả hai lựa chọn. 
+Lưu ý: nhóm “Backbone” trong GROMACS chỉ có N, Cα, C → không dùng được cho phân tích H-bond.</p>
+
+<p><b>(b) Liên kết hydro giữa các mạch bên (side chain)</b></p>
+<div class="code">
+<pre>
+gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_sidechain.xvg
+</pre>
+</div>
+<p>Chọn nhóm <b>SideChain</b> (8) cho cả hai lựa chọn.</p>
+
+<p><b>(c) Liên kết hydro giữa protein và nước</b></p>
+<div class="code">
+<pre>
+gmx hbond -s md_0_10.tpr -f md_0_10_noPBC.xtc -tu ns -num hbnum_prot_wat.xvg
+</pre>
+</div>
+<p>Chọn <b>Protein</b> (1) và <b>Water (12)</b> hoặc <b>SOL (13)</b> (hai nhóm này tương đương).</p>
+
+<h3>Đọc kết quả</h3>
+<p>Khi vẽ biểu đồ, bạn sẽ thấy:</p>
+<ul>
+  <li>Số lượng H-bond trong khung chính (MainChain+H) khá ổn định, khoảng 55 liên kết.</li>
+  <li>Mạch bên (SideChain) ít hơn, khoảng ~20 liên kết.</li>
+  <li>Protein hình thành nhiều H-bond với phân tử nước, phản ánh sự hòa tan tốt.</li>
+</ul>
+<p>Tất cả kết quả đều ổn định theo thời gian, điều này phù hợp với một mô phỏng ngắn (10 ns).</p>

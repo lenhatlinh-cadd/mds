@@ -1,12 +1,12 @@
-<h2>TẠO TỆP CẤU TRÚC LIÊN KẾT</h2>
-Tệp cấu trúc liên kết (topoplogy file) là tập tin định nghĩa các nguyên tử, liên kết, góc, tham số lực… để mô phỏng động lực học phân tử hoạt động đúng theo trường lực.
+<h2>TẠO TỆP TOPOLOGY</h2>
+Tệp topoplogy <i>(tệp cấu trúc liên kết)</i> là tập tin định nghĩa các nguyên tử, liên kết, góc, tham số lực… để mô phỏng động lực học phân tử hoạt động đúng theo trường lực.
 Tệp cấu trúc chứa thông tin mô tả cấu trúc và thông tin liên kết của hệ thống mô phỏng, bao gồm:
 <ul>
   <li><b>Danh sách nguyên tử</b> (atomic types, charges, masses).</li>
   <li><b>Liên kết</b> (bonds): nguyên tử nào nối với nguyên tử nào.</li>
   <li><b>Góc</b> (angles) giữa các liên kết.</li>
   <li><b>Dihedral/torsion</b> (xoay quanh liên kết).</li>
-  <li><b>Tham số trường lực</b> (force field parameters): hằng số lò xo, hằng số xoắn, hằng số Lennard–Jones...</li>
+  <li><b>Tham số trường lực</b> (force field parameters): hằng số lò xo, hằng số xoắn, hằng số Lennard-Jones...</li>
   <li><b>Số phân tử và loại phân tử có trong hệ</b> (protein, nước, ion…).</li>
 </ul>
 
@@ -45,7 +45,7 @@ Cách nhanh hơn là dùng lệnh:</p>
 
 <div class="code">
 <pre>
-grep -v HOH protein.pdb > protein_clean.pdb
+grep -v HOH 1AKI.pdb > 1AKI_clean.pdb
 </pre>
 </div>
 
@@ -60,9 +60,9 @@ Hãy nhớ rằng <code>pdb2gmx</code> không thể tạo topology cho mọi lo�
 Công cụ này sẽ tạo ra ba file quan trọng:</p>
 
 <ul>
-  <li><b>Cấu trúc phân tử đã xử lý</b> (<code>protein_processed.gro</code>)</li>
+  <li><b>Cấu trúc phân tử đã xử lý</b> (<code>1AKI_processed.gro</code>)</li>
   <li><b>File hạn chế vị trí</b> (<code>posre.itp</code>)</li>
-  <li><b>Topology</b> (<code>topol.top</code>) – chứa thông tin về loại nguyên tử, điện tích, liên kết, góc, dihedral,...</li>
+  <li><b>Topology</b> (<code>topol.top</code>) chứa thông tin về loại nguyên tử, điện tích, liên kết, góc, dihedral,...</li>
 </ul>
 
 <p>Trong hướng dẫn này, chúng ta sẽ dùng trường lực <b>CHARMM36</b>. 
@@ -81,7 +81,7 @@ Sau đó, giải nén và đặt vào thư mục:</p>
 
 <div class="code">
 <pre>
-gmx pdb2gmx -f protein_clean.pdb -o protein_processed.gro -water tip3p
+gmx pdb2gmx -f 1AKI_clean.pdb -o 1AKI_processed.gro -water tip3p
 </pre>
 </div>
 

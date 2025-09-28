@@ -1,44 +1,59 @@
 <h2>CÂN BẰNG HỆ THỐNG</h2>
-<p>Sau khi đã tối ưu năng lượng, chúng ta có một cấu trúc khởi đầu hợp lý về hình học và định hướng dung môi. Tuy nhiên, để bắt đầu mô phỏng động lực học phân tử (MD) thực sự, cần phải <b>cân bằng dung môi và ion</b> xung quanh protein. Nếu bỏ qua bước này và chạy ngay động lực học không hạn chế, hệ thống có thể sụp đổ vì dung môi mới chỉ tối ưu nội tại, chưa thích ứng với phân tử hòa tan (protein).</p>
+<p>Sau khi tối ưu năng lượng, ta có được cấu trúc ban đầu hợp lý về hình học và định hướng dung môi. Tuy nhiên, trước khi mô phỏng động lực học phân tử (MD) thực sự, cần phải cân bằng dung môi và ion xung quanh protein. Nếu bỏ qua bước này và chạy ngay MD không hạn chế, hệ thống có thể sụp đổ vì dung môi mới chỉ tối ưu nội tại, chưa thích ứng với phân tử hòa tan, dẫn đến kết quả sai hoặc lỗi mô phỏng.</p>
 
-<p>Ở giai đoạn cân bằng, chúng ta sẽ đưa hệ thống về nhiệt độ mô phỏng mong muốn và sau đó áp suất sẽ được điều chỉnh để đạt mật độ phù hợp.</p>
+<p>Trong giai đoạn cân bằng, hệ thống được đưa về nhiệt độ mô phỏng mong muốn, sau đó ổn định áp suất để đạt mật độ phù hợp. File <code>posre.itp</code> (tạo bởi <code>pdb2gmx</code>) sẽ được dùng để áp đặt lực hạn chế lên các nguyên tử nặng của protein, giúp dung môi thích nghi trong khi giữ cấu trúc protein ổn định. Vị trí ràng buộc được cung cấp từ file tọa độ đi kèm tùy chọn <code>-r</code> khi chạy <code>grompp</code>.</p>
 
-<h3>Sử dụng file posre.itp</h3>
-
-<p>Bạn còn nhớ file <code>posre.itp</code> được tạo bởi <code>pdb2gmx</code> không? Chúng ta sẽ dùng nó ngay bây giờ. File này áp dụng lực hạn chế vị trí lên các nguyên tử nặng (tức là trừ hydro) của protein. Các nguyên tử vẫn có thể di chuyển, nhưng cần vượt qua một “rào cản năng lượng” đáng kể. Ý nghĩa của việc này là giúp dung môi được cân bằng xung quanh protein, trong khi cấu trúc protein không bị biến dạng nhiều. Vị trí gốc của ràng buộc được cung cấp qua file tọa độ đi kèm tùy chọn <code>-r</code> trong lệnh <code>grompp</code>.</p>
-
-<h3>Quá trình cân bằng đẳng tích</h3>
-
-<p>Cân bằng thường được thực hiện qua hai pha. Pha đầu là <b>NVT ensemble</b> (giữ cố định số hạt, thể tích và nhiệt độ). Trong giai đoạn này, nhiệt độ hệ thống sẽ dần ổn định ở giá trị mong muốn. Thông thường, 50–100 ps là đủ; trong hướng dẫn này ta sẽ thực hiện 100 ps.</p>
-
-<p>Thời gian chạy phụ thuộc vào phần cứng: trên CPU đa nhân có thể mất gần 1 giờ, còn nếu dùng GPU thông dụng, chỉ mất 1–2 phút.</p>
-
-<h3>Chạy NVT bằng grompp và mdrun</h3>
-
+<h3>Cân bằng đẳng tích (NVT)</h3>
+<p>Giai đoạn đầu tiên giữ cố định số hạt, thể tích và nhiệt độ. Trong khoảng 50-100 ps (ở đây chọn 100 ps), nhiệt độ hệ thống sẽ ổn định ở giá trị mong muốn (298 K). Trên CPU đa nhân có thể mất ~1 giờ, còn GPU chỉ 1-2 phút.</p>
 <div class="code">
-<pre>
-gmx grompp -f inputs/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
+gmx grompp -f inputs/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr<br>
 gmx mdrun -deffnm nvt
-</pre>
+</div>
+<p>Một số thiết lập trong <code>nvt.mdp</code>:<br>
+- <code>gen_vel = yes</code>: sinh vận tốc ngẫu nhiên ban đầu (có thể đổi <code>gen_seed</code> để tạo nhiều mô phỏng).<br>
+- <code>tcoupl = V-rescale</code>: thermostat V-rescale.<br>
+- <code>pcoupl = no</code>: chưa điều chỉnh áp suất.</p>
+<p>Kiểm tra tiến triển nhiệt độ bằng:</p>
+<div class="code">
+gmx energy -f nvt.edr -o temperature.xvg
+</div>
+<ul>
+  <li>Nhập <code>17</code> → Enter (chọn Temperature).</li>
+  <li>Nhập <code>0</code> → Enter (kết thúc).</li>
+</ul>
+<p>Kết quả mong đợi: nhiệt độ đạt 298 K và ổn định trong suốt quá trình.</p>
+
+<h3>Cân bằng đẳng áp (NPT)</h3>
+<p>Sau NVT, hệ thống đã ổn định về nhiệt độ. Tiếp theo, cần ổn định áp suất và mật độ trong tập hợp NPT (giữ N, P, T không đổi), gần giống với điều kiện thí nghiệm thực tế. File tham số <code>npt.mdp</code> có thêm phần điều chỉnh áp suất (C-rescale barostat) và thường cần thời gian dài hơn để hội tụ.</p>
+<p>Một số thiết lập trong <code>npt.mdp</code>:<br>
+- <code>continuation = yes</code>: tiếp tục từ NVT.<br>
+- <code>gen_vel = no</code>: dùng vận tốc từ NVT.</p>
+<div class="code">
+gmx grompp -f inputs/npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr<br>
+gmx mdrun -deffnm npt
 </div>
 
-<p>Một số thông số quan trọng trong file <code>nvt.mdp</code>:</p>
+<h3>Phân tích kết quả</h3>
+<p><b>Kiểm tra áp suất của hệ bằng lệnh sau:</b></p>
+<div class="code">
+gmx energy -f npt.edr -o pressure.xvg
+</div>
 <ul>
-  <li><code>gen_vel = yes</code>: tạo vận tốc ban đầu ngẫu nhiên. Có thể thay đổi <code>gen_seed</code> để khởi tạo nhiều mô phỏng khác nhau từ cùng cấu trúc ban đầu.</li>
-  <li><code>tcoupl = V-rescale</code>: thuật toán thermostat V-rescale (Bussi et al.).</li>
-  <li><code>pcoupl = no</code>: chưa áp dụng điều chỉnh áp suất trong giai đoạn này.</li>
+  <li>Nhập <code>17</code> → Enter (chọn Pressure).</li>
+  <li>Nhập <code>0</code> → Enter (kết thúc).</li>
 </ul>
 
-<h3>Phân tích nhiệt độ</h3>
+<p>Áp suất dao động mạnh (~100 ps đầu), nhưng giá trị trung bình (ví dụ -3 ± 11 bar so với 1 bar chuẩn) vẫn chấp nhận được về mặt thống kê.</p>
 
-<p>Để kiểm tra sự tiến triển nhiệt độ, dùng lệnh:</p>
-
+<p><b>Kiểm tra mật độ của hệ bằng lệnh sau:</b></p>
 <div class="code">
-<pre>
-gmx energy -f nvt.edr -o temperature.xvg
-</pre>
+gmx energy -f npt.edr -o density.xvg
 </div>
+<ul>
+  <li>Nhập <code>23</code> → Enter (chọn Density).</li>
+  <li>Nhập <code>0</code> → Enter (kết thúc).</li>
+</ul>
 
-<p>Khi được hỏi, nhập <b>16 0</b> để chọn nhiệt độ (Temperature) và kết thúc. File <code>temperature.xvg</code> sẽ được tạo, có thể mở bằng Xmgrace để vẽ đồ thị.</p>
+<p>Giá trị trung bình trong 500 ps có thể quanh 1025 kg/m³, cao hơn thực nghiệm do có thêm protein và ion. Quan trọng là mật độ đã ổn định.</p>
 
-<p>Kết quả mong đợi: nhiệt độ hệ thống nhanh chóng đạt 298 K và duy trì ổn định trong suốt quá trình NVT. Với hệ đơn giản này, chỉ 50 ps cũng có thể đủ, nhưng chúng ta thực hiện 100 ps để chắc chắn.</p>
+<p><i>Lưu ý:</i> Kết quả chi tiết có thể khác nhau giữa các mô phỏng do tính ngẫu nhiên và thời gian hội tụ, vì vậy không cần khớp hoàn toàn với ví dụ.</p>

@@ -1,12 +1,12 @@
-<h2>THÊM ION</h2>
+<h2>THÊM ION VÀO HỆ THỐNG</h2>
 
-<p>Hiện tại, chúng ta đã có một hệ thống đã được hòa tan trong dung môi, nhưng protein mang điện tích dương tổng cộng là <b>+8e</b> (thông tin này được hiển thị trong kết quả của <code>pdb2gmx</code>). Nếu bạn bỏ sót, hãy xem dòng cuối trong mục <code>[ atoms ]</code> của file <code>topol.top</code>, sẽ có phần <code>qtot 8</code>. Vì trong thực tế sinh học không tồn tại hệ có điện tích tổng, nên chúng ta cần bổ sung ion để trung hòa.</p>
+<p>Hiện tại, chúng ta đã có một hệ thống đã được hòa tan trong dung môi, nhưng protein mang điện tích dương tổng cộng là <b>+8e</b> (thông tin này được hiển thị trong kết quả của <code>pdb2gmx</code>). Nếu bạn bỏ sót, hãy xem dòng cuối trong mục <code>[ atoms ]</code> của file <code>topol.top</code>, sẽ có phần <code>qtot 8</code>. Trong điều kiện sinh học tự nhiên, các hệ dung dịch luôn được trung hòa về điện tích tổng thể, nghĩa là nếu protein mang điện dương thì sẽ luôn có ion âm xung quanh để cân bằng.</p>
 
 <p>Công cụ trong GROMACS dùng để thêm ion là <b>genion</b>. Lệnh này sẽ thay thế một số phân tử nước bằng ion mà ta chỉ định. Đầu vào của <code>genion</code> là file chạy (run input file) có phần mở rộng <code>.tpr</code>. File này được tạo bởi <code>grompp</code> (GROMACS pre-processor), công cụ kết hợp tọa độ, topology và thông số từ file tham số động lực học phân tử (<code>.mdp</code>) để sinh ra mô tả chi tiết ở mức nguyên tử.</p>
 
 <p>Ở bước này, chúng ta chỉ cần một file <code>.mdp</code> đơn giản để sinh ra <code>.tpr</code>. Thông thường, người ta dùng file <code>.mdp</code> cho tối ưu năng lượng, vì nó cơ bản và không chứa tham số phức tạp. Lưu ý rằng file trong hướng dẫn này chỉ tương thích với trường lực CHARMM36.</p>
 
-<h3>Tạo file .tpr bằng grompp:</h3>
+<h3>Tạo file .tpr bằng grompp</h3>
 
 <div class="code">
 <pre>
@@ -16,7 +16,7 @@ gmx grompp -f inputs/ions.mdp -c 1AKI_solv.gro -p topol.top -o ions.tpr
 
 <p>Lệnh trên tạo ra file <code>ions.tpr</code> – mô tả đầy đủ hệ thống ở mức nguyên tử.</p>
 
-<h3>Thêm ion bằng genion:</h3>
+<h3>Thêm ion bằng genion</h3>
 
 <div class="code">
 <pre>
@@ -44,7 +44,7 @@ gmx genion -s ions.tpr -o 1AKI_solv_ions.gro -p topol.top -pname NA -nname CL -n
   <li>Từ phiên bản 4.5, tên ion luôn được chuẩn hóa thành ký hiệu nguyên tố viết hoa (ví dụ: <code>NA</code>, <code>CL</code>), thay vì tên residue hoặc atom.</li>
 </ul>
 
-<h3>Kết quả sau khi thêm ion:</h3>
+<h3>Kết quả sau khi thêm ion</h3>
 
 <div class="code-view">
 <pre>
