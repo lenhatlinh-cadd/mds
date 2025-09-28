@@ -1,0 +1,22 @@
+<h2 style="text-transform: uppercase;">
+  CÂN BẰNG ÁP SUẤT (NPT)
+</h2>
+
+<p>Sau khi nhiệt độ đã ổn định, cần cân bằng áp suất. Giai đoạn NPT cho protein màng thường dài hơn so với protein hòa tan do tính <b>heterogeneous</b> của hệ thống: nước khuếch tán nhanh, nhưng lipid khuếch tán chậm. Ở đây, chúng ta tiến hành cân bằng NPT 1 ns. File <code>npt.mdp</code> có thể tham khảo <a href="#">tại đây</a>.</p>
+
+<h3>Thay đổi chính trong NPT .mdp</h3>
+<ul>
+  <li><b>tcoupl = Nose-Hoover:</b> Thermostat Nosé-Hoover tạo ra đúng ensemble động học và cho phép dao động tự nhiên. Không dùng cho NVT; bắt đầu với Berendsen hoặc V-rescale, chuyển sang Nosé-Hoover khi bắt đầu NPT hoặc MD sản xuất.</li>
+  <li><b>pcoupltype = semiisotropic:</b> Áp suất không đồng nhất (semi-isotropic) cho phép màng biến dạng trong mặt phẳng x-y riêng biệt với trục z. Có thể dùng anisotropic, nhưng box vectors có thể bị skew dài hạn.</li>
+  <li>Hai giá trị cho compressibility và ref_p, tương ứng cho x-y và z.</li>
+</ul>
+
+<h3>Chạy cân bằng NPT</h3>
+
+<pre><code>gmx grompp -f npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -n index.ndx -o npt.tpr
+
+gmx mdrun -deffnm npt
+</code></pre>
+
+<p>Phân tích áp suất bằng <code>gmx energy</code>. Ngoài ra, kiểm tra sự ổn định của box vectors để đảm bảo diện tích màng ở mặt phẳng x-y ổn định (Box-X và Box-Y).</p>
+

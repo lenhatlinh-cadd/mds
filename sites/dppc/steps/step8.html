@@ -1,0 +1,12 @@
+<h2 style="text-transform: uppercase;">
+  MÔ PHỎNG SẢN XUẤT (PRODUCTION MD)
+</h2>
+
+<p>Sau hai giai đoạn cân bằng, hệ thống đã ổn định ở nhiệt độ và áp suất mong muốn. Chúng ta sẵn sàng <b>gỡ bỏ position restraints</b> và chạy MD sản xuất để thu thập dữ liệu. Quá trình tương tự như các bước trước. Chạy mô phỏng 1 ns với file <code>md.mdp</code> <a href="#">tại đây</a>.</p>
+
+<pre><code>gmx grompp -f md.mdp -c npt.gro -t npt.cpt -p topol.top -n index.ndx -o md_0_1.tpr
+
+gmx mdrun -deffnm md_0_1
+</code></pre>
+
+<p>Để tiếp tục mô phỏng vượt quá 1 ns và sử dụng checkpointing, tham khảo tài liệu trên trang web chính thức của GROMACS.</p>

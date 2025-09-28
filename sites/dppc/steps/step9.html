@@ -1,0 +1,61 @@
+<h2 style="text-transform: uppercase;">
+  PHÂN TÍCH HỆ THỐNG MÀNG VÀ PROTEIN
+</h2>
+
+<p>Có nhiều loại phân tích hữu ích cho hệ thống protein màng. Một số tham số quan trọng bao gồm:</p>
+<ul>
+  <li>Deuterium order parameters của chuỗi acyl</li>
+  <li>Mật độ môi trường màng</li>
+  <li>Diện tích trên mỗi đầu lipid</li>
+  <li>Độ dày bilayer (chiều thẳng đứng)</li>
+  <li>Khuếch tán ngang của lipid</li>
+  <li>Các phân tích khác như cấu trúc thứ cấp của peptide, RMSD, hướng P-N vector, độ nghiêng helix, v.v.</li>
+</ul>
+<p>Hầu hết các phân tích này yêu cầu các index group chuyên biệt, tạo bằng <code>make_ndx</code>.</p>
+
+<h3>1. Deuterium Order Parameters</h3>
+<p>Tạo index group chỉ chứa các nguyên tử carbon dọc theo chuỗi acyl của lipid, mỗi chuỗi phải xử lý riêng biệt:</p>
+<pre><code>gmx make_ndx -f md_0_1.tpr -o sn1.ndx
+...
+ > a C34
+ > a C36
+ > a C37
+ > a C38
+...
+ > a C50
+ > del 0-21
+ > q
+</code></pre>
+<p>Sử dụng GROMACS order module với trục bình thường z:</p>
+<pre><code>gmx order -s md_0_1.tpr -f md_0_1.xtc -n sn1.ndx -d z -od deuter_sn1.xvg</code></pre>
+
+<h3>2. Mật độ màng</h3>
+<p>Tạo index group cho các đầu lipid, chuỗi acyl, protein và dung môi:</p>
+<pre><code>gmx make_ndx -f md_0_1.tpr -o density_groups.ndx
+...
+ > 13 & a C1 | a C2 | a C3 | a N4 | ... | a O11
+ > name 22 Headgroups
+ > 13 & a C12 | a C13 | a O14 | a C15 | a O16 | a C32 | a O33 | a C34 | a O35
+ > name 23 Glycerol_Ester
+ > 13 & ! 22 & ! 23
+ > name 24 Acyl_Chains
+ > q
+</code></pre>
+<p>Phân tích từng nhóm:</p>
+<pre><code>gmx density -s md_0_1.tpr -f md_0_1.xtc -n density_groups.ndx -o dens_headgroups.xvg -d Z</code></pre>
+
+<h3>3. Diện tích đầu lipid và độ dày bilayer</h3>
+<p>Diện tích đầu lipid cho màng có protein không thể tính trực tiếp bằng GROMACS. Với màng thuần, nó là:</p>
+<pre><code>(Box-X * Box-Y) / (# lipids per leaflet)</code></pre>
+<p>Với protein nhúng, sử dụng chương trình GridMAT-MD để tính diện tích đầu lipid và độ dày bilayer.</p>
+
+<h3>4. Khuếch tán ngang của lipid</h3>
+<p>Tạo index group cho nguyên tử tham chiếu (P8) của lipid:</p>
+<pre><code>gmx make_ndx -f md_0_1.tpr -o p8.ndx
+...
+ > a P8
+ > q
+</code></pre>
+<p>Tính khuếch tán ngang:</p>
+<pre><code>gmx msd -s md_0_1.tpr -f md_0_1.xtc -n p8.ndx -lateral z</code></pre>
+<p>Lưu ý: Với mô phỏng ngắn, giá trị D thu được chưa chính xác, nhưng đây là minh họa cho việc sử dụng module <code>msd</code> trong tính toán các đặc tính lipid.</p>

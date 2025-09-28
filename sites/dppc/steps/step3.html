@@ -1,0 +1,103 @@
+<h2 style="text-transform: uppercase;">
+  XÂY DỰNG Ô ĐƠN VỊ CHO PROTEIN MÀNG
+</h2>
+
+<p>Quá trình định nghĩa một ô đơn vị cho protein màng phức tạp hơn nhiều so với protein trong nước. 
+Các bước chính bao gồm:</p>
+<ul>
+  <li>Định hướng protein và màng trong cùng hệ trục tọa độ</li>
+  <li>Sắp xếp lipid xung quanh protein</li>
+  <li>Thêm dung môi nước</li>
+</ul>
+
+<h3>1. Orient the protein and membrane</h3>
+<p>Chúng ta đã căn chỉnh peptide KALP bằng <code>editconf</code>. 
+Bilayer nằm trong mặt phẳng x-y, với vector pháp tuyến theo trục z. 
+Để loại bỏ ảnh hưởng của tính tuần hoàn (periodicity), sử dụng <code>trjconv</code>:</p>
+
+<ol>
+  <li><b>Tạo file .tpr cho hệ chỉ có DPPC bằng grompp:</b></li>
+</ol>
+
+<pre><code>gmx grompp -f minim.mdp -c dppc128.pdb -p topol_dppc.top -o dppc.tpr
+</code></pre>
+
+<p>Nếu có lỗi fatal, có thể dùng <code>-maxwarn 1</code>. 
+File <code>topol_dppc.top</code> chỉ dùng cho bước này.</p>
+
+<ol start="2">
+  <li><b>Dùng trjconv để loại periodicity:</b></li>
+</ol>
+
+<pre><code>gmx trjconv -s dppc.tpr -f dppc128.pdb -o dppc128_whole.gro -pbc mol -ur compact
+</code></pre>
+
+<p>Trong file <code>dppc128_whole.gro</code>, dòng cuối chứa vector hộp (box vectors). 
+Chúng ta cần đặt protein vào trung tâm hộp này:</p>
+
+<pre><code>gmx editconf -f KALP-15_processed.gro -o KALP_newbox.gro -c -box 6.41840 6.44350 6.59650
+</code></pre>
+
+<p>Ví dụ khác nếu box không đối xứng:</p>
+
+<pre><code>gmx editconf -f protein.gro -o protein_newbox.gro -box (membrane box vectors) -center x y z
+</code></pre>
+
+
+<h3>2. Pack the lipids around the protein</h3>
+<p>Cách thuận tiện nhất là dùng phương pháp <b>InflateGRO</b>. 
+Trước tiên, gộp file protein và bilayer:</p>
+
+<pre><code>cat KALP_newbox.gro dppc128_whole.gro > system.gro
+</code></pre>
+
+<p>Chỉnh lại phần header, số nguyên tử, rồi thêm vào topology:</p>
+
+<pre><code>; Strong position restraints for InflateGRO
+#ifdef STRONG_POSRES
+#include "strong_posre.itp"
+#endif
+</code></pre>
+
+<p>Tạo file vị trí restrain mạnh:</p>
+
+<pre><code>gmx genrestr -f KALP_newbox.gro -o strong_posre.itp -fc 100000 100000 100000
+</code></pre>
+
+<p>Chạy InflateGRO lần đầu (scale = 4):</p>
+
+<pre><code>perl inflategro.pl system.gro 4 DPPC 14 system_inflated.gro 5 area.dat
+</code></pre>
+
+<p>Minimization sau inflation:</p>
+
+<pre><code>gmx grompp -f minim_inflategro.mdp -c system_inflated.gro -p topol.top -r system_inflated.gro -o system_inflated_em.tpr
+gmx mdrun -deffnm system_inflated_em
+</code></pre>
+
+<p>Loại periodicity lần nữa:</p>
+
+<pre><code>gmx trjconv -s system_inflated_em.tpr -f system_inflated_em.gro -o tmp.gro -pbc mol
+mv tmp.gro system_inflated_em.gro
+</code></pre>
+
+<p>Sau đó, thu hẹp lipid với scale &lt; 1 (ví dụ 0.95):</p>
+
+<pre><code>perl inflategro.pl system_inflated_em.gro 0.95 DPPC 0 system_shrink1.gro 5 area_shrink1.dat
+</code></pre>
+
+<p>Lặp lại nhiều lần (EM + shrinking) cho tới khi đạt area/lipid ~71 Å² (gần giá trị thực nghiệm ~62 Å²).</p>
+
+
+<h3>3. Solvate with water</h3>
+<p>Thêm nước bằng <code>gmx solvate</code>:</p>
+
+<pre><code>gmx solvate -cp system_shrink26_em.gro -cs spc216.gro -o system_solv.gro -p topol.top
+</code></pre>
+
+<p>Sau đó dùng script Perl để loại nước nằm sai vị trí (bên trong lõi kỵ nước của bilayer):</p>
+
+<pre><code>perl water_deletor.pl -in system_solv.gro -out system_solv_fix.gro -ref O33 -middle C50 -nwater 3
+</code></pre>
+
+<p>Cập nhật lại số lượng nước (SOL) trong <code>topol.top</code> theo output của script.</p>
