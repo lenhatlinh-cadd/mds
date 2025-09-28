@@ -24,7 +24,7 @@ header{display:flex;align-items:center;gap:16px}
   box-shadow:0 6px 18px rgba(11,114,217,0.15);
 }
 h1{margin:0;font-size:1.6rem}
-p.lead{margin:6px 0 0;color:var(--muted)}
+p.lead{margin:3px 0;color:var(--muted)}
 
 main{
   margin-top:22px;
