@@ -1,0 +1,47 @@
+<h2>BƯỚC 2: ĐẶT HAI LỚP DUNG MÔI</h2>
+
+<p>Việc đặt hai lớp dung môi (cyclohexane và nước) có thể thực hiện dễ dàng bằng module <code>editconf</code>.  
+Trước hết, ta định nghĩa một hộp mô phỏng (unit cell) với kích thước mong muốn và đặt lớp cyclohexane vào một vị trí xác định.  
+Khi đã sắp xếp hợp lý, phần không gian trống trong hộp sẽ được điền đầy bằng nước.</p>
+
+<p>Sau khi cân bằng lớp cyclohexane (466 phân tử), hộp có kích thước <code>4.30795 nm</code> theo cả ba chiều.  
+Mục tiêu của bài tập này là xây dựng hệ hai pha sao cho lớp nước có kích thước tương đương.  
+Cách làm: giữ nguyên kích thước theo trục x và y, và nhân đôi kích thước theo trục z.</p>
+
+<p>Nếu chỉ định hộp mới theo cách này, <code>editconf</code> sẽ tự động <b>đặt cyclohexane vào giữa hộp</b>.  
+Dù điều này vẫn đúng về mặt tuần hoàn (periodicity), nhưng sẽ bất tiện nếu ta muốn thêm protein hoặc peptide nhỏ vào lớp nước.  
+Vì vậy, ta sẽ chỉ định <b>tọa độ tâm của hệ thống</b> thủ công, đặt tại <code>(x/2, y/2, z/4)</code>.  
+Điều này giúp lớp cyclohexane nằm gần đáy hộp, và khoảng trống phía trên có thể điền đầy bằng nước.</p>
+
+<p>Lệnh ví dụ:</p>
+
+<div class="code-view">
+<pre>
+gmx editconf -f chx_10ns.gro -o chx_newbox.gro \
+-box 4.30795 4.30795 8.6159 \
+-center 2.153975 2.153975 2.153975
+</pre>
+</div>
+
+<p>Kết quả: ta thu được một hộp với lớp cyclohexane được đặt ở vị trí mong muốn.</p>
+
+<h3>Thêm dung môi nước</h3>
+
+<p>Bước tiếp theo là điền đầy phần không gian còn trống bằng nước, dùng module <code>solvate</code>:</p>
+
+<div class="code-view">
+<pre>
+gmx solvate -cp chx_newbox.gro -cs spc216.gro -p chx.top -o chx_solv.gro
+</pre>
+</div>
+
+<p><b>Lưu ý quan trọng:</b> công cụ <code>solvate</code> có thể chèn một số phân tử nước vào ngay trong lớp cyclohexane.  
+Để hạn chế hiện tượng này:</p>
+<ul>
+  <li>Tạo một bản sao của file <code>vdwradii.dat</code> (thường nằm trong <code>$GMXLIB</code>) vào thư mục làm việc.</li>
+  <li>Chỉnh giá trị bán kính của nguyên tử carbon từ <code>0.17</code> thành <code>0.35</code>.</li>
+  <li>Chạy lại lệnh <code>gmx solvate</code>.</li>
+</ul>
+
+<p>Sau bước này, vẫn có thể còn một vài phân tử nước “lạc” vào lớp cyclohexane, nhưng chúng sẽ bị loại bỏ trong quá trình cân bằng.  
+Đừng lo lắng nếu thấy nước xuất hiện ở “đáy” hộp — do điều kiện biên tuần hoàn (periodic boundary conditions), lớp nước sẽ liên tục trong mặt phẳng x-y.</p>

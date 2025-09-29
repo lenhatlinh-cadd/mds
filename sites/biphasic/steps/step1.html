@@ -1,0 +1,59 @@
+<h2>BƯỚC 1: CHUẨN BỊ LỚP KỴ NƯỚC</h2>
+
+<p>Lớp kỵ nước trong hướng dẫn này sẽ được tạo từ <b>cyclohexane</b>, được mô phỏng theo trường lực <b>GROMOS96 43A1</b>.  
+Bạn có thể dùng bất kỳ phần mềm chỉnh sửa phân tử nào để tạo file tọa độ. Topology thì khá đơn giản, có thể tự tạo hoặc sinh từ các server trực tuyến như <b>PRODRG</b>.  
+Lưu ý: cần gán <b>điện tích bằng 0</b> cho tất cả các nhóm CH<sub>2</sub> (united atom), thay vì dùng giá trị điện tích riêng phần mà PRODRG đưa ra.  
+Để tiết kiệm thời gian, bạn có thể tải sẵn file tọa độ và topology của cyclohexane.</p>
+
+<p>Có hai cách để xây dựng hộp mô phỏng:</p>
+<ul>
+  <li><b>Phương pháp 1:</b> Chèn ngẫu nhiên phân tử vào một hộp có kích thước cố định.</li>
+  <li><b>Phương pháp 2:</b> Xây dựng lưới phân tử với số ô đã định trước.</li>
+</ul>
+
+<h3>Phương pháp 1. Chèn ngẫu nhiên</h3>
+
+<p>Dùng module <code>insert-molecules</code> để chèn ngẫu nhiên phân tử vào hộp.  
+Ví dụ, để tạo một hộp lập phương 5 nm chứa cyclohexane, chạy lệnh sau:</p>
+
+<div class="code-view">
+<pre>
+gmx insert-molecules -ci chx.gro -nmol 1200 -box 5 5 5 -o chx_box.gro
+</pre>
+</div>
+
+<p>Tham số <code>-nmol</code> có thể đặt một giá trị lớn. Công cụ sẽ cố gắng nhét nhiều nhất có thể vào hộp.  
+Nên thử vài giá trị tăng dần để đảm bảo hộp được lấp đầy.  
+Trong ví dụ trên, hộp cuối cùng có 1114 phân tử cyclohexane. Đây cũng là cách được sử dụng trong một bài báo gần đây.</p>
+
+<h3>Phương pháp 2. Chèn có kiểm soát</h3>
+
+<p>Nếu bạn muốn một cách xây hộp “có trật tự” hơn, có thể dùng module <code>genconf</code> để tạo lưới phân tử.  
+Ưu điểm của phương pháp 1: ít trật tự nhân tạo → cân bằng nhanh hơn.  
+Ưu điểm của phương pháp 2: kiểm soát chính xác số phân tử, biết vị trí của từng phân tử.</p>
+
+<p>Lệnh ví dụ:</p>
+
+<div class="code-view">
+<pre>
+gmx genconf -f chx.gro -nbox 8 8 8 -o chx_box.gro
+</pre>
+</div>
+
+<p>Lệnh này sẽ tạo ra một hộp gồm <code>8 × 8 × 8 = 512</code> phân tử cyclohexane.  
+Không bắt buộc phải cho các giá trị x, y, z bằng nhau — bạn có thể tạo hộp chữ nhật hoặc tấm slab.  
+Trong hướng dẫn này, hộp lập phương là đủ.</p>
+
+<h3>Cân bằng mật độ</h3>
+
+<p>Sau khi có hộp cyclohexane, bạn cần chạy mô phỏng để hệ đạt mật độ ổn định.  
+Quy trình khuyến nghị:</p>
+<ul>
+  <li>Tối ưu năng lượng bằng <b>Steepest Descent</b>.</li>
+  <li>Cân bằng <b>NVT</b> trong 100 ps ở 298 K.</li>
+  <li>Cân bằng <b>NPT</b> trong 100 ps ở 298 K, 1 bar.</li>
+  <li>Chạy tiếp 10 ns NPT để đạt mật độ hợp lý.</li>
+</ul>
+
+<p>Hộp cyclohexane đã được cân bằng (theo phương pháp 1) có thể tải về tại đây:  
+<a href="#">Tải file đã cân bằng</a></p>
