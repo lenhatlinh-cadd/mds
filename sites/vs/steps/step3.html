@@ -1,0 +1,61 @@
+<h2>Step Three: Simple Simulations</h2>
+
+<p>
+Chúng ta sẽ tạo một hệ thống đơn giản để mô phỏng. Tạo một hộp nhỏ chứa các phân tử CO2 sử dụng <code>insert-molecules</code>:
+</p>
+
+<div class="code view">
+<pre>
+gmx insert-molecules -ci co2.pdb -nmol 10 -box 10 10 10 -o box.pdb
+</pre>
+</div>
+
+<p>
+Chúng ta làm điều này vì nếu chỉ mô phỏng một phân tử duy nhất, hệ thống sẽ không có độ tự do và mô phỏng thực chất diễn ra ở 0 K, do đó phân tử không di chuyển. Điều này không hữu ích để kiểm tra mô hình, nên ta dùng một hệ thống nhỏ. Cập nhật section <code>[ molecules ]</code> trong <code>topol.top</code> để phản ánh 10 phân tử CO2 trong hệ.
+</p>
+
+<h3>Energy Minimization</h3>
+<p>
+Chạy năng lượng tối thiểu sử dụng file <code>.mdp</code>:
+</p>
+
+<div class="code view">
+<pre>
+gmx grompp -f em.mdp -c box.pdb -p topol.top -o em.tpr
+gmx mdrun -nt 1 -nb cpu -deffnm em
+</pre>
+</div>
+
+<p>
+Hệ thống rất nhỏ (50 hạt), nên chỉ sử dụng một luồng để chạy mô phỏng.
+</p>
+
+<h3>Short MD Simulation</h3>
+<p>
+Chạy một mô phỏng ngắn với file <code>md.mdp</code>:
+</p>
+
+<div class="code view">
+<pre>
+gmx grompp -f md.mdp -c em.gro -p topol.top -o md.tpr
+gmx mdrun -nt 1 -nb cpu -deffnm md
+</pre>
+</div>
+
+<p>
+Các phân tử CO2 sẽ chuyển động trong không gian, điều này là bình thường. Quan trọng là hình học phân tử được xây dựng chính xác trong mỗi frame. Chúng ta có thể kiểm tra mô men quán tính của từng phân tử bằng module <code>principal</code>. Phân tích từng phân tử:
+</p>
+
+<div class="code view">
+<pre>
+gmx make_ndx -f em.gro
+...
+> splitres 0
+> q
+gmx principal -s md.tpr -f md.trr -n index.ndx
+</pre>
+</div>
+
+<p>
+Chọn bất kỳ phân tử nào để phân tích khi được hỏi. Output trong <code>moi.dat</code> chứa mô men quán tính theo các trục x, y, z. Mô men quán tính theo trục x (dọc theo liên kết C=O) là 0, trong khi theo trục y và z khoảng 0.500, hoàn toàn khớp với giá trị đã tính khi thiết lập topology. Như vậy, mô hình CO2 này tái tạo đúng mô men quán tính mong đợi.
+</p>

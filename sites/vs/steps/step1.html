@@ -1,0 +1,27 @@
+<h2>Step One: Introduction</h2>
+
+<p>
+Tutorial này giả định rằng người đọc đã quen thuộc với khái niệm <strong>virtual sites</strong> và tất cả thông tin trong <em>GROMACS manual</em>, các mục 4.7 và 5.2.2. Nếu chưa, vui lòng tìm hiểu trước các thông tin này. Trong tutorial này, hướng dẫn sẽ được cung cấp để xây dựng một phân tử tuyến tính đơn giản, <strong>carbon dioxide (CO2)</strong>. Phân tử này không thể được xây dựng theo cách truyền thống do lý do thuật toán: một góc 180° không ổn định trong mô phỏng.
+</p>
+
+<p><strong>Tóm tắt một số điểm chính về virtual sites:</strong></p>
+<ul>
+  <li>Virtual sites không có khối lượng</li>
+  <li>Virtual sites có thể có tương tác Lennard-Jones và điện tích</li>
+  <li>Lực tác dụng lên virtual sites được chiếu lên các tâm khối lượng tạo ra chúng</li>
+  <li>Vị trí của virtual sites không được cập nhật qua tích phân; chúng được xây dựng từ vị trí cập nhật của các tâm khối lượng</li>
+</ul>
+
+<p>
+Do đó, chúng ta giải quyết vấn đề này như sau: phân tử CO2 sẽ được xây dựng từ hai nguyên tử có khối lượng nhưng không có điện tích hoặc thông số van der Waals. Các nguyên tử C và O được chuyển thành virtual sites, với vị trí được tính từ vị trí của các nguyên tử có khối lượng.
+</p>
+
+<p><strong>Một số vấn đề cần lưu ý khi xây dựng phân tử theo cách này:</strong></p>
+<ul>
+  <li>Phân tử phải có cùng khối lượng như nếu được tạo từ các nguyên tử bình thường</li>
+  <li>Phân tử phải có cùng mô men quán tính như nếu được tạo từ các nguyên tử bình thường</li>
+</ul>
+
+<p>
+Các vấn đề này sẽ được xem xét khi nghiên cứu phần <em>topology</em>.
+</p>

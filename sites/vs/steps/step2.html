@@ -1,0 +1,70 @@
+<h2>Step Two: Construct the Topology</h2>
+
+<p>
+Khác với workflow GROMACS thông thường, trong ví dụ này chúng ta sẽ không sử dụng <code>pdb2gmx</code> để xây dựng topology. Topology sẽ được tạo hoàn toàn bằng tay sử dụng trình soạn thảo văn bản. Force field được chọn cho bài tập này là <strong>OPLS-AA</strong>. Topology có thể được tải về <a href="#">tại đây</a>. Trong bước này, chúng ta sẽ xem xét nội dung để giải thích logic xây dựng. File tọa độ tương ứng cho một phân tử CO2 có thể được tải về <a href="#">tại đây</a>.
+</p>
+
+<h3>Mass distribution in the molecule</h3>
+<p>
+Trước tiên, chúng ta xem xét phân bố khối lượng trong phân tử. Hai tâm khối lượng được dùng để mô tả toàn bộ khối lượng của phân tử CO2. Từ topology, ta có thể thấy cách tổng khối lượng của phân tử được tính để phân bổ lại giữa hai tâm khối lượng.
+</p>
+
+<div class="code view">
+<pre>
+; Moment of inertia and total mass must be correct
+; Mass is easy - virtual sites are 1/2 * mass(CO2)
+;
+; Total mass = (2 * 15.9994) + 12.011 = 44.0098 amu
+;    each M particle has a mass of 22.0049 amu
+</pre>
+</div>
+
+<p>
+Việc tính mô men quán tính khó hơn, nhưng có thể được tính từ các phương trình cơ bản. Mô men quán tính cho một phân tử tuyến tính gồm ba nguyên tử (rotor tuyến tính triatomic) là:
+</p>
+
+<p>
+(Mô men quán tính cho phân tử CO2 được tính sử dụng khối lượng O = 15.9994 amu và chiều dài C=O = 0.125 nm. Kết quả là 0.500 amu·nm². Sử dụng phương trình cho phân tử hai nguyên tử, ta thu được khoảng cách giữa hai tâm khối lượng là 0.213173 nm, được đặt như một constraint trong topology.)
+</p>
+
+<p>
+Constraint được sử dụng thay vì một bond harmonic thông thường vì (1) giá trị này phải không đổi và (2) tránh việc phải định nghĩa các tham số bonded mới trong force field.
+</p>
+
+<h3>Constructing the virtual sites</h3>
+<p>
+Bây giờ chúng ta xác định cơ chế xây dựng các virtual C và O. Virtual sites tuyến tính (sử dụng <em>type 2 virtual site geometry</em> trong directive <code>[ virtual_sites2 ]</code>) được đặt ở một tỷ lệ khoảng cách giữa hai mass centers. Trong topology, giá trị <code>a</code> được định nghĩa, tương ứng với tỷ lệ này. Vị trí virtual site = a × bij, với bij là chiều dài bond giữa hai mass centers.
+</p>
+
+<h4>Defining the position of carbon</h4>
+<p>
+Carbon được đặt chính giữa phân tử, tức là ở giữa hai mass centers. Trong topology, site này có a = 0.5:
+</p>
+
+<div class="code view">
+<pre>
+2   4   5      1   0.5000      ; right in the middle
+</pre>
+</div>
+
+<h4>Defining the positions of oxygens</h4>
+<p>
+Vị trí của các oxygen virtual sites khó hơn. Chúng nằm ngoài khoảng cách giữa hai mass centers. Giá trị <code>a</code> &gt; 1. Tính toán cụ thể:
+</p>
+
+<ul>
+  <li>C=O bond length = 0.125 nm</li>
+  <li>M1--M2 constraint length = 0.213173 nm → half = 0.1065865 nm</li>
+  <li>O virtual site extends 0.0184135 nm beyond M1--M2 → a = (0.213173 + 0.0184135)/0.213173 = 1.0851116</li>
+</ul>
+
+<p>
+Trong topology, hai dòng cho O virtual sites, liên quan đến các mass centers M1 (atom 4) và M2 (atom 5):
+</p>
+
+<div class="code view">
+<pre>
+1   4   5      1   1.0851116   ; relative to mass center 4, extends beyond mass center 5
+3   5   4      1   1.0851116   ; as in the case of site 1
+</pre>
+</div>
