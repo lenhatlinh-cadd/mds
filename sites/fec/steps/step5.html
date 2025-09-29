@@ -1,0 +1,42 @@
+<h2>Step Five: Equilibration</h2>
+
+<p>
+Hệ thống sẽ được cân bằng qua hai giai đoạn: 
+(1) đẳng tích (<strong>NVT</strong>) với thể tích không đổi, 
+và (2) đẳng áp (<strong>NPT</strong>) với áp suất không đổi. 
+Các bước này đảm bảo hệ đạt trạng thái cân bằng về nhiệt độ và áp suất trước khi tiến hành mô phỏng sản xuất (production MD).
+</p>
+
+<div class="code-view">
+##################### <br>
+# NVT EQUILIBRATION # <br>
+##################### <br>
+echo "Starting constant volume equilibration..." <br><br>
+
+cd ../ <br>
+mkdir NVT <br>
+cd NVT <br><br>
+
+gmx grompp -f $MDP/nvt_$LAMBDA.mdp -c ../EM/min$LAMBDA.gro \<br>
+-p $FREE_ENERGY/topol.top -o nvt$LAMBDA.tpr <br><br>
+
+gmx mdrun -deffnm nvt$LAMBDA <br><br>
+
+echo "Constant volume equilibration complete." <br><br>
+
+##################### <br>
+# NPT EQUILIBRATION # <br>
+##################### <br>
+echo "Starting constant pressure equilibration..." <br><br>
+
+cd ../ <br>
+mkdir NPT <br>
+cd NPT <br><br>
+
+gmx grompp -f $MDP/npt_$LAMBDA.mdp -c ../NVT/nvt$LAMBDA.gro \<br>
+-p $FREE_ENERGY/topol.top -t ../NVT/nvt$LAMBDA.cpt -o npt$LAMBDA.tpr <br><br>
+
+gmx mdrun -deffnm npt$LAMBDA <br><br>
+
+echo "Constant pressure equilibration complete." <br>
+</div>

@@ -1,0 +1,51 @@
+<h2>Bước 1: Cơ sở lý thuyết</h2>
+
+<p>
+Hướng dẫn này giả định rằng bạn đã có kiến thức cơ bản về tính toán năng lượng tự do, 
+các loại phương pháp khác nhau và lý thuyết nền tảng của kỹ thuật này. 
+Việc cung cấp một khóa học đầy đủ ở đây là không khả thi. 
+Thay vào đó, nội dung sẽ tập trung vào khía cạnh thực hành khi chạy mô phỏng năng lượng tự do bằng GROMACS, 
+đồng thời chỉ ra một số điểm lý thuyết quan trọng khi cần thiết. 
+Dưới đây là danh sách một số bài báo hữu ích cho người mới bắt đầu với tính toán năng lượng tự do 
+(không phải là đầy đủ, và cũng không thay thế cho việc học bài bản về cơ học thống kê 
+và tài liệu chuyên khảo).
+</p>
+
+<ul>
+  <li>C. D. Christ, A. E. Mark, và W. F. van Gunsteren (2010) <i>J. Comput. Chem.</i> 31: 1569-1582. DOI</li>
+  <li>A. Pohorille, C. Jarzynski, và C. Chipot (2010) <i>J. Phys. Chem. B</i> 114: 10235-10253. DOI</li>
+  <li>A. Villa và A. E. Mark (2002) <i>J. Comput. Chem.</i> 23: 548-553. DOI</li>
+</ul>
+
+<p>
+Mục tiêu của hướng dẫn này là tái tạo kết quả trên một hệ rất đơn giản đã có giá trị tham chiếu chính xác. 
+Hệ thống được chọn (methane trong nước) đã được Shirts và cộng sự nghiên cứu trong một công trình 
+đánh giá có hệ thống về trường lực và năng lượng tự do hòa tan của các nhóm bên amino acid. 
+Ấn phẩm đầy đủ có thể tìm thấy trong tài liệu gốc, và hướng dẫn này giả định rằng 
+bạn đã đọc và hiểu những điểm chính trong bài báo đó.
+</p>
+
+<p>
+Thay vì dùng phương pháp tích phân nhiệt động (thermodynamic integration) để đánh giá sự khác biệt năng lượng tự do, 
+phân tích dữ liệu ở đây sẽ sử dụng module <b>bar</b> của GROMACS (giới thiệu từ phiên bản 4.5, 
+trước đây gọi là <i>g_bar</i>). 
+Phương pháp này dựa trên <b>Bennett Acceptance Ratio (BAR)</b> để tính toán sự khác biệt năng lượng tự do. 
+Bài báo gốc về phương pháp BAR có thể tham khảo thêm, và ở đây ta giả định rằng bạn đã nắm cơ bản phương pháp này.
+</p>
+
+<p>
+Các ứng dụng điển hình của tính toán năng lượng tự do bao gồm: 
+năng lượng tự do hòa tan/hydrat hóa và năng lượng tự do gắn kết của một phân tử nhỏ với thụ thể sinh học lớn hơn (thường là protein). 
+Cả hai trường hợp đều yêu cầu đưa thêm (couple) hoặc loại bỏ (decouple/annihilate) phân tử nhỏ ra khỏi hệ 
+và tính toán sự thay đổi năng lượng tự do tương ứng.
+</p>
+
+<p>
+Có hai loại tương tác phi liên kết thường được biến đổi trong quá trình tính toán năng lượng tự do: 
+tương tác Coulomb và tương tác van der Waals. 
+Các tương tác liên kết (bonded) cũng có thể điều chỉnh, nhưng để đơn giản, sẽ không bàn ở đây. 
+Trong hướng dẫn này, chúng ta sẽ tính toán năng lượng tự do của một quá trình rất cơ bản: 
+tắt (turn off) các tương tác Lennard-Jones giữa các nguyên tử của một phân tử methane trong nước. 
+Giá trị này đã được Shirts và cộng sự tính toán với độ chính xác cao, 
+và đó chính là kết quả mà chúng ta sẽ tái tạo trong hướng dẫn này.
+</p>

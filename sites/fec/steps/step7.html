@@ -1,0 +1,45 @@
+<h2>Step Seven: Phân tích kết quả (Analysis)</h2>
+
+<p>
+Sau khi hoàn tất tất cả các mô phỏng <strong>Production MD</strong>, chúng ta sẽ dùng module 
+<code>gmx bar</code> của GROMACS để tính toán giá trị <strong>ΔG<sub>AB</sub></strong>. 
+Cách làm rất đơn giản: gom tất cả các file <code>md*.xvg</code> sinh ra từ lệnh <code>mdrun</code> 
+trong thư mục làm việc, sau đó chạy:
+</p>
+
+<div class="code-view">
+gmx bar -f md*.xvg -o -oi
+</div>
+
+<p>
+Chương trình sẽ in ra nhiều thông tin hữu ích trên màn hình, đồng thời sinh ra 3 file đầu ra:
+<code>bar.xvg</code>, <code>barint.xvg</code> và <code>histogram.xvg</code>. 
+Ví dụ, kết quả ΔG thu được trong quá trình decoupling methane:
+</p>
+
+<ul>
+  <li>ΔG<sub>AB</sub> = <strong>-9.13 ± 0.09 kJ/mol</strong></li>
+  <li>Tương đương <strong>-2.18 ± 0.02 kcal/mol</strong></li>
+</ul>
+
+<p>
+Vì quá trình mô phỏng là <em>loại bỏ methane</em> khỏi dung dịch, nên quá trình ngược lại 
+(tức là <em>hòa tan methane</em> vào nước) sẽ có ΔG bằng <strong>+2.18 ± 0.02 kcal/mol</strong>, 
+phù hợp với kết quả của Shirts et al. (2.24 ± 0.01 kcal/mol).
+</p>
+
+<h3>Ý nghĩa các file đầu ra</h3>
+
+<ul>
+  <li><strong>bar.xvg</strong>: Biểu diễn ΔG giữa các cặp giá trị λ lân cận. Đây là nơi đầu tiên 
+  cho thấy tác dụng của tham số <code>calc_lambda_neighbors</code>.</li>
+  <li><strong>barint.xvg</strong>: ΔG tích lũy theo λ. Điểm tại λ = 1 chính là tổng ΔG của toàn bộ 
+  quá trình từ λ = 0 → λ = 1.</li>
+  <li><strong>histogram.xvg</strong>: Biểu diễn phân bố mẫu, giúp kiểm tra mức độ chồng lấn pha 
+  giữa các cửa sổ λ, đảm bảo lấy mẫu đủ tốt.</li>
+</ul>
+
+<p>
+Tóm lại, việc sử dụng <code>gmx bar</code> cho phép ta không chỉ tính ΔG cuối cùng, 
+mà còn trực quan hóa quá trình biến đổi năng lượng tự do và đánh giá chất lượng lấy mẫu.
+</p>

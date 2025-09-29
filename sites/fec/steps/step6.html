@@ -1,0 +1,26 @@
+<h2>Step Six: Production MD</h2>
+
+<p>
+Sau khi hệ thống đã được cân bằng, chúng ta tiến hành mô phỏng sản xuất (<strong>Production MD</strong>). 
+Trong giai đoạn này, dữ liệu <code>∂H/∂λ</code> sẽ được thu thập để phục vụ tính toán năng lượng tự do. 
+Toàn bộ quy trình cho một giá trị <code>λ</code> thường mất khoảng 2.5 giờ trên một máy trạm có GPU. 
+Do có nhiều mô phỏng cần chạy (21 tập vector λ), nên tốt nhất là triển khai trên cụm máy tính để chạy song song và tiết kiệm thời gian.
+</p>
+
+<div class="code-view">
+################# <br>
+# PRODUCTION MD # <br>
+################# <br>
+echo "Starting production MD simulation..." <br><br>
+
+cd ../ <br>
+mkdir Production_MD <br>
+cd Production_MD <br><br>
+
+gmx grompp -f $MDP/md_$LAMBDA.mdp -c ../NPT/npt$LAMBDA.gro \<br>
+-p $FREE_ENERGY/topol.top -t ../NPT/npt$LAMBDA.cpt -o md$LAMBDA.tpr <br><br>
+
+gmx mdrun -deffnm md$LAMBDA <br><br>
+
+echo "Production MD complete." <br>
+</div>

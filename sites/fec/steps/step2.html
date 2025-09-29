@@ -1,0 +1,76 @@
+<h2>Step Two: Xem xét Topology</h2>
+
+<p>
+Tải xuống tệp tọa độ (<i>coordinate file</i>) và topology cho hệ thống này. Các tệp này ban đầu được cung cấp trong tutorial của <b>David Mobley</b> (hiện không còn trực tuyến), 
+và cũng chính là các tệp gốc mà <b>Michael Shirts</b> đã sử dụng trong nghiên cứu được trích dẫn ở bước trước 
+(đã chỉnh sửa nhẹ để tương thích với các phiên bản GROMACS mới).
+</p>
+
+<p>
+Hệ thống bao gồm một phân tử methane (được đặt tên là <code>ALAB</code> trong tệp tọa độ, 
+tương ứng với nguyên tử β-carbon của alanine) trong một hộp gồm 596 phân tử nước TIP3P.  
+Trong tệp topology, ta có:
+</p>
+
+<div class="code-view">
+<pre>
+; Topology for methane in TIP3P
+
+#include "oplsaa.ff/forcefield.itp"
+
+[ moleculetype ]
+; Name                       nrexcl
+Methane                      3
+
+[ atoms ]
+;   nr       type  resnr residue  atom   cgnr     charge       mass  typeB    chargeB  massB
+     1   opls_138      1   ALAB     CB      1      0.000       12.011   
+     2   opls_140      1   ALAB    HB1      2      0.000        1.008   
+     3   opls_140      1   ALAB    HB2      3      0.000        1.008   
+     4   opls_140      1   ALAB    HB3      4      0.000        1.008   
+     5   opls_140      1   ALAB    HB4      5      0.000        1.008   
+
+[ bonds ]
+;  ai    aj funct            c0            c1            c2            c3
+    1     2     1 
+    1     3     1 
+    1     4     1 
+    1     5     1 
+
+[ angles ]
+;  ai    aj    ak funct            c0            c1            c2            c3
+    2     1     3     1 
+    2     1     4     1 
+    2     1     5     1 
+    3     1     4     1 
+    3     1     5     1 
+    4     1     5     1 
+
+; water topology
+#include "oplsaa.ff/tip3p.itp"
+
+[ system ]
+; Name
+Methane in water
+
+[ molecules ]
+; Compound             #mols
+Methane                1
+SOL                    596
+</pre>
+</div>
+
+<p>
+Chú ý rằng tất cả các điện tích trong phân tử methane đều bằng 0.  
+Điều này có lý do thực tiễn: thông thường, các tương tác điện tích giữa chất tan (solute) và dung môi (solvent) sẽ bị tắt trước khi loại bỏ tương tác van der Waals. 
+Nếu vẫn để điện tích hoạt động trong khi các tương tác Lennard-Jones bị loại bỏ, các điện tích trái dấu có thể tiến lại rất gần nhau, 
+khiến hệ thống trở nên bất ổn và có thể <i>nổ tung</i>.  
+Trong tutorial này, ta giả định rằng điện tích đã được loại bỏ đúng cách trước đó, và bước tiếp theo chỉ tắt các tương tác van der Waals giữa methane và nước.
+</p>
+
+<p>
+Lưu ý thêm: trong các phiên bản GROMACS cũ, các cột <code>typeB</code>, <code>chargeB</code>, và <code>massB</code> phải được khai báo cho trạng thái B của phân tử 
+(khi thực hiện biến đổi trạng thái). Từ phiên bản GROMACS 4.0, với các trường hợp (de)coupling đơn giản, việc chỉnh sửa topology theo cách này không còn cần thiết.  
+Tuy nhiên, nếu biến đổi một phân tử thành một phân tử khác (ví dụ thay đổi cả các thông số liên kết và không liên kết), 
+cách tiếp cận cũ gọi là <i>dual topology</i> vẫn phải dùng. Bạn có thể tham khảo chi tiết trong phần 5.8.4 của tài liệu hướng dẫn GROMACS.
+</p>

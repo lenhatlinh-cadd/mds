@@ -1,0 +1,92 @@
+<h2>Ứng dụng nâng cao</h2>
+
+<p>
+Một ứng dụng phổ biến của việc tính toán năng lượng tự do là xác định <strong>ΔG của gắn kết</strong> giữa một ligand và một thụ thể (ví dụ: một protein). 
+Để làm điều này theo phương pháp alchemical, bạn cần (de)couple ligand khi nằm trong phức hợp với thụ thể và khi nằm trong dung dịch (bulk). 
+ΔGbind trong trường hợp này bằng tổng của năng lượng tự do đưa ligand vào vị trí gắn kết (complexation) và năng lượng tự do khử dung hoá ligand (desolvation):
+</p>
+
+<div class="code-view">
+<pre>
+ΔGbind = ΔGcomplexation + ΔGdesolvation
+
+ΔGsolvation = -ΔGdesolvation
+
+⇒ ΔGbind = ΔGcomplexation - ΔGsolvation
+</pre>
+</div>
+
+<p>
+Nói cách khác, ΔG của gắn kết là hiệu giữa hai trạng thái: ligand được (de)couple trong phức hợp và ligand được (de)couple trong dung dịch.  
+Một chu trình nhiệt động (thermodynamic cycle) đơn giản cho việc này thường được vẽ để minh họa các bước chuyển hóa (ví dụ ΔG1 là ΔGsolvation, ΔG3 là ΔGcomplexation).
+</p>
+
+<p>
+Việc biến đổi một phân tử có tương tác đầy đủ (fully-interacting) thành một “dummy” (các tâm nguyên tử tồn tại nhưng không tương tác phi-lk với môi trường) yêu cầu tắt cả hai loại tương tác không liên kết: 
+<b>van der Waals (LJ)</b> và <b>Coulombic</b>. Trong ví dụ methane ở tutorial trước, ta chỉ minh họa việc tắt LJ; đối với bài toán gắn kết thực sự, phải xử lý cả hai.
+</p>
+
+<div class="code-view">
+<pre>
+Fully-interacting  →  No charges, full LJ  →  Dummy molecule
+</pre>
+</div>
+
+<p>
+Trong chu trình nhiệt động phía trên, ΔG1 và ΔG3 thực chất là việc <em>đưa</em> ligand (từ dummy trở về trạng thái tương tác) — tức là thao tác coupling thay vì decoupling.  
+Chu trình đã nêu là rất cơ bản và không tính đến các yếu tố phức tạp khác như ràng buộc hướng (orientational restraints), biến đổi cấu hình protein, v.v. Những yếu tố này cần cân nhắc trong các bài toán thực tế.
+</p>
+
+<h3>Thiết lập λ-vector an toàn (sequential decoupling)</h3>
+
+<p>
+Đối với nhiều ligand (đặt tên chung là <code>LIG</code>), một cấu hình thiết lập có vẻ hợp lý là:
+</p>
+
+<div class="code-view">
+<pre>
+couple-moltype    = LIG
+couple-intramol   = no
+couple-lambda0    = none
+couple-lambda1    = vdw-q
+</pre>
+</div>
+
+<p>
+<strong>Chú ý quan trọng:</strong> nếu tắt van der Waals trong khi giữ Coulomb bật, các điện tích trái dấu có thể tiến quá gần nhau (vì không còn lực đẩy LJ) dẫn đến hệ bất ổn. Do đó, cách an toàn là thực hiện tắt/lần lượt (sequential): tắt Coulomb trước hoặc tắt LJ trước rồi bật Coulomb dần — tốt nhất là sử dụng <em>λ-vector</em> để kiểm soát độc lập hai loại tương tác.
+</p>
+
+<p>
+Ví dụ cấu hình λ-vector khả dụng trong GROMACS ≥ 5.0:
+</p>
+
+<div class="code-view">
+<pre>
+couple-moltype          = LIG
+couple-intramol         = no
+couple-lambda0          = none
+couple-lambda1          = vdw-q
+init_lambda_state       = 0
+calc_lambda_neighbors   = 1
+
+vdw_lambdas             = 0.00 0.05 0.10 ... 1.00 1.00 1.00 ... 1.00
+coul_lambdas            = 0.00 0.00 0.00 ... 0.00 0.05 0.10 ... 1.00
+</pre>
+</div>
+
+<p>
+Trong sơ đồ trên, giá trị λ cho Coulomb luôn giữ bằng 0 trong giai đoạn đầu (khi vdw thay đổi), rồi khi vdw đã đạt trạng thái mong muốn (các phần "1.00" trong vdw_lambdas), ta mới bắt đầu tăng dần giá trị của <code>coul_lambdas</code>. 
+Việc theo dõi rõ ràng trạng thái tương ứng với λ = 0 và λ = 1 là rất quan trọng.
+</p>
+
+<h3>Ứng dụng</h3>
+
+<ul>
+  <li><b>ΔG hydration/solvation:</b> dùng để so sánh với dữ liệu thực nghiệm hoặc dùng làm target khi tham số hóa force field.</li>
+  <li><b>ΔG binding:</b> tính năng lượng tự do gắn kết bằng chu trình coupling/decoupling ligand trong phức hợp và trong dung dịch.</li>
+  <li><b>Tham số hóa force field:</b> năng lượng hòa tan chính xác có thể dùng để hiệu chỉnh tham số LJ / điện tích.</li>
+</ul>
+
+<p>
+Tóm lại, phương pháp λ-vector trong GROMACS cho phép xây dựng đường đi alchemical an toàn và linh hoạt (ví dụ tách riêng chuyển đổi LJ và Coulomb theo trình tự), điều này rất hữu ích cho các bài toán gắn kết và solvation phức tạp.
+</p>

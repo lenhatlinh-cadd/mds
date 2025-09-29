@@ -1,0 +1,47 @@
+<h2>Step Four: Energy Minimization</h2>
+
+<p>
+Trong bước này, chúng ta sẽ tiến hành tối thiểu hóa năng lượng bằng phương pháp 
+<strong>steepest descent</strong>. 
+Các lệnh được chạy thông qua <code>job.sh</code> script, đồng thời tạo ra cấu trúc thư mục 
+gọn gàng cho từng giá trị <code>init_lambda_state</code> như sau:
+</p>
+
+<div class="code-view">
+Lambda_0/ <br>
+Lambda_0/EM/ <br>
+Lambda_0/NVT/ <br>
+Lambda_0/NPT/ <br>
+Lambda_0/Production_MD/ <br>
+</div>
+
+<p>
+Tương ứng, các file <code>.mdp</code> cũng được lưu trữ phân cấp trong thư mục <code>$MDP</code> 
+(ví dụ: <code>$MDP/EM/</code>, <code>$MDP/NVT/</code>, ...). Điều này giúp quá trình tổ chức công việc 
+rõ ràng và thuận tiện hơn.
+</p>
+
+<p>
+Đoạn script sau minh họa cách chạy bước minimization:
+</p>
+
+<div class="code-view">
+mkdir Lambda_$LAMBDA <br>
+cd Lambda_$LAMBDA <br><br>
+
+################################# <br>
+# ENERGY MINIMIZATION 1: STEEP  # <br>
+################################# <br>
+echo "Starting minimization for lambda = $LAMBDA..." <br><br>
+
+mkdir EM <br>
+cd EM <br><br>
+
+# Lặp lại grompp và mdrun để chạy minimization <br>
+gmx grompp -f $MDP/em_steep_$LAMBDA.mdp -c $FREE_ENERGY/methane_water.gro \<br>
+-p $FREE_ENERGY/topol.top -o min$LAMBDA.tpr <br><br>
+
+gmx mdrun -deffnm min$LAMBDA <br><br>
+
+echo "Minimization complete." <br>
+</div>

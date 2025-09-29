@@ -1,0 +1,118 @@
+<h2>Step Three: Quy trình tính toán</h2>
+
+<p>
+Sự thay đổi năng lượng tự do khi chuyển một hệ từ trạng thái A sang trạng thái B (ΔG<sub>AB</sub>) 
+là hàm của tham số ghép nối <code>λ</code>, biểu thị mức độ biến đổi đã xảy ra.  
+Các mô phỏng được tiến hành tại nhiều giá trị λ khác nhau để dựng đồ thị <code>∂H/∂λ</code>, 
+từ đó suy ra ΔG<sub>AB</sub>.
+</p>
+
+<p>
+Bước quan trọng đầu tiên là quyết định số lượng điểm λ sẽ được chọn để mô tả quá trình chuyển hóa 
+từ A (λ = 0) sang B (λ = 1).  
+Mục tiêu là có đủ dữ liệu để mô tả không gian pha đầy đủ và thu được đường cong ∂H/∂λ tin cậy.
+</p>
+
+<div class="code-view">
+<pre>
+λ = 0     λ = 0.5     λ = 1
+</pre>
+</div>
+
+<p>
+- Với việc loại bỏ <b>tương tác Coulombic</b> (tỉ lệ tuyến tính theo λ), có thể dùng khoảng λ đều từ 0 đến 1, 
+thường là 0.05 – 0.1.  
+Tuy nhiên, nếu phân tử có tương tác mạnh với môi trường (ví dụ liên kết hydro), 
+cần dùng nhiều điểm λ hơn, thậm chí không đều.  
+<br><br>
+- Với việc loại bỏ <b>tương tác van der Waals</b>, khoảng λ phức tạp hơn.  
+Nhiều điểm λ cần được gom lại trong vùng có độ dốc ∂H/∂λ lớn (thường 0.6 ≤ λ ≤ 0.8).  
+Trong tutorial này, ta sẽ dùng khoảng λ đều 0.05.
+</p>
+
+<h3>Quy trình chuẩn cho mỗi giá trị λ</h3>
+<ol>
+  <li>Tối thiểu hóa năng lượng (Steepest descents minimization)</li>
+  <li>Cân bằng NVT</li>
+  <li>Cân bằng NPT</li>
+  <li>Thu thập dữ liệu dưới tập hợp NPT</li>
+</ol>
+
+<p>
+Các tệp <code>.mdp</code> cho từng bước (với λ = 0) được cung cấp sẵn:
+</p>
+<ul>
+  <li>Steepest descents EM</li>
+  <li>NVT equilibration</li>
+  <li>NPT equilibration</li>
+  <li>Production MD</li>
+</ul>
+
+<p>
+Ngoài ra có sẵn script Perl <code>write_mdp.pl</code> để tự động sinh nhanh các tệp <code>.mdp</code> cho từng λ, 
+và script shell <code>job.sh</code> để chạy toàn bộ workflow.
+</p>
+
+<div class="code-view">
+<pre>
+perl write_mdp.pl em_steep.mdp
+</pre>
+</div>
+
+<p>
+Sau khi chạy, bạn sẽ nhận được các file <code>em_steep_0.mdp</code>, <code>em_steep_1.mdp</code>, … <code>em_steep_20.mdp</code>  
+với giá trị <code>init_lambda_state</code> được chèn tự động.  
+Tương tự, có thể tạo <code>nvt.mdp</code>, <code>npt.mdp</code>, và <code>md.mdp</code>.
+</p>
+
+<p>
+Trong file <code>job.sh</code>, cần chỉnh sửa giá trị <code>$FREE_ENERGY</code> và <code>$MDP</code> cho phù hợp, 
+nếu không script sẽ không chạy.
+</p>
+
+<h3>Các thiết lập liên quan đến free energy trong file .mdp</h3>
+
+<div class="code-view">
+<pre>
+free_energy = yes       ; bật chế độ free energy calculation
+init_lambda_state = 0   ; chỉ định chỉ số vector λ sẽ dùng
+delta_lambda = 0        ; không thay đổi λ theo thời gian (tránh sai số slow growth)
+calc_lambda_neighbors = 1   ; tính năng lượng chênh lệch với λ lân cận
+vdw_lambdas = ...       ; mảng λ cho tương tác van der Waals
+coul_lambdas = ...      ; mảng λ cho tương tác Coulombic
+bonded_lambdas = ...    ; mảng λ cho liên kết
+restraint_lambdas = ... ; mảng λ cho restraint
+mass_lambdas = ...      ; mảng λ cho khối lượng nguyên tử
+temperature_lambdas = ... ; mảng λ cho nhiệt độ
+sc-alpha = 0.5
+sc-coul = no
+sc-power = 1.0
+sc-sigma = 0.3
+couple-moltype = Methane
+couple-lambda0 = vdw
+couple-lambda1 = none
+couple-intramol = no
+nstdhdl = 10
+</pre>
+</div>
+
+<p>
+Ví dụ vector λ cho <code>vdw_lambdas</code> với bước 0.05:
+</p>
+
+<div class="code-view">
+<pre>
+; init_lambda_state    0    1    2    3   ...   20
+vdw_lambdas         = 0.00 0.05 0.10 0.15 ... 1.00
+coul_lambdas        = 0.00 0.00 0.00 ... 0.00
+bonded_lambdas      = 0.00 ...
+restraint_lambdas   = 0.00 ...
+mass_lambdas        = 0.00 ...
+temperature_lambdas = 0.00 ...
+</pre>
+</div>
+
+<p>
+Trong ví dụ này, ta chỉ biến đổi tương tác van der Waals.  
+Điện tích đã bằng 0 trong topology và file .mdp không bật Coulombic, nên <code>coul_lambdas</code> là không liên quan.
+</p>
