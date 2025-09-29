@@ -1,0 +1,23 @@
+<h2>Bước X: Thêm dung môi và ion</h2>
+<p>
+Bước này được thực hiện tương tự như các mô phỏng khác. Nếu chưa rõ, bạn có thể tham khảo chi tiết hơn trong tutorial về Lysozyme. 
+Trước hết, ta sẽ thêm nước bằng lệnh <code>solvate</code>:
+</p>
+
+<div class="code-view">
+gmx solvate -cp newbox.gro -cs spc216.gro -o solv.gro -p topol.top
+</div>
+
+<p>
+Tiếp theo, ta sẽ thêm ion bằng lệnh <code>genion</code>, sử dụng file <code>ions.mdp</code>. 
+Trong mô phỏng này, hệ sẽ được trung hòa điện tích và bổ sung thêm 100 mM NaCl:
+</p>
+
+<div class="code-view">
+gmx grompp -f ions.mdp -c solv.gro -p topol.top -o ions.tpr<br>
+gmx genion -s ions.tpr -o solv_ions.gro -p topol.top -pname NA -nname CL -neutral -conc 0.1
+</div>
+
+<p>
+Khi được hỏi, hãy chọn nhóm <b>13 (SOL)</b> để thay thế một số phân tử nước bằng ion.
+</p>

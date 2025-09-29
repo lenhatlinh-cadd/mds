@@ -1,0 +1,65 @@
+<h2>Step Seven: Data Analysis</h2>
+
+<p>
+Phân tích phổ biến nhất trong các mô phỏng <b>umbrella sampling</b> là trích xuất
+<b>potential of mean force (PMF)</b>, từ đó thu được giá trị ΔG cho quá trình gắn/kết.
+ΔG chính là hiệu số giữa giá trị cao nhất và thấp nhất trên đường cong PMF, 
+miễn là các giá trị ở khoảng cách COM lớn hội tụ về mức ổn định.
+</p>
+
+<p>
+Một phương pháp thường dùng để trích xuất PMF là 
+<b>Weighted Histogram Analysis Method (WHAM)</b>,
+được tích hợp sẵn trong GROMACS qua module <code>wham</code>.
+Đầu vào của WHAM gồm hai file:
+</p>
+
+<ul>
+  <li><code>tpr-files.dat</code>: chứa danh sách tên các file <code>.tpr</code> của từng window</li>
+  <li><code>pullf-files.dat</code> hoặc <code>pullx-files.dat</code>: chứa danh sách tên các file <code>pullf.xvg</code> hoặc <code>pullx.xvg</code></li>
+</ul>
+
+<div class="code-view">
+umbrella0.tpr  
+umbrella1.tpr  
+...  
+umbrella22.tpr  
+</div>
+
+<p>Với danh sách file lực kéo:</p>
+
+<div class="code-view">
+umbrella0_pullf.xvg  
+umbrella1_pullf.xvg  
+...  
+umbrella22_pullf.xvg  
+</div>
+
+<p>
+Lưu ý: các file phải có <b>tên duy nhất</b> (ví dụ <code>umbrella0_pullf.xvg</code>, 
+<code>umbrella1_pullf.xvg</code>...) nếu không WHAM sẽ bị lỗi.
+</p>
+
+<p>Chạy WHAM:</p>
+
+<div class="code-view">
+gmx wham -it tpr-files.dat -if pullf-files.dat -o -hist -unit kCal
+</div>
+
+<p>
+Tùy chọn <code>-unit kCal</code> cho kết quả theo đơn vị kcal/mol, 
+ngoài ra có thể dùng kJ/mol hoặc kBT.  
+Kết quả thu được là đường cong PMF và histogram đi kèm.
+</p>
+
+<p>
+Ví dụ trong kết quả này, ΔG ≈ 46 kcal/mol, khá gần với giá trị đã công bố (50.5 kcal/mol).
+Sự chênh lệch là do spacing giữa các window khác nhau và cấu hình ban đầu khác.
+</p>
+
+<p>
+Đặc biệt lưu ý: tại ξ = 0.8 nm, PMF bị khuyết mẫu vì không có window ở vùng này.  
+Để khắc phục, chỉ cần chạy thêm một simulation với window đặt tại ξ = 0.8 nm, 
+sau đó bổ sung file mới vào <code>tpr-files.dat</code> và <code>pullf-files.dat</code> 
+rồi chạy lại WHAM. Các window khác không cần chạy lại.
+</p>

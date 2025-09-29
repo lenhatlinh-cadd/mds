@@ -1,0 +1,40 @@
+<h2>Tạo topology phân tử cho mô phỏng Umbrella Sampling</h2>
+
+<p>Việc tạo topology cho một mô phỏng umbrella sampling tương tự như các mô phỏng khác. 
+Đầu tiên, hãy chuẩn bị file tọa độ (coordinate file) của cấu trúc quan tâm, 
+sau đó tạo topology bằng lệnh <code>pdb2gmx</code>. Một số hệ thống sẽ cần lưu ý đặc biệt 
+(ví dụ: phức hợp protein-ligand, protein màng,…). Đối với hệ protein-ligand, bạn có thể tham khảo 
+<a href="#">hướng dẫn này</a>; còn đối với protein màng, khuyến nghị đọc thêm 
+<a href="#">tài liệu chuyên đề này</a>. Các nguyên tắc của umbrella sampling có thể mở rộng dễ dàng 
+cho những hệ đó, nhưng trong hướng dẫn này, chúng ta chỉ xét protein.</p>
+
+<p>Hệ thống được trình bày ở đây là quá trình phân ly của một peptide đơn lẻ khỏi đầu đang phát triển 
+của sợi nguyên Aβ42 protofibril, dựa trên các mô phỏng đã được công bố gần đây. 
+File cấu trúc của Aβ42 protofibril dạng dại (wild-type), được acetyl hóa tại đầu N của mỗi chuỗi, 
+có thể tải <a href="#">tại đây</a>. Mã PDB gốc là <b>2BEG</b>.</p>
+
+<p>Chạy cấu trúc thông qua <code>pdb2gmx</code>:</p>
+
+<pre>
+gmx pdb2gmx -f 2BEG_model1_capped.pdb -ignh -ter -o complex.gro
+</pre>
+
+<p>Khi được hỏi, hãy chọn:</p>
+<ul>
+  <li><b>GROMOS96 53A6</b> cho bộ tham số (force field)</li>
+  <li><b>SPC</b> cho mô hình nước</li>
+  <li><b>None</b> cho đầu N (N-termini)</li>
+  <li><b>COO-</b> cho đầu C (C-termini) của mỗi chuỗi</li>
+</ul>
+
+<p>Tiếp theo, chỉnh sửa file <code>topol_Protein_chain_B.itp</code> và thêm các dòng sau ở cuối file:</p>
+
+<pre>
+#ifdef POSRES_B
+#include "posre_Protein_chain_B.itp"
+#endif
+</pre>
+
+<p>Chúng ta sẽ sử dụng chuỗi B như một tham chiếu cố định trong quá trình pulling, 
+do đó cần gán ràng buộc vị trí (position restraint) riêng cho chuỗi này, 
+nhưng không áp dụng cho các chuỗi khác.</p>

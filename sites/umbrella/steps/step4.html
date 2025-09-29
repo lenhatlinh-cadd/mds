@@ -1,0 +1,20 @@
+<h2>Bước X: Tối thiểu hóa năng lượng và cân bằng</h2>
+<p>
+Các bước tối thiểu hóa năng lượng và cân bằng được thực hiện tương tự như bất kỳ hệ protein-trong-nước nào. 
+Ở đây, ta sẽ tiến hành tối thiểu hóa năng lượng bằng phương pháp <i>steepest descents</i>, sau đó là cân bằng NPT. 
+File <code>.mdp</code> cho bước minimization có thể lấy tại đây, và file cho cân bằng NPT có thể lấy tại đây.
+</p>
+
+<p>
+Chạy <code>grompp</code> và <code>mdrun</code> như thường lệ:
+</p>
+
+<div class="code-view">
+gmx grompp -f minim.mdp -c solv_ions.gro -p topol.top -o em.tpr<br>
+gmx mdrun -v -deffnm em
+</div>
+
+<div class="code-view">
+gmx grompp -f npt.mdp -c em.gro -p topol.top -r em.gro -o npt.tpr<br>
+gmx mdrun -deffnm npt
+</div>

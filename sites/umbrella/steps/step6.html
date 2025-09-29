@@ -1,0 +1,48 @@
+<h2>Bước X: Chạy mô phỏng Umbrella Sampling</h2>
+<p>
+Trong ví dụ này, ta sẽ lấy mẫu khoảng cách COM từ <b>0.5 – 5.0 nm</b> dọc theo trục z, với bước nhảy xấp xỉ 0.2 nm. 
+Điều này đòi hỏi khoảng <b>23 cửa sổ sampling</b> (23 mô phỏng độc lập). 
+Các cấu hình khởi đầu (conf*.gro) được chọn từ kết quả kéo SMD ở bước trước.
+</p>
+
+<p>
+Trước tiên, tiến hành <b>cân bằng NPT ngắn</b> cho từng cửa sổ bằng file <code>npt_umbrella.mdp</code>. 
+Ví dụ (số frame sẽ thay đổi tùy hệ thống):
+</p>
+
+<div class="code-view">
+gmx grompp -f npt_umbrella.mdp -c conf6.gro -p topol.top -r conf6.gro -n index.ndx -o npt0.tpr<br>
+...<br>
+gmx grompp -f npt_umbrella.mdp -c conf449.gro -p topol.top -r conf449.gro -n index.ndx -o npt22.tpr
+</div>
+
+<div class="code-view">
+gmx mdrun -deffnm npt0<br>
+...<br>
+gmx mdrun -deffnm npt22
+</div>
+
+<p>
+Sau khi cân bằng, ta chạy mô phỏng Umbrella Sampling chính thức với file <code>md_umbrella.mdp</code>. 
+Điểm khác biệt quan trọng là <code>pull_coord1_rate = 0</code>, nghĩa là hệ không còn bị kéo nữa, mà chỉ bị giữ trong cửa sổ cấu hình xác định. 
+Tham số <code>pull_coord1_start = yes</code> cho phép COM ban đầu được dùng làm khoảng cách tham chiếu, 
+nên ta không cần định nghĩa thủ công <code>pull_coord1_init</code> cho từng cấu hình.
+</p>
+
+<div class="code-view">
+gmx grompp -f md_umbrella.mdp -c npt0.gro -t npt0.cpt -p topol.top -r npt0.gro -n index.ndx -o umbrella0.tpr<br>
+...<br>
+gmx grompp -f md_umbrella.mdp -c npt22.gro -t npt22.cpt -p topol.top -r npt22.gro -n index.ndx -o umbrella22.tpr
+</div>
+
+<div class="code-view">
+gmx mdrun -deffnm umbrella0<br>
+...<br>
+gmx mdrun -deffnm umbrella22
+</div>
+
+<p>
+Mỗi file <code>umbrella*.tpr</code> sẽ được chạy bằng <code>mdrun</code> để thu thập dữ liệu. 
+Sau khi hoàn tất tất cả mô phỏng, ta có thể chuyển sang bước phân tích dữ liệu.  
+Có thể dùng script Python (Mike Harms) để tự động hóa quá trình này (chuẩn bị file, chạy grompp và mdrun).
+</p>

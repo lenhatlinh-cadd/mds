@@ -1,0 +1,79 @@
+<h2>Bước X: Chuẩn bị cấu hình cho Umbrella Sampling</h2>
+<p>
+Để thực hiện <i>umbrella sampling</i>, ta cần tạo ra một loạt cấu hình dọc theo tọa độ phản ứng (reaction coordinate, ký hiệu ζ). 
+Một số cấu hình này sẽ được dùng làm cấu hình khởi đầu cho các cửa sổ <i>umbrella sampling</i>, mỗi cửa sổ sẽ chạy trong một mô phỏng độc lập. 
+Trong ví dụ này, tọa độ phản ứng được chọn là trục <b>z</b>, và ta sẽ kéo chuỗi peptit A ra khỏi sợi nguyên Aβ42 protofibril.
+</p>
+
+<p>
+Ta sẽ tiến hành mô phỏng kéo trong 500 ps, lưu cấu hình sau mỗi 1 ps. 
+Mục tiêu là thu được các cấu hình phân bố đều theo khoảng cách tâm khối (COM) giữa peptit A và B, để sau này chọn ra các cấu hình cho các cửa sổ sampling. 
+File <code>.mdp</code> cho bước kéo đã được chuẩn bị sẵn, với các thiết lập chính:
+</p>
+
+<div class="code-view">
+; Pull code<br>
+pull                    = yes<br>
+pull_ncoords            = 1<br>
+pull_ngroups            = 2<br>
+pull_group1_name        = Chain_A<br>
+pull_group2_name        = Chain_B<br>
+pull_coord1_type        = umbrella<br>
+pull_coord1_geometry    = distance<br>
+pull_coord1_dim         = N N Y<br>
+pull_coord1_groups      = 1 2<br>
+pull_coord1_start       = yes<br>
+pull_coord1_rate        = 0.01<br>
+pull_coord1_k           = 1000
+</div>
+
+<p>
+Để thực hiện kéo, trước tiên ta cần tạo <b>index group</b> riêng cho Chain A và Chain B:
+</p>
+
+<div class="code-view">
+gmx make_ndx -f npt.gro<br>
+ &gt; r 1-27<br>
+ &gt; name 19 Chain_A<br>
+ &gt; r 28-54<br>
+ &gt; name 20 Chain_B<br>
+ &gt; q
+</div>
+
+<p>
+Sau đó chạy mô phỏng <i>steered MD</i> (SMD):
+</p>
+
+<div class="code-view">
+gmx grompp -f md_pull.mdp -c npt.gro -p topol.top -r npt.gro -n index.ndx -t npt.cpt -o pull.tpr<br>
+gmx mdrun -deffnm pull -pf pullf.xvg -px pullx.xvg
+</div>
+
+<p>
+Sau khi chạy, ta sẽ có quỹ đạo kéo <code>pull.xtc</code>. 
+Để chuẩn bị các cửa sổ sampling, ta cần trích xuất các khung cấu hình (frames) từ quỹ đạo này:
+</p>
+
+<div class="code-view">
+gmx trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
+</div>
+
+<p>
+Lệnh trên tạo ra các file <code>conf0.gro, conf1.gro, ...</code> tương ứng với từng frame. 
+Sau đó, dùng <code>gmx distance</code> (hoặc script tự động) để đo khoảng cách COM giữa Chain A và B trong từng frame. 
+File đầu ra (ví dụ <code>summary_distances.dat</code>) sẽ cho thấy sự thay đổi khoảng cách COM theo thời gian.
+</p>
+
+<p>
+Dựa trên file này, ta chọn ra các cấu hình với khoảng cách COM cách nhau đều (ví dụ 0.2 nm) để dùng cho các cửa sổ umbrella sampling. 
+Chẳng hạn:
+</p>
+
+<div class="code-view">
+6     0.500<br>
+160   0.704
+</div>
+
+<p>
+→ khi đó ta sẽ dùng <code>conf6.gro</code> và <code>conf160.gro</code> làm hai cấu hình khởi đầu cho 2 cửa sổ sampling liền kề.
+</p>

@@ -1,0 +1,38 @@
+<h2>Xác định ô cơ sở (unit cell) cho mô phỏng pulling</h2>
+
+<p>Việc định nghĩa ô cơ sở cho mô phỏng pulling cũng giống như đối với các mô phỏng khác. 
+Tuy nhiên, có một điểm quan trọng cần lưu ý: phải chừa đủ không gian theo hướng pulling 
+để đảm bảo việc kéo diễn ra liên tục mà không bị ảnh hưởng bởi ảnh tuần hoàn của hệ thống. 
+Nói cách khác, <b>quy ước ảnh gần nhất (minimum image convention)</b> phải luôn được thỏa mãn, 
+và khoảng cách kéo phải luôn nhỏ hơn một nửa chiều dài của vector hộp theo hướng pulling.</p>
+
+<p>Tại sao lại như vậy?</p>
+
+<p>GROMACS tính toán khoảng cách có xét đến tính tuần hoàn. 
+Ví dụ, nếu bạn có một hộp dài 10 nm và bạn kéo trên 5.0 nm, 
+thì khoảng cách tuần hoàn sẽ trở thành khoảng cách tham chiếu, 
+và thực chất nhỏ hơn 5.0 nm! Điều này sẽ ảnh hưởng nghiêm trọng đến kết quả, 
+bởi vì khoảng cách bạn nghĩ mình đang kéo không phải là khoảng cách thực tế mà chương trình tính.</p>
+
+<p>Trong hướng dẫn này, chúng ta sẽ kéo tổng cộng 5.0 nm trong một hộp có chiều dài 12.0 nm, 
+nhằm tránh các vấn đề nêu trên. Tâm khối (center of mass) của protofibril sẽ được đặt tại 
+tọa độ <code>(3.280, 2.181, 2.4775)</code> trong hộp có kích thước <code>6.560 × 4.362 × 12</code>. 
+Sử dụng <code>editconf</code> để đặt protofibril vào vị trí này:</p>
+
+<div class="code-view">
+<pre>
+gmx editconf -f complex.gro -o newbox.gro -center 3.280 2.181 2.4775 -box 6.560 4.362 12
+</pre>
+</div>
+
+<p>Bạn có thể trực quan hóa vị trí của protofibril trong hộp bằng phần mềm <b>VMD</b>. 
+Nạp cấu trúc vào VMD và mở Tk console. Gõ lệnh sau 
+(lưu ý: dấu <code>&gt;</code> là ký hiệu prompt của Tk, không phải bạn nhập vào):</p>
+
+<div class="code-view">
+<pre>
+&gt; pbc box
+</pre>
+</div>
+
+<p>Khi đó, trong cửa sổ VMD, bạn sẽ thấy hình ảnh hộp mô phỏng xuất hiện tương ứng.</p>

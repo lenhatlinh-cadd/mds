@@ -1,1 +1,39 @@
+<h1>Umbrella Sampling</h1>
 
+<p><b>Justin A. Lemkul, Ph.D.</b><br>
+Bộ môn Hóa sinh, Đại học Virginia Tech</p>
+
+<h2>Giới thiệu</h2>
+
+<p>Hướng dẫn này sẽ giúp người học thiết lập và chạy các mô phỏng kéo (pulling simulations) 
+cần thiết để tính toán năng lượng gắn kết giữa hai phân tử. Hướng dẫn giả định rằng người học 
+đã hoàn thành thành công <i>Lysozyme tutorial</i>, một hướng dẫn khác, hoặc ít nhất đã quen thuộc 
+với các phương pháp mô phỏng cơ bản của GROMACS và cách tổ chức topology. Đặc biệt, nội dung sẽ 
+tập trung vào cách xây dựng hệ thống đúng cách và thiết lập các thông số cho pull code.</p>
+
+<p>Năng lượng gắn kết (ΔG<sub>bind</sub>) được tính từ thế năng trung bình (PMF), rút ra từ một loạt 
+mô phỏng umbrella sampling. Một tập hợp các cấu hình ban đầu sẽ được tạo ra, mỗi cấu hình tương ứng 
+với một vị trí mà phân tử quan tâm (thường gọi là "ligand") được giữ cố định bằng thế năng điều hòa, 
+tại các khoảng cách khác nhau của khối tâm (COM) so với một nhóm khác. Sự ràng buộc này cho phép ligand 
+khảo sát không gian cấu hình trong một vùng được định nghĩa dọc theo tọa độ phản ứng giữa hai nhóm. 
+Các "cửa sổ" (windows) phải được thiết kế sao cho có sự chồng lấn nhẹ giữa các vị trí của ligand để có 
+thể tái dựng chính xác đường cong PMF.</p>
+
+<h2>Các bước thực hiện</h2>
+<ol>
+  <li>Tạo một loạt cấu hình dọc theo một bậc tự do (reaction coordinate).</li>
+  <li>Trích xuất các frame từ quỹ đạo ở bước 1, tương ứng với khoảng cách COM mong muốn.</li>
+  <li>Chạy mô phỏng umbrella sampling cho từng cấu hình, để giữ nó trong một cửa sổ tương ứng với 
+      khoảng cách COM đã chọn.</li>
+  <li>Sử dụng <i>Weighted Histogram Analysis Method</i> (WHAM) để rút ra PMF và tính ΔG<sub>bind</sub>.</li>
+</ol>
+
+<p>Hướng dẫn này giả định rằng người đọc đang sử dụng GROMACS phiên bản 2018 trở lên. Công việc gốc của 
+tác giả (từ đó xây dựng quy trình này) được thực hiện trên phiên bản 4.0.5, nhưng về nguyên tắc có thể 
+áp dụng cho bất kỳ phiên bản nào thuộc dòng 4.0.x hoặc 4.5.x. Pull code đã được viết lại hoàn toàn sau 
+phiên bản 3.3.3, và một lần nữa ở phiên bản 5.1, vì vậy yêu cầu dùng phiên bản 2018.x là quan trọng.</p>
+
+<p>Trước khi tiếp tục, bạn nên đọc bài báo liên quan để hiểu rõ bối cảnh của các mô phỏng này. 
+Không nên áp dụng nguyên xi các thiết lập trong hướng dẫn này cho bất kỳ hệ nào, vì có những 
+lưu ý cụ thể sẽ được bàn đến sau. Mục đích của hướng dẫn là cung cấp cho người học kiến thức lý thuyết 
+về umbrella sampling và một ví dụ thực tiễn được rút ra trực tiếp từ tài liệu nghiên cứu.</p>
