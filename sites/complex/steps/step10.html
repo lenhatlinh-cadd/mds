@@ -1,0 +1,109 @@
+<h2>Step Nine: Analysis</h2>
+
+<h3>Recentering and Rewrapping Coordinates</h3>
+<p>
+Trong mô phỏng có điều kiện biên tuần hoàn (PBC), phân tử có thể bị “đứt gãy” hoặc “nhảy” qua biên của hộp mô phỏng. 
+Để đưa protein về tâm và tái bao gói các phân tử vào trong ô cơ sở (hình thoi dodecahedron), dùng <code>trjconv</code>:
+</p>
+
+<div class="code-view">
+gmx trjconv -s md_0_10.tpr -f md_0_10.xtc -o md_0_10_center.xtc -center -pbc mol -ur compact
+</div>
+
+<p>
+Chọn <b>Protein</b> để centering và <b>System</b> để output.  
+Để trích frame đầu tiên (t = 0 ns):
+</p>
+
+<div class="code-view">
+gmx trjconv -s md_0_10.tpr -f md_0_10_center.xtc -o start.pdb -dump 0
+</div>
+
+<p>
+Để có hình ảnh trực quan mượt hơn, thực hiện fitting quay và tịnh tiến:
+</p>
+
+<div class="code-view">
+gmx trjconv -s md_0_10.tpr -f md_0_10_center.xtc -o md_0_10_fit.xtc -fit rot+trans
+</div>
+
+---
+
+<h3>Analyzing Protein-Ligand Interactions</h3>
+<p>
+Tính khoảng cách giữa nhóm hydroxyl của JZ4 và nguyên tử O của Gln102:
+</p>
+
+<div class="code-view">
+gmx distance -s md_0_10.tpr -f md_0_10_center.xtc -select 'resname "JZ4" and name OAB plus resid 102 and name OE1' -oall
+</div>
+
+<p>
+Tiếp theo, phân tích góc liên kết hydro. Tạo index group cho donor và acceptor:
+</p>
+
+<div class="code-view">
+gmx make_ndx -f em.gro -o index.ndx
+...
+ > 13 & a OAB | a H12
+ > 1 & r 102 & a OE1
+ > q
+</div>
+
+<p>
+Tính góc bằng module <code>angle</code>:
+</p>
+
+<div class="code-view">
+gmx angle -f md_0_10_center.xtc -n index.ndx -ov angle.xvg
+</div>
+
+---
+
+<h3>Ligand RMSD</h3>
+<p>
+Tạo index group chỉ gồm các nguyên tử nặng (heavy atoms) của JZ4:
+</p>
+
+<div class="code-view">
+gmx make_ndx -f em.gro -n index.ndx
+...
+ > 13 & ! a H*
+ > name 26 JZ4_Heavy
+ > q
+</div>
+
+<p>
+Tính RMSD của ligand (so với backbone của protein):
+</p>
+
+<div class="code-view">
+gmx rms -s em.tpr -f md_0_10_center.xtc -n index.ndx -tu ns -o rmsd_jz4.xvg
+</div>
+
+---
+
+<h3>Protein-Ligand Interaction Energy</h3>
+<p>
+Chuẩn bị file .tpr mới với <code>energygrps = Protein JZ4</code> trong file .mdp:
+</p>
+
+<div class="code-view">
+gmx grompp -f ie.mdp -c npt.gro -t npt.cpt -p topol.top -n index.ndx -o ie.tpr
+</div>
+
+<p>
+Chạy tính lại năng lượng bằng <code>-rerun</code>:
+</p>
+
+<div class="code-view">
+gmx mdrun -deffnm ie -rerun md_0_10.xtc -nb cpu
+</div>
+
+<p>
+Trích xuất năng lượng tương tác:
+</p>
+
+<div class="code-view">
+gmx energy -f ie.edr -o interaction_energy.xvg
+</div>

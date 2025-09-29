@@ -1,0 +1,94 @@
+<h2>Step Six: Equilibration</h2>
+
+<p>
+Quá trình cân bằng (equilibration) cho hệ protein-ligand cũng tương tự như với protein trong nước, 
+nhưng có một số điểm cần chú ý: 
+(1) áp dụng ràng buộc vị trí cho ligand, 
+(2) xử lý nhóm ghép nhiệt độ (temperature coupling groups).
+</p>
+
+<h3>1. Restraining the Ligand</h3>
+
+<p>
+Tạo index group cho JZ4 (chỉ chứa các nguyên tử không phải hydro):
+</p>
+
+<div class="code-view">
+gmx make_ndx -f jz4.gro -o index_jz4.ndx
+...
+ &gt; 0 &amp; ! a H*
+ &gt; q
+</div>
+
+<p>
+Sinh file position restraint cho ligand bằng <code>genrestr</code>:
+</p>
+
+<div class="code-view">
+gmx genrestr -f jz4.gro -n index_jz4.ndx -o posre_jz4.itp -fc 1000 1000 1000
+</div>
+
+<p>
+Chèn vào <code>topol.top</code> đúng vị trí như sau:
+</p>
+
+<div class="code-view">
+; Include Position restraint file
+#ifdef POSRES
+#include "posre.itp"
+#endif
+
+; Include ligand topology
+#include "jz4.itp"
+
+; Ligand position restraints
+#ifdef POSRES
+#include "posre_jz4.itp"
+#endif
+
+; Include water topology
+#include "./charmm36-jul2022.ff/tip3p.itp"
+</div>
+
+<p>
+Nếu muốn điều khiển riêng rẽ việc ràng buộc protein và ligand, có thể dùng block <code>#ifdef POSRES_LIG</code> 
+và thêm <code>define = -DPOSRES -DPOSRES_LIG</code> trong file .mdp. 
+Tùy nhu cầu mà bạn chọn cách nào, nhưng thông thường restrain cả protein và ligand cùng lúc là đủ.
+</p>
+
+<h3>2. Temperature Coupling Groups</h3>
+
+<p>
+Không nên ghép thermostat cho từng phân tử riêng lẻ (ví dụ <code>tc-grps = Protein JZ4 SOL CL</code>) vì hệ sẽ dễ bị "nổ". 
+Thay vào đó, nên nhóm Protein và JZ4 chung lại, còn ion và nước vào một nhóm khác.
+</p>
+
+<p>
+Dùng <code>make_ndx</code> trên cấu trúc đã minimize (em.gro):
+</p>
+
+<div class="code-view">
+gmx make_ndx -f em.gro -o index.ndx
+...
+ &gt; 1 | 13
+ &gt; q
+</div>
+
+<p>
+Khi đó ta có thể đặt <code>tc-grps = Protein_JZ4 Water_and_ions</code> để đạt hiệu ứng 
+tương đương <code>Protein Non-Protein</code>.
+</p>
+
+<h3>3. NVT Equilibration</h3>
+
+<p>
+Thực hiện NVT equilibration bằng cách:
+</p>
+
+<div class="code-view">
+gmx grompp -f nvt.mdp -c em.gro -r em.gro -p topol.top -n index.ndx -o nvt.tpr
+</div>
+
+<div class="code-view">
+gmx mdrun -deffnm nvt
+</div>

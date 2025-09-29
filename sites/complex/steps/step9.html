@@ -1,0 +1,22 @@
+<h2>Step Eight: Production MD</h2>
+
+<p>
+Sau khi hoàn tất hai giai đoạn cân bằng (NVT và NPT), hệ thống đã ổn định ở nhiệt độ và áp suất mong muốn. 
+Bây giờ chúng ta sẽ bỏ các ràng buộc vị trí và bắt đầu mô phỏng động lực học phân tử sản xuất (Production MD) để thu thập dữ liệu.
+</p>
+
+<p>
+Tiến hành tạo file đầu vào bằng <code>grompp</code> (sử dụng file checkpoint từ bước NPT):
+</p>
+
+<div class="code-view">
+gmx grompp -f md.mdp -c npt.gro -t npt.cpt -p topol.top -n index.ndx -o md_0_10.tpr
+</div>
+
+<p>
+Chạy mô phỏng Production MD trong 10 ns với <code>mdrun</code>:
+</p>
+
+<div class="code-view">
+gmx mdrun -deffnm md_0_10
+</div>

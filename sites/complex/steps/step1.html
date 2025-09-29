@@ -1,0 +1,69 @@
+<h3>Step 1: Chuẩn bị cấu trúc protein</h3>
+
+<p>
+Trước hết, chúng ta cần tải về file cấu trúc của protein. Trong ví dụ này,
+chúng ta sẽ sử dụng <b>T4 lysozyme L99A/M102Q</b> với mã PDB <code>3HTB</code>.
+Hãy truy cập <a href="https://www.rcsb.org/">RCSB PDB</a> và tải về file PDB gốc.
+</p>
+
+<p>
+Sau khi tải xong, có thể quan sát cấu trúc bằng các phần mềm như
+VMD, Chimera, hoặc PyMOL. Tiếp theo, hãy loại bỏ các thành phần không cần thiết
+như nước tinh thể (HOH), PO<sub>4</sub>, và BME. 
+Lưu ý rằng trong một số trường hợp đặc biệt, nước gắn trong hốc hoạt động
+có thể cần giữ lại, nhưng trong hướng dẫn này ta sẽ bỏ đi và chỉ tập trung
+vào <b>ligand JZ4 (2-propylphenol)</b>.
+</p>
+
+<p>
+Để tách ligand JZ4 ra file riêng, dùng lệnh:
+</p>
+
+<div class="code-view">
+<pre>
+grep JZ4 3HTB_clean.pdb > jz4.pdb
+</pre>
+</div>
+
+<p>
+Sau đó xóa các dòng chứa JZ4 khỏi <code>3HTB_clean.pdb</code> để chỉ còn lại protein.
+Lúc này, chúng ta sẽ tạo topology cho protein bằng <code>pdb2gmx</code> với force field
+CHARMM36. Force field này có thể tải từ <a href="https://mackerell.umaryland.edu/charmm_ff.shtml">MacKerell Lab</a>.
+Hãy tải cả tarball <code>charmm36-jul2022.ff.tgz</code> và script
+<code>cgenff_charmm2gmx.py</code> (chọn phiên bản Python phù hợp).
+</p>
+
+<p>
+Giải nén force field:
+</p>
+
+<div class="code-view">
+<pre>
+tar -zxvf charmm36-jul2022.ff.tgz
+</pre>
+</div>
+
+<p>
+Bây giờ ta có thư mục <code>charmm36-jul2022.ff</code> trong working directory.
+Tiếp theo, chạy <code>pdb2gmx</code> để tạo topology cho T4 lysozyme:
+</p>
+
+<div class="code-view">
+<pre>
+gmx pdb2gmx -f 3HTB_clean.pdb -o 3HTB_processed.gro -ter
+</pre>
+</div>
+
+<p>
+Bạn sẽ được yêu cầu chọn:
+</p>
+<ul>
+  <li><b>Force field</b>: chọn <code>CHARMM36</code> (option 1, từ current directory)</li>
+  <li><b>Water model</b>: chọn mặc định <i>CHARMM-modified TIP3P</i></li>
+  <li><b>Terminus type</b>: chọn <code>NH3+</code> cho N-terminus và <code>COO-</code> cho C-terminus</li>
+</ul>
+
+<p>
+Lưu ý: Việc chọn đúng <b>termini</b> rất quan trọng, nếu không sẽ gặp lỗi
+không khớp tên nguyên tử (do pdb2gmx mặc định chọn kiểu carbohydrate cho MET đầu N).
+</p>

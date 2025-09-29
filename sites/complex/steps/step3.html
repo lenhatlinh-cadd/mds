@@ -1,0 +1,122 @@
+<h2>Xử lý ligand (JZ4)</h2>
+<p>
+Trong mô phỏng, việc gán tham số cho ligand là một trong những bước khó khăn nhất vì đa số force field không tự động nhận diện. 
+Đối với <b>OPLS, AMBER, CHARMM</b>, việc tham số hóa thường dựa trên các tính toán hóa lượng tử. 
+Trong khi đó, <b>GROMOS</b> lại dựa nhiều vào fitting thực nghiệm. 
+Do quá trình này phức tạp, các công cụ tự động thường được sử dụng để tạo topology tương thích với từng force field. 
+Ví dụ:
+</p>
+
+<ul>
+  <li><b>AMBER</b>: Antechamber (GAFF), acpype (tạo topology GROMACS)</li>
+  <li><b>CHARMM</b>: CGenFF server</li>
+  <li><b>GROMOS</b>: PRODRG 2.5, ATB</li>
+  <li><b>OPLS-AA</b>: LigParGen</li>
+</ul>
+
+<h3>1. Tạo file .mol2 và thêm nguyên tử Hydro</h3>
+<p>
+Dùng <b>Avogadro</b> để mở file <code>jz4.pdb</code>, vào menu <i>Build → Add Hydrogens</i> để thêm H.  
+Sau đó lưu lại dưới định dạng <b>Sybyl Mol2</b> với tên <code>jz4.mol2</code>.
+</p>
+
+<h3>2. Chỉnh sửa jz4.mol2</h3>
+<p>  
+Mở file <code>jz4.mol2</code> bằng text editor và chỉnh lại phần header:
+</p>
+
+<div class="code-view">
+@&lt;TRIPOS&gt;MOLECULE<br>
+JZ4
+</div>
+
+<p>  
+Đồng nhất tên residue và số thứ tự để toàn bộ ATOM section dùng cùng một residue <b>JZ4</b>.
+</p>
+
+<h3>3. Sắp xếp lại danh sách bond</h3>
+<p>
+Dùng script <code>sort_mol2_bonds.pl</code> để sắp xếp lại các liên kết:
+</p>
+
+<div class="code-view">
+perl sort_mol2_bonds.pl jz4.mol2 jz4_fix.mol2
+</div>
+
+<h3>4. Sinh topology bằng CGenFF</h3>
+<p>
+Truy cập <a href="https://cgenff.umaryland.edu">CGenFF server</a>, upload <code>jz4_fix.mol2</code>.  
+Server sẽ trả về file topology <code>jz4.str</code>.
+</p>
+
+<p>
+Chuyển đổi topology CHARMM sang GROMACS bằng script <code>cgenff_charmm2gmx.py</code>:
+</p>
+
+<div class="code-view">
+python cgenff_charmm2gmx.py JZ4 jz4_fix.mol2 jz4.str charmm36-jul2022.ff
+</div>
+
+<p>
+Kết quả thu được:
+</p>
+<ul>
+  <li><code>jz4.itp</code> – định nghĩa molecule type</li>
+  <li><code>jz4.prm</code> – chứa các thông số bonded mới</li>
+</ul>
+
+<h3>5. Chuyển đổi và xây dựng complex</h3>
+<p>
+Chuyển file <code>jz4_ini.pdb</code> sang định dạng GROMACS:
+</p>
+
+<div class="code-view">
+gmx editconf -f jz4_ini.pdb -o jz4.gro
+</div>
+
+<p>
+Sao chép toàn bộ toạ độ từ <code>jz4.gro</code> vào cuối file <code>complex.gro</code> (ngay trước box vectors), 
+sau đó chỉnh số lượng atom ở dòng thứ 2 của file.
+</p>
+
+<h3>6. Chỉnh sửa topology</h3>
+<p>
+Thêm dòng include ligand topology vào <code>topol.top</code> sau phần posre:
+</p>
+
+<div class="code-view">
+; Include Position restraint file<br>
+#ifdef POSRES<br>
+#include "posre.itp"<br>
+#endif<br><br>
+
+; Include ligand topology<br>
+#include "jz4.itp"<br><br>
+
+; Include water topology<br>
+#include "./charmm36-jul2022.ff/tip3p.itp"
+</div>
+
+<p>
+Và thêm các parameter của ligand vào đầu file (ngay sau forcefield.itp):
+</p>
+
+<div class="code-view">
+; Include forcefield parameters<br>
+#include "./charmm36-jul2022.ff/forcefield.itp"<br><br>
+
+; Include ligand parameters<br>
+#include "jz4.prm"
+</div>
+
+<p>
+Cuối cùng, bổ sung JZ4 vào danh sách molecules:
+</p>
+
+<div class="code-view">
+[molecules]<br>
+; Compound        #mols<br>
+Protein_chain_A     1<br>
+JZ4                 1
+</div>
+Tệp tọa độ và cấu trúc hiện đã thống nhất với nội dung của hệ thống.

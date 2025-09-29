@@ -1,0 +1,41 @@
+<h2>Step Five: Energy Minimization</h2>
+
+<p>
+Sau khi hệ thống đã được xây dựng đầy đủ, chúng ta sẽ tạo binary input bằng <code>grompp</code> 
+sử dụng file tham số <code>em.mdp</code>:
+</p>
+
+<div class="code-view">
+gmx grompp -f em.mdp -c solv_ions.gro -p topol.top -o em.tpr
+</div>
+
+<p>
+Hãy chắc chắn rằng bạn đã cập nhật <code>topol.top</code> trong các bước chạy 
+<code>genbox</code> và <code>genion</code>, nếu không bạn sẽ gặp lỗi kiểu như 
+<code>"number of coordinates in coordinate file does not match topology"</code>.
+</p>
+
+<p>
+Tiếp theo, chạy energy minimization bằng <code>mdrun</code>:
+</p>
+
+<div class="code-view">
+gmx mdrun -v -deffnm em
+</div>
+
+<p>
+Trong ví dụ này, hệ thống hội tụ khá nhanh:
+</p>
+
+<div class="code-view">
+Steepest Descents converged to Fmax &lt; 1000 in 143 steps
+Potential Energy  = -4.9014547e+05
+Maximum force     =  8.7411469e+02 on atom 27
+Norm of force     =  5.6676244e+01
+</div>
+
+<p>
+Giống như trong tutorial về lysozyme, bạn có thể theo dõi các thành phần của năng lượng thế 
+bằng module <code>gmx energy</code>. Ở đây, mình sẽ không trình bày chi tiết. 
+Sau khi đã đạt được energy minimum, chúng ta có thể bắt đầu chạy mô phỏng động lực học phân tử (MD) thực sự.
+</p>

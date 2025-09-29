@@ -1,0 +1,49 @@
+<h2>Step Four: Thêm ion vào hệ thống</h2>
+
+<p>
+Hiện tại chúng ta đã có hệ thống đã được solvated nhưng protein vẫn mang điện tích. 
+Kết quả từ <code>pdb2gmx</code> cho thấy protein có điện tích tổng cộng là +6e (dựa trên thành phần amino acid). 
+Nếu bạn bỏ qua thông tin này khi chạy <code>pdb2gmx</code>, có thể kiểm tra lại ở dòng cuối của phần 
+<code>[ atoms ]</code> trong <code>topol.top</code>; bạn sẽ thấy có ghi <code>qtot 6</code>. 
+Vì trong điều kiện sinh học không tồn tại hệ có điện tích tổng khác 0, chúng ta cần thêm ion để trung hòa.
+</p>
+
+<p>
+Đầu tiên, dùng <code>grompp</code> để tạo file <code>.tpr</code>, với bất kỳ file <code>.mdp</code> nào. 
+Thông thường, nên dùng file <code>.mdp</code> dành cho energy minimization 
+(vì cần ít tham số nhất, dễ duy trì). Ví dụ:
+</p>
+
+<div class="code-view">
+gmx grompp -f ions.mdp -c solv.gro -p topol.top -o ions.tpr
+</div>
+
+<p>
+Sau đó, dùng <code>genion</code> để thêm ion vào hệ thống:
+</p>
+
+<div class="code-view">
+gmx genion -s ions.tpr -o solv_ions.gro -p topol.top -pname NA -nname CL -neutral
+</div>
+
+<p>
+Tên ion chỉ định bằng <code>-pname</code> và <code>-nname</code> trước đây phụ thuộc force field, 
+nhưng từ phiên bản GROMACS 4.5 đã được chuẩn hóa. 
+Cụ thể, tên nguyên tử luôn là ký hiệu nguyên tố viết hoa 
+(cùng với <code>[ moleculetype ]</code> trong topology). 
+Tên residue có thể có hoặc không kèm theo dấu của điện tích (+/-). 
+Nếu gặp vấn đề về tên gọi, hãy tham khảo file <code>ions.itp</code>.
+</p>
+
+<p>
+Sau khi thêm ion, phần <code>[ molecules ]</code> trong topology sẽ trông như sau:
+</p>
+
+<div class="code-view">
+[molecules]
+; Compound        #mols
+Protein_chain_A     1
+JZ4                 1
+SOL             10228
+CL                  6
+</div>

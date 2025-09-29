@@ -1,0 +1,22 @@
+<h2>Step Seven: NPT Equilibration</h2>
+
+<p>
+Sau khi hoàn tất mô phỏng NVT, bước tiếp theo là cân bằng đẳng áp – nhiệt độ (NPT). 
+Ở giai đoạn này, hệ sẽ được điều chỉnh để đạt áp suất mục tiêu, đảm bảo mật độ dung môi hợp lý.
+</p>
+
+<p>
+Tạo file đầu vào nhị phân bằng <code>grompp</code>:
+</p>
+
+<div class="code-view">
+gmx grompp -f npt.mdp -c nvt.gro -t nvt.cpt -r nvt.gro -p topol.top -n index.ndx -o npt.tpr
+</div>
+
+<p>
+Sau đó chạy mô phỏng NPT với <code>mdrun</code>:
+</p>
+
+<div class="code-view">
+gmx mdrun -deffnm npt
+</div>

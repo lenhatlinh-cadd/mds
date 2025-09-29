@@ -1,0 +1,24 @@
+<h2>Step Three: Định nghĩa hộp mô phỏng & Thêm dung môi</h2>
+
+<p>
+Ở bước này, quy trình giống như bất kỳ mô phỏng MD nào khác. 
+Trước tiên, ta sẽ định nghĩa hộp mô phỏng (unit cell), sau đó làm đầy bằng nước.
+</p>
+
+<div class="code-view">
+gmx editconf -f complex.gro -o newbox.gro -bt dodecahedron -d 1.0
+</div>
+
+<div class="code-view">
+gmx solvate -cp newbox.gro -cs spc216.gro -p topol.top -o solv.gro
+</div>
+
+<p>
+Khi quan sát <code>solv.gro</code>, bạn có thể thắc mắc tại sao lệnh <code>editconf</code> không tạo ra 
+hình dạng hộp dodecahedron như mong muốn. 
+Thực tế, GROMACS luôn sử dụng cách biểu diễn tọa độ hiệu quả nhất, 
+trong đó toàn bộ hệ được "re-wrapped" về một hộp triclinic. 
+Điều này không ảnh hưởng đến tính toán vì <code>mdrun</code> có thể thực hiện mô phỏng 
+với các dạng hộp tương đương về mặt vật lý. 
+Nếu cần hiển thị đúng hình dạng hộp dodecahedron, bạn có thể khôi phục nó sau khi sinh file <code>.tpr</code>.
+</p>
